@@ -1,12 +1,15 @@
+import { VerifyEmail } from './users/entities/verify-email.entity'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import * as Joi from 'joi'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
-import { UsersModule } from './users/users.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { CommonModule } from './common/common.module'
-import { Users } from './users/entities/user.entity'
+import { User } from './users/entities/user.entity'
+import { VerifyPhone } from './users/entities/verify-phone.entity'
+import { UsersModule } from './users/users.module'
+import { NotifiesModule } from './notifies/notifies.module';
 
 @Module({
     imports: [
@@ -34,7 +37,7 @@ import { Users } from './users/entities/user.entity'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [Users],
+            entities: [User, VerifyEmail, VerifyPhone],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -43,6 +46,7 @@ import { Users } from './users/entities/user.entity'
         }),
         UsersModule,
         CommonModule,
+        NotifiesModule,
     ],
     controllers: [],
     providers: [],

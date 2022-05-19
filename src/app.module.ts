@@ -9,7 +9,8 @@ import { CommonModule } from './common/common.module'
 import { User } from './users/entities/user.entity'
 import { VerifyPhone } from './users/entities/verify-phone.entity'
 import { UsersModule } from './users/users.module'
-import { NotifiesModule } from './notifies/notifies.module';
+import { NotifiesModule } from './notifies/notifies.module'
+import { ValidateModule } from './validate/validate.module'
 
 @Module({
     imports: [
@@ -47,6 +48,7 @@ import { NotifiesModule } from './notifies/notifies.module';
         UsersModule,
         CommonModule,
         NotifiesModule,
+        ValidateModule,
     ],
     controllers: [],
     providers: [],

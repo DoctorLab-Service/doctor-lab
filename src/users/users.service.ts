@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { NotifiesService } from 'src/notifies/notifies.service'
+import { ValidateService } from 'src/validate/validate.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import { User } from './entities/user.entity'
@@ -10,6 +11,7 @@ export class UserService {
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
         private notifiesService: NotifiesService,
+        private validation: ValidateService,
     ) {}
 
     async createAccount({
@@ -21,6 +23,7 @@ export class UserService {
         phone,
         email,
         password,
+        rePassword,
         success,
         role,
         language,
@@ -32,17 +35,25 @@ export class UserService {
 
             // Change language for response error message
             this.notifiesService.init(language, 'users')
-            const errors = await this.notifiesService.notify('error', 'exist')
+            const errorsExist = await this.notifiesService.notify('error', 'exist')
+            const errorsField = await this.notifiesService.notify('error', 'field')
 
             // Check exist and return errror
-            if (existEmail) return { ok: false, error: errors.email }
-            if (existPhone) return { ok: false, error: errors.phone }
+            if (existEmail) return { ok: false, error: errorsExist.email }
+            if (existPhone) return { ok: false, error: errorsExist.phone }
 
-            //Che
-
+            ////Check field by empty or not
+            const checkedFields = await this.validation.checkFields<CreateAccountInput>(errorsField, {
+                fullname,
+                experience,
+                phone,
+                email,
+                password,
+                rePassword,
+            })
+            console.log(checkedFields)
             // Create user if email and phone is not exist
-            const createdUser = await this.users.create(accountData)
-            console.log(createdUser)
+            //const createdUser = this.users.create({accountData})
 
             return { ok: true }
         } catch (error) {

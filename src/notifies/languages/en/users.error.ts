@@ -2,19 +2,27 @@ import { NotifyDto } from 'src/notifies/dtos/notify.dto'
 
 export const notifies: NotifyDto = {
     serviceName: 'users',
-    language: 'en',
+    language: 'ENw',
     messages: {
-        exist: {
+        isExist: {
             phone: 'There is user with that phone already',
             email: 'There is user with that email already',
         },
-        field: {
-            fullname: 'Enter your name',
-            experience: 'Enter your experience',
-            phone: 'Enter your phone',
-            email: 'Enter your email',
-            password: 'Enter password',
+        isEmpty: {
             rePassword: 'Please repeat your password',
+        },
+        isLength: {
+            fullname: 'Fullname must be longer than or equal to 3 characters',
+            country: 'Country must be no longer than 64 characters',
+            state: 'State must be no longer than 64 characters',
+            address: 'Address must be no longer than 64 characters',
+            email: 'Email must be longer than or equal to 3 characters',
+            experience: 'Experianse must be longer than or equal to 3 characters',
+            password: 'Password must be longer than or equal to 6 characters',
+        },
+        isValid: {
+            phone: 'Invalid phone number',
+            email: 'Invalid email address',
             passwordEqual: "Passwords don't match",
         },
     },

@@ -17,6 +17,7 @@ export enum EUserClinicAccess {
     Forbiden = 'Forbiden',
 }
 export enum EUserGender {
+    NotChosen = 'Not Choisen',
     Male = 'Male',
     Female = 'Female',
 }

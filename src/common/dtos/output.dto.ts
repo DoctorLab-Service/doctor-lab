@@ -1,12 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { Errors } from './errors.dto'
 
-type TErrors = {
-    [key: string]: string
-}
 @ObjectType()
 export class CoreOutput {
     @Field(() => String, { nullable: true })
-    error?: string | TErrors[]
+    error?: string | Errors
 
     @Field(() => Boolean)
     ok?: boolean

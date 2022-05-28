@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { ValidationException } from 'src/exceptions/validation.exception'
 import { NotifiesService } from 'src/notifies/notifies.service'
-import { ValidateService } from 'src/validate/validate.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import { User } from './entities/user.entity'
@@ -11,7 +11,6 @@ export class UserService {
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
         private notifiesService: NotifiesService,
-        private validation: ValidateService,
     ) {}
 
     async createAccount({
@@ -23,7 +22,6 @@ export class UserService {
         phone,
         email,
         password,
-        rePassword,
         success,
         role,
         language,
@@ -35,25 +33,28 @@ export class UserService {
 
             // Change language for response error message
             this.notifiesService.init(language, 'users')
-            const errorsExist = await this.notifiesService.notify('error', 'exist')
-            const errorsField = await this.notifiesService.notify('error', 'field')
+            const errorsMessage = await this.notifiesService.notify('error', 'isExist')
 
             // Check exist and return errror
-            if (existEmail) return { ok: false, error: errorsExist.email }
-            if (existPhone) return { ok: false, error: errorsExist.phone }
+            if (existEmail) throw new ValidationException({ email: errorsMessage.email })
+            if (existPhone) throw new ValidationException({ phone: errorsMessage.phone })
 
-            ////Check field by empty or not
-            const checkedFields = await this.validation.checkFields<CreateAccountInput>(errorsField, {
+            const newUser = {
                 fullname,
-                experience,
+                country,
+                state,
+                address,
                 phone,
                 email,
+                experience,
                 password,
-                rePassword,
-            })
-            console.log(checkedFields)
+                success,
+                role,
+                language,
+            }
+
             // Create user if email and phone is not exist
-            //const createdUser = this.users.create({accountData})
+            await this.users.save(this.users.create({ ...newUser }))
 
             return { ok: true }
         } catch (error) {

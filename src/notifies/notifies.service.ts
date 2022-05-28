@@ -11,7 +11,7 @@ export class NotifiesService {
      * Notify of service
      */
     init(lng: string, service: string): void {
-        this.lng = lng
+        this.lng = lng || 'ru'
         this.service = service
     }
 

@@ -1,11 +1,24 @@
 import { Resolver, Args, Query } from '@nestjs/graphql'
-import { FindAllByRoleIenput, FindByEmailInput, FindByIdInput, FindByOutput, FindByPhoneInput } from '../dtos/find.dto'
+import {
+    FindAllByOutput,
+    FindAllByRoleIenput,
+    FindByEmailInput,
+    FindByIdInput,
+    FindByOutput,
+    FindByPhoneInput,
+} from '../dtos/find.dto'
 import { UserService } from '../users.service'
 
 @Resolver()
 export class UserQueries {
     constructor(private readonly usersService: UserService) {}
 
+    /*
+        Queries Find By:
+        - id
+        - phone
+        - email
+     */
     @Query(() => FindByOutput)
     async findById(@Args('input') findBy: FindByIdInput): Promise<FindByOutput> {
         return await this.usersService.findById(findBy)
@@ -21,8 +34,12 @@ export class UserQueries {
         return await this.usersService.findByEmail(findBy)
     }
 
-    @Query(() => FindByOutput)
-    async findAllByRole(@Args('input') findAllBy: FindAllByRoleIenput): Promise<FindByOutput> {
+    /*
+        Queries Find All By:
+        - Role
+    */
+    @Query(() => FindAllByOutput)
+    async findAllByRole(@Args('input') findAllBy: FindAllByRoleIenput): Promise<FindAllByOutput> {
         return await this.usersService.findAllByRole(findAllBy)
     }
 }

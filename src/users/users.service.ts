@@ -4,7 +4,14 @@ import { ValidationException } from 'src/exceptions/validation.exception'
 import { NotifiesService } from 'src/notifies/notifies.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
-import { FindAllByRoleIenput, FindByEmailInput, FindByIdInput, FindByOutput, FindByPhoneInput } from './dtos/find.dto'
+import {
+    FindAllByOutput,
+    FindAllByRoleIenput,
+    FindByEmailInput,
+    FindByIdInput,
+    FindByOutput,
+    FindByPhoneInput,
+} from './dtos/find.dto'
 import { User } from './entities/user.entity'
 
 @Injectable()
@@ -70,11 +77,10 @@ export class UserService {
     }
 
     /*
-     * Find By:
-     * - id
-     * - phone
-     * - email
-     * - role
+        Find By:
+        - id
+        - phone
+        - email
      */
     async findById({ id, language }: FindByIdInput): Promise<FindByOutput> {
         this.notifiesService.init(language, 'users')
@@ -118,15 +124,19 @@ export class UserService {
         }
     }
 
-    async findAllByRole({ role, language }: FindAllByRoleIenput): Promise<FindByOutput> {
+    /*
+        Find All By:
+        - Role
+    */
+    async findAllByRole({ role, language }: FindAllByRoleIenput): Promise<FindAllByOutput> {
         this.notifiesService.init(language, 'users')
         const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
 
         try {
-            const user = await this.users.findOne({ where: { role } })
-            if (!user) throw new ValidationException({ email: errorsMessage.user })
+            const users = await this.users.find({ where: { role } })
+            if (!users.length) throw new ValidationException({ email: errorsMessage.user })
 
-            return { ok: Boolean(user), user }
+            return { ok: Boolean(users.length), users }
         } catch (error) {
             throw new ValidationException({ email: errorsMessage.user })
         }

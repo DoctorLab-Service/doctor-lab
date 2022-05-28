@@ -12,6 +12,9 @@ import { User } from '../entities/user.entity'
 //     query: FindById | FindByPhone | FindByEmail
 // }
 
+/*
+    Inputs
+*/
 @InputType()
 export class FindByIdInput extends PickType(User, ['id', 'language']) {}
 
@@ -24,8 +27,17 @@ export class FindByEmailInput extends PickType(User, ['email', 'language']) {}
 @InputType()
 export class FindAllByRoleIenput extends PickType(User, ['role', 'language']) {}
 
+/*
+    Outputs
+*/
 @ObjectType()
 export class FindByOutput extends CoreOutput {
-    @Field(() => User || [User], { nullable: true })
-    user?: User | User[]
+    @Field(() => User, { nullable: true })
+    user?: User
+}
+
+@ObjectType()
+export class FindAllByOutput extends CoreOutput {
+    @Field(() => [User], { nullable: true })
+    users?: User[]
 }

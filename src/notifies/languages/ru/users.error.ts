@@ -25,5 +25,11 @@ export const notifies: NotifyDto = {
             email: 'Не валидный адрес електронной почты',
             passwordEqual: 'Пароли не совпадают',
         },
+        isNotFound: {
+            user: 'Ничего не найден',
+        },
+        isNotCreate: {
+            user: 'Не удалось создать учетную запись',
+        },
     },
 }

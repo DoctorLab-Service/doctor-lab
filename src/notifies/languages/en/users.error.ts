@@ -2,7 +2,7 @@ import { NotifyDto } from 'src/notifies/dtos/notify.dto'
 
 export const notifies: NotifyDto = {
     serviceName: 'users',
-    language: 'ENw',
+    language: 'EN',
     messages: {
         isExist: {
             phone: 'There is user with that phone already',
@@ -24,6 +24,12 @@ export const notifies: NotifyDto = {
             phone: 'Invalid phone number',
             email: 'Invalid email address',
             passwordEqual: "Passwords don't match",
+        },
+        isNotFound: {
+            user: 'Nothing found',
+        },
+        isNotCreate: {
+            user: "Couldn't create account",
         },
     },
 }

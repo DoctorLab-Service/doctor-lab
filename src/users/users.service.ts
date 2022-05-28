@@ -4,6 +4,7 @@ import { ValidationException } from 'src/exceptions/validation.exception'
 import { NotifiesService } from 'src/notifies/notifies.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
+import { FindAllByRoleIenput, FindByEmailInput, FindByIdInput, FindByOutput, FindByPhoneInput } from './dtos/find.dto'
 import { User } from './entities/user.entity'
 
 @Injectable()
@@ -13,6 +14,9 @@ export class UserService {
         private notifiesService: NotifiesService,
     ) {}
 
+    /*
+     * Create new account
+     */
     async createAccount({
         fullname,
         country,
@@ -26,13 +30,14 @@ export class UserService {
         role,
         language,
     }: CreateAccountInput): Promise<CreateAccountOutput> {
+        this.notifiesService.init(language, 'users')
+
         try {
             // Check by exist to email and phone
             const existEmail = await this.users.findOne({ where: { email } })
             const existPhone = await this.users.findOne({ where: { phone } })
 
             // Change language for response error message
-            this.notifiesService.init(language, 'users')
             const errorsMessage = await this.notifiesService.notify('error', 'isExist')
 
             // Check exist and return errror
@@ -59,10 +64,71 @@ export class UserService {
             return { ok: true }
         } catch (error) {
             console.log(error)
-            return {
-                ok: false,
-                error,
-            }
+            const errorsMessage = await this.notifiesService.notify('error', 'isNotCreate')
+            throw new ValidationException({ email: errorsMessage.user })
+        }
+    }
+
+    /*
+     * Find By:
+     * - id
+     * - phone
+     * - email
+     * - role
+     */
+    async findById({ id, language }: FindByIdInput): Promise<FindByOutput> {
+        this.notifiesService.init(language, 'users')
+        const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
+
+        try {
+            const user = await this.users.findOne({ where: { id } })
+            if (!user) throw new ValidationException({ email: errorsMessage.user })
+
+            return { ok: Boolean(user), user }
+        } catch (error) {
+            throw new ValidationException({ email: errorsMessage.user })
+        }
+    }
+
+    async findByPhone({ phone, language }: FindByPhoneInput): Promise<FindByOutput> {
+        this.notifiesService.init(language, 'users')
+        const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
+
+        try {
+            const user = await this.users.findOne({ where: { phone } })
+            if (!user) throw new ValidationException({ email: errorsMessage.user })
+
+            return { ok: Boolean(user), user }
+        } catch (error) {
+            throw new ValidationException({ email: errorsMessage.user })
+        }
+    }
+
+    async findByEmail({ email, language }: FindByEmailInput): Promise<FindByOutput> {
+        this.notifiesService.init(language, 'users')
+        const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
+
+        try {
+            const user = await this.users.findOne({ where: { email } })
+            if (!user) throw new ValidationException({ email: errorsMessage.user })
+
+            return { ok: Boolean(user), user }
+        } catch (error) {
+            throw new ValidationException({ email: errorsMessage.user })
+        }
+    }
+
+    async findAllByRole({ role, language }: FindAllByRoleIenput): Promise<FindByOutput> {
+        this.notifiesService.init(language, 'users')
+        const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
+
+        try {
+            const user = await this.users.findOne({ where: { role } })
+            if (!user) throw new ValidationException({ email: errorsMessage.user })
+
+            return { ok: Boolean(user), user }
+        } catch (error) {
+            throw new ValidationException({ email: errorsMessage.user })
         }
     }
 }

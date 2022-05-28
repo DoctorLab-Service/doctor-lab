@@ -65,7 +65,7 @@ export class User extends CoteEntity {
     @Length(3, 32)
     experience: string
 
-    @Column()
+    @Column({ select: false })
     @Field(() => String)
     @IsString()
     @Length(6, 32)

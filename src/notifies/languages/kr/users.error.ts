@@ -25,5 +25,11 @@ export const notifies: NotifyDto = {
             email: '잘못된 이메일 주소',
             passwordEqual: '비밀번호가 일치하지 않습니다',
         },
+        isNotFound: {
+            user: '아무것도 찾을 수 없음',
+        },
+        isNotCreate: {
+            user: '계정을 만들 수 없습니다',
+        },
     },
 }

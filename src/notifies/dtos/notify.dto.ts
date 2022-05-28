@@ -7,7 +7,7 @@ export class NotifyDto {
 }
 
 export class MassagesDto {
-    readonly [key: string]: MassageDto
+    readonly [key: string]: MassageDto | string
 }
 
 export class MassageDto {

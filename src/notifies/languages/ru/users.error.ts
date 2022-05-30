@@ -26,7 +26,8 @@ export const notifies: NotifyDto = {
             passwordEqual: 'Пароли не совпадают',
         },
         isNotFound: {
-            user: 'Ничего не найден',
+            user: 'Пользователь не найден',
+            users: 'Ничего не найдено',
         },
         isNotCreate: {
             user: 'Не удалось создать учетную запись',

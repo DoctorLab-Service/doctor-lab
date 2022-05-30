@@ -3,33 +3,21 @@
  * Default Admin
  * Users cant create Admin role on one's own
  */
-export enum EUserAdminSuccess {
-    Admin = 'Admin',
-    Custom = 'Custom',
-    Manager = 'Manager',
-    Marketing = 'Marketing',
-    Support = 'Support',
-    Finance = 'Finance',
-    Forbiden = 'Forbiden',
-}
-/**
- * Base Admin can create and set success
- * Default Doctor
- */
-export enum EUserClinicAccess {
-    Admin = 'Admin', // for owner
-    Assistant = 'Assistant',
-    Custom = 'Custom', // owner can create
-    Doctor = 'Doctor',
-    Dentist = 'Dentist', // doctor
-    Manager = 'Manager',
-    Forbiden = 'Forbiden',
-}
-/**
- * Set automaticly if role Patient
- */
-export enum EUserPatient {
-    Patient = 'Patient',
+export enum EUserSuccess {
+    Admin = 'Admin', //AC for owner (clinic) or main admin
+    Custom = 'Custom', //AC owner can create or admin
+    Manager = 'Manager', //AC
+    Forbiden = 'Forbiden', // AC
+
+    Marketing = 'Marketing', // A
+    Support = 'Support', // A
+    Finance = 'Finance', // A
+
+    Assistant = 'Assistant', // D
+    Doctor = 'Doctor', // D
+    Dentist = 'Dentist', // D
+
+    Patient = 'Patient', // P
 }
 
 /**
@@ -50,6 +38,7 @@ export enum EUserRoles {
     Clinic = 'Clinic',
     Admin = 'Admin',
 }
+
 /**
  * User can set custom lng, or set from client browser
  */

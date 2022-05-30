@@ -26,7 +26,8 @@ export const notifies: NotifyDto = {
             passwordEqual: "Passwords don't match",
         },
         isNotFound: {
-            user: 'Nothing found',
+            user: 'The user is not found',
+            users: 'Usr found',
         },
         isNotCreate: {
             user: "Couldn't create account",

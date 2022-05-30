@@ -1,9 +1,11 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql'
 import { IsNotEmpty, IsString } from 'class-validator'
+import { string } from 'joi'
 import { CoreOutput } from 'src/common/dtos/output.dto'
 import { User } from '../entities/user.entity'
 
-export const CreateAccountFields: any[] = [
+@InputType()
+export class CreateAccountInput extends PickType(User, [
     'fullname',
     'country',
     'state',
@@ -12,11 +14,9 @@ export const CreateAccountFields: any[] = [
     'phone',
     'email',
     'password',
+    'role',
     'language',
-]
-
-@InputType()
-export class CreateAccountInput extends PickType(User, [...CreateAccountFields, 'success', 'role', 'language']) {
+]) {
     @Field(() => String, { nullable: true })
     @IsString()
     @IsNotEmpty()
@@ -24,4 +24,7 @@ export class CreateAccountInput extends PickType(User, [...CreateAccountFields, 
 }
 
 @ObjectType()
-export class CreateAccountOutput extends CoreOutput {}
+export class CreateAccountOutput extends CoreOutput {
+    @Field(() => String, { nullable: true })
+    token?: string
+}

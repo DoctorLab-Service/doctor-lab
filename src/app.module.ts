@@ -1,7 +1,7 @@
+import * as Joi from 'joi'
 import { VerifyEmail } from './users/entities/verify-email.entity'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
-import * as Joi from 'joi'
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -10,6 +10,8 @@ import { User } from './users/entities/user.entity'
 import { VerifyPhone } from './users/entities/verify-phone.entity'
 import { UsersModule } from './users/users.module'
 import { NotifiesModule } from './notifies/notifies.module'
+import { JwtModule } from './jwt/jwt.module'
+import { JwtMiddleware } from './jwt/jwt.middleware'
 
 @Module({
     imports: [
@@ -41,14 +43,30 @@ import { NotifiesModule } from './notifies/notifies.module'
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
-            autoSchemaFile: true,
             path: 'users', // http;//localhost:8001/users
+            autoSchemaFile: true,
+            context: ({ req }) => ({
+                user: req['user'], // set req['user'] to context for graphql resolvers
+            }),
+        }),
+        JwtModule.forRoot({
+            privateKey: process.env.PRIVATE_KEY, // Using for creating token on jwt.service
         }),
         UsersModule,
         CommonModule,
         NotifiesModule,
+        //JWT module is  a custom module for this project
     ],
     controllers: [],
     providers: [],
 })
-export class AppModule {}
+export class AppModule {
+    // Set middleware for authorization for all graphql post request
+    // V-1 for using or use on main.ts like use(
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(JwtMiddleware).forRoutes({
+            path: '/users',
+            method: RequestMethod.ALL,
+        })
+    }
+}

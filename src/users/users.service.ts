@@ -1,28 +1,43 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ValidationException } from 'src/exceptions/validation.exception'
+import { JwtService } from 'src/jwt/jwt.service'
 import { NotifiesService } from 'src/notifies/notifies.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import {
-    FindAllByOutput,
-    FindAllByRoleIenput,
+    FindAllOutput,
+    FindAllByRoleInput,
     FindByEmailInput,
     FindByIdInput,
     FindByOutput,
     FindByPhoneInput,
+    FindAllInput,
 } from './dtos/find.dto'
 import { User } from './entities/user.entity'
+import { VerifyEmail } from './entities/verify-email.entity'
+import { VerifyPhone } from './entities/verify-phone.entity'
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
+        @InjectRepository(VerifyEmail) private readonly verifyEmail: Repository<VerifyEmail>,
+        @InjectRepository(VerifyPhone) private readonly verifyPhone: Repository<VerifyPhone>,
         private notifiesService: NotifiesService,
+        private jwtService: JwtService,
     ) {}
 
     /*
-     * Create new account
+        Account: 
+        + create
+        - update
+        - delete
+        - verifyEmail
+        - verifyPhone
+        - addRole
+        - updateRole
+        - deleteRole
      */
     async createAccount({
         fullname,
@@ -33,11 +48,12 @@ export class UserService {
         phone,
         email,
         password,
-        success,
         role,
         language,
     }: CreateAccountInput): Promise<CreateAccountOutput> {
         this.notifiesService.init(language, 'users')
+        const errorsExist = await this.notifiesService.notify('error', 'isExist')
+        const errorsCreate = await this.notifiesService.notify('error', 'isNotCreate')
 
         try {
             // Check by exist to email and phone
@@ -45,11 +61,9 @@ export class UserService {
             const existPhone = await this.users.findOne({ where: { phone } })
 
             // Change language for response error message
-            const errorsMessage = await this.notifiesService.notify('error', 'isExist')
-
             // Check exist and return errror
-            if (existEmail) throw new ValidationException({ email: errorsMessage.email })
-            if (existPhone) throw new ValidationException({ phone: errorsMessage.phone })
+            if (existEmail) throw new ValidationException({ email: errorsExist.email })
+            if (existPhone) throw new ValidationException({ phone: errorsExist.phone })
 
             const newUser = {
                 fullname,
@@ -60,22 +74,38 @@ export class UserService {
                 email,
                 experience,
                 password,
-                success,
                 role,
                 language,
             }
 
             // Create user if email and phone is not exist
-            await this.users.save(this.users.create({ ...newUser }))
+            const user = await this.users.save(this.users.create({ ...newUser }))
+            if (!user) throw new ValidationException({ email: errorsCreate.user })
 
-            return { ok: true }
+            const codeEmail = await this.verifyEmail.save(this.verifyEmail.create({ user }))
+            const codePhone = await this.verifyPhone.save(this.verifyPhone.create({ user }))
+
+            console.log('codeEmail', codeEmail)
+            console.log('codePhone', codePhone)
+
+            const token = this.jwtService.sign({ id: user.id })
+
+            return { ok: true, token }
         } catch (error) {
             console.log(error)
-            const errorsMessage = await this.notifiesService.notify('error', 'isNotCreate')
-            throw new ValidationException({ email: errorsMessage.user })
+            throw new ValidationException({ email: errorsCreate.user })
         }
     }
 
+    // async updateAccoun() {}
+    // async deleteAccoun() {}
+
+    // async verifyEmail() {}
+    // async verifyphone() {}
+
+    // async addRole() {}
+    // async updateRole() {}
+    // async deleteRole() {}
     /*
         Find By:
         - id
@@ -126,19 +156,33 @@ export class UserService {
 
     /*
         Find All By:
+        - All
         - Role
     */
-    async findAllByRole({ role, language }: FindAllByRoleIenput): Promise<FindAllByOutput> {
+    async findAll({ language }: FindAllInput): Promise<FindAllOutput> {
+        this.notifiesService.init(language, 'users')
+        const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
+
+        try {
+            const users = await this.users.find({})
+            if (!users.length) throw new ValidationException({ email: errorsMessage.users })
+
+            return { ok: Boolean(users.length), users }
+        } catch (error) {
+            throw new ValidationException({ email: errorsMessage.users })
+        }
+    }
+    async findAllByRole({ role, language }: FindAllByRoleInput): Promise<FindAllOutput> {
         this.notifiesService.init(language, 'users')
         const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
 
         try {
             const users = await this.users.find({ where: { role } })
-            if (!users.length) throw new ValidationException({ email: errorsMessage.user })
+            if (!users.length) throw new ValidationException({ email: errorsMessage.users })
 
             return { ok: Boolean(users.length), users }
         } catch (error) {
-            throw new ValidationException({ email: errorsMessage.user })
+            throw new ValidationException({ email: errorsMessage.users })
         }
     }
 }

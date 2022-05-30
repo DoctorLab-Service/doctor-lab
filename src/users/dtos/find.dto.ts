@@ -2,16 +2,6 @@ import { InputType, Field, PickType, ObjectType } from '@nestjs/graphql'
 import { CoreOutput } from './../../common/dtos/output.dto'
 import { User } from '../entities/user.entity'
 
-// class FindById extends PickType(User, ['id']) {}
-// class FindByPhone extends PickType(User, ['phone']) {}
-// class FindByEmail extends PickType(User, ['email']) {}
-
-// @InputType()
-// export class FindByIdInput extends PickType(User, ['language']) {
-//     @Field(() => Number || String)
-//     query: FindById | FindByPhone | FindByEmail
-// }
-
 /*
     Inputs
 */
@@ -25,7 +15,10 @@ export class FindByPhoneInput extends PickType(User, ['phone', 'language']) {}
 export class FindByEmailInput extends PickType(User, ['email', 'language']) {}
 
 @InputType()
-export class FindAllByRoleIenput extends PickType(User, ['role', 'language']) {}
+export class FindAllByRoleInput extends PickType(User, ['role', 'language']) {}
+
+@InputType()
+export class FindAllInput extends PickType(User, ['language']) {}
 
 /*
     Outputs
@@ -37,7 +30,7 @@ export class FindByOutput extends CoreOutput {
 }
 
 @ObjectType()
-export class FindAllByOutput extends CoreOutput {
+export class FindAllOutput extends CoreOutput {
     @Field(() => [User], { nullable: true })
     users?: User[]
 }

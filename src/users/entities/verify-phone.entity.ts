@@ -19,7 +19,7 @@ export class VerifyPhone extends CoteEntity {
     user: User
 
     @BeforeInsert()
-    createCode(): number {
+    createCode(): void {
         try {
             let code = Math.floor(Math.random() * 999999)
             if (code < 100000) {
@@ -27,7 +27,8 @@ export class VerifyPhone extends CoteEntity {
                     code = Math.floor(Math.random() * 999999)
                 }
             }
-            return code
+
+            this.code = code.toString()
         } catch (error) {
             console.log(error)
             throw new InternalServerErrorException()

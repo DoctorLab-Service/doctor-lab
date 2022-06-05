@@ -22,6 +22,7 @@ export class UserQueries {
         - phone
         - email
      */
+    @UseGuards(AuthGuard)
     @Query(() => FindByOutput)
     async findById(@Args('input') findBy: FindByIdInput): Promise<FindByOutput> {
         return await this.usersService.findById(findBy)
@@ -33,20 +34,24 @@ export class UserQueries {
         return await this.usersService.findByPhone(findBy)
     }
 
+    @UseGuards(AuthGuard)
     @Query(() => FindByOutput)
     async findByEmail(@Args('input') findBy: FindByEmailInput): Promise<FindByOutput> {
         return await this.usersService.findByEmail(findBy)
     }
 
     /*
-        Queries Find All By:
-        - All
-        - Role
+    Queries Find All By:
+    - All
+    - Role
     */
+    @UseGuards(AuthGuard)
     @Query(() => FindAllOutput)
     async findAll(@Args('input') findAll: FindAllInput): Promise<FindAllOutput> {
         return await this.usersService.findAll(findAll)
     }
+
+    @UseGuards(AuthGuard)
     @Query(() => FindAllOutput)
     async findAllByRole(@Args('input') findAllBy: FindAllByRoleInput): Promise<FindAllOutput> {
         return await this.usersService.findAllByRole(findAllBy)

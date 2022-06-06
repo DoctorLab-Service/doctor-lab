@@ -1,10 +1,12 @@
 import * as bcrypt from 'bcrypt'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { CoteEntity } from 'src/common/entities/core.entity'
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne } from 'typeorm'
 import { ELanguage, EUserGender, EUserRoles, EUserSuccess } from 'src/common/common.enums'
 import { InternalServerErrorException } from '@nestjs/common'
-import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, IsString, Length, MaxLength } from 'class-validator'
+import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
+import { CoreEntity } from 'src/common/entities/core.entity'
+import { Role } from 'src/roles/entities/role.entity'
+import { Clinic } from 'src/clinics/entities/clinic.entity'
 
 registerEnumType(ELanguage, { name: 'ELanguage' })
 registerEnumType(EUserSuccess, { name: 'EUserSuccess' })
@@ -14,10 +16,9 @@ registerEnumType(EUserRoles, { name: 'EUserRoles' })
 @InputType({ isAbstract: true })
 @ObjectType()
 @Entity()
-export class User extends CoteEntity {
+export class User extends CoreEntity {
     @Column()
     @Field(() => String)
-    @IsString()
     @Length(3, 64)
     fullname: string
 
@@ -28,19 +29,16 @@ export class User extends CoteEntity {
 
     @Column({ nullable: true })
     @Field(() => String)
-    @IsString()
     @MaxLength(64)
     country: string
 
     @Column({ nullable: true })
     @Field(() => String)
-    @IsString()
     @MaxLength(64)
     state: string
 
     @Column({ nullable: true })
     @Field(() => String)
-    @IsString()
     @MaxLength(64)
     address: string
 
@@ -57,13 +55,11 @@ export class User extends CoteEntity {
 
     @Column()
     @Field(() => String)
-    @IsString()
     @Length(3, 32)
     experience: string
 
     @Column({ select: false })
     @Field(() => String)
-    @IsString()
     @Length(6, 32)
     password: string
 
@@ -89,9 +85,17 @@ export class User extends CoteEntity {
     @Field(() => EUserRoles)
     role: EUserRoles
 
+    @OneToMany(() => Role, roles => roles.user)
+    @Field(() => [Role])
+    roles: Role[]
+
     @Column({ type: 'enum', enum: ELanguage, default: ELanguage.RU })
     @Field(() => ELanguage)
     language: ELanguage
+
+    @OneToOne(() => Clinic, clinic => clinic.owner)
+    @Field(() => Clinic)
+    clinic: Clinic
 
     //messages: Messages // from chat service
     //clinics: Clinic[] // Pat
@@ -101,7 +105,6 @@ export class User extends CoteEntity {
     //appointments: Appointment[] // Dr/pat
     //payments: Payments // from Payments service
     //rate: Ratings
-    //clinic: Clinic | null // for owner
 
     @BeforeInsert()
     async setSuccess(): Promise<void> {

@@ -28,17 +28,6 @@ export class UserService {
         private jwtService: JwtService,
     ) {}
 
-    /*
-        Account: 
-        + create
-        - update
-        - delete
-        - verifyEmail
-        - verifyPhone
-        - addRole
-        - updateRole
-        - deleteRole
-     */
     async createAccount({
         fullname,
         country,
@@ -103,15 +92,6 @@ export class UserService {
     // async verifyEmail() {}
     // async verifyphone() {}
 
-    // async addRole() {}
-    // async updateRole() {}
-    // async deleteRole() {}
-    /*
-        Find By:
-        - id
-        - phone
-        - email
-     */
     async findById({ id, language }: FindByIdInput): Promise<FindByOutput> {
         this.notifiesService.init(language, 'users')
         const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')

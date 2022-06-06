@@ -18,9 +18,9 @@ export class UserQueries {
 
     /*
         Queries Find By:
-        - id
-        - phone
-        - email
+        + id
+        + phone
+        + email
      */
     @UseGuards(AuthGuard)
     @Query(() => FindByOutput)
@@ -42,8 +42,8 @@ export class UserQueries {
 
     /*
     Queries Find All By:
-    - All
-    - Role
+    + All
+    + Role
     */
     @UseGuards(AuthGuard)
     @Query(() => FindAllOutput)

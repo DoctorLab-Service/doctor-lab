@@ -45,5 +45,4 @@ export enum EUserRoles {
 export enum ELanguage {
     RU = 'RU',
     EN = 'EN',
-    KR = 'KR',
 }

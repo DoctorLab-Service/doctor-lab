@@ -1,3 +1,5 @@
+import { VerifyPhone } from './users/entities/verify-phone.entity';
+import { VerifyEmail } from './users/entities/verify-email.entity';
 import * as Joi from 'joi'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
@@ -14,6 +16,8 @@ import { RolesModule } from './roles/roles.module'
 import { ClinicsModule } from './clinics/clinics.module'
 import { Role } from './roles/entities/role.entity'
 import { Clinic } from './clinics/entities/clinic.entity'
+import { EmailModule } from './email/email.module'
+import { PhoneModule } from './phone/phone.module';
 
 @Module({
     imports: [
@@ -30,6 +34,8 @@ import { Clinic } from './clinics/entities/clinic.entity'
                 DB_PASSWORDS: Joi.string().required(),
                 DB_NAME: Joi.string().required(),
                 PRIVATE_KEY: Joi.string().required(),
+                SENDGRID_API_KEY: Joi.string().required(),
+                SENDGRID_EMAIL: Joi.string().required(),
             }),
         }),
         TypeOrmModule.forRoot({
@@ -41,7 +47,7 @@ import { Clinic } from './clinics/entities/clinic.entity'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [User, Role, Clinic],
+            entities: [User, Role, Clinic, VerifyEmail, VerifyPhone],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -60,6 +66,8 @@ import { Clinic } from './clinics/entities/clinic.entity'
         NotifiesModule,
         RolesModule,
         ClinicsModule,
+        EmailModule,
+        PhoneModule,
     ],
     controllers: [],
     providers: [],

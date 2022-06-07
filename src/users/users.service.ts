@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { EmailService } from 'src/email/email.service'
 import { ValidationException } from 'src/exceptions/validation.exception'
 import { JwtService } from 'src/jwt/jwt.service'
 import { NotifiesService } from 'src/notifies/notifies.service'
+import { PhoneService } from 'src/phone/phone.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import {
@@ -25,6 +27,8 @@ export class UserService {
         @InjectRepository(VerifyEmail) private readonly verifyEmail: Repository<VerifyEmail>,
         @InjectRepository(VerifyPhone) private readonly verifyPhone: Repository<VerifyPhone>,
         private notifiesService: NotifiesService,
+        private emailService: EmailService,
+        private phoneService: PhoneService,
         private jwtService: JwtService,
     ) {}
 
@@ -43,6 +47,7 @@ export class UserService {
         this.notifiesService.init(language, 'users')
         const errorsExist = await this.notifiesService.notify('error', 'isExist')
         const errorsCreate = await this.notifiesService.notify('error', 'isNotCreate')
+        const errorsVerify = await this.notifiesService.notify('error', 'isNotVeify')
 
         try {
             // Check by exist to email and phone
@@ -74,8 +79,11 @@ export class UserService {
             const codeEmail = await this.verifyEmail.save(this.verifyEmail.create({ user }))
             const codePhone = await this.verifyPhone.save(this.verifyPhone.create({ user }))
 
-            console.log('codeEmail', codeEmail)
-            console.log('codePhone', codePhone)
+            await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
+            const phoneVerificationStatus = await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
+
+            console.log(phoneVerificationStatus)
+            if (!phoneVerificationStatus) throw new ValidationException({ phone: errorsVerify.noSendSMS })
 
             const token = this.jwtService.sign({ id: user.id })
 

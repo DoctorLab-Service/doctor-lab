@@ -53,7 +53,7 @@ export class PhoneService {
 
             if (!verification) throw new ValidationException({ error: errorsVerify.phone })
 
-            verification.user.verifiedEmail = true
+            verification.user.verifiedPhone = true
             await this.users.save(verification.user)
             await this.verification.delete(verification.id)
             return { ok: true }

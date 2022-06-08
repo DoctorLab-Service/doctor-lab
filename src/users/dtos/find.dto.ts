@@ -6,7 +6,7 @@ import { User } from '../entities/user.entity'
     Inputs
 */
 @InputType()
-export class FindByIdInput extends PickType(User, ['id', 'language']) {}
+export class FindByIdInput extends PickType(User, ['id']) {}
 
 @InputType()
 export class FindByPhoneInput extends PickType(User, ['phone', 'language']) {}

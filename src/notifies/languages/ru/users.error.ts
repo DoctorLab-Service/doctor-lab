@@ -32,5 +32,8 @@ export const notifies: NotifyDto = {
         isNotCreate: {
             user: 'Не удалось создать учетную запись',
         },
+        isNotVerify: {
+            noSendSMS: 'Не удалось отправить вам смс',
+        },
     },
 }

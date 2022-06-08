@@ -47,7 +47,7 @@ export class UserService {
         this.notifiesService.init(language, 'users')
         const errorsExist = await this.notifiesService.notify('error', 'isExist')
         const errorsCreate = await this.notifiesService.notify('error', 'isNotCreate')
-        const errorsVerify = await this.notifiesService.notify('error', 'isNotVeify')
+        const errorsVerify = await this.notifiesService.notify('error', 'isNotVerify')
 
         try {
             // Check by exist to email and phone
@@ -80,10 +80,8 @@ export class UserService {
             const codePhone = await this.verifyPhone.save(this.verifyPhone.create({ user }))
 
             await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
-            const phoneVerificationStatus = await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
-
-            console.log(phoneVerificationStatus)
-            if (!phoneVerificationStatus) throw new ValidationException({ phone: errorsVerify.noSendSMS })
+            // const phoneVerificationStatus = await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
+            // if (!phoneVerificationStatus) throw new ValidationException({ phone: errorsVerify.noSendSMS })
 
             const token = this.jwtService.sign({ id: user.id })
 
@@ -97,10 +95,7 @@ export class UserService {
     // async updateAccoun() {}
     // async deleteAccoun() {}
 
-    // async verifyEmail() {}
-    // async verifyphone() {}
-
-    async findById({ id, language }: FindByIdInput): Promise<FindByOutput> {
+    async findById({ id }: FindByIdInput, language): Promise<FindByOutput> {
         this.notifiesService.init(language, 'users')
         const errorsMessage = await this.notifiesService.notify('error', 'isNotFound')
 

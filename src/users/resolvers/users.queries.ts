@@ -1,6 +1,6 @@
 import { AuthGuard } from './../../auth/auth.guard'
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Args, Query } from '@nestjs/graphql'
+import { Resolver, Args, Query, Context } from '@nestjs/graphql'
 import {
     FindAllOutput,
     FindAllByRoleInput,
@@ -24,8 +24,8 @@ export class UserQueries {
      */
     @UseGuards(AuthGuard)
     @Query(() => FindByOutput)
-    async findById(@Args('input') findBy: FindByIdInput): Promise<FindByOutput> {
-        return await this.usersService.findById(findBy)
+    async findById(@Args('input') findBy: FindByIdInput, @Context() { req: { user } }): Promise<FindByOutput> {
+        return await this.usersService.findById(findBy, user.language)
     }
 
     @UseGuards(AuthGuard)

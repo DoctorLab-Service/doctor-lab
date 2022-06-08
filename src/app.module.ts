@@ -1,5 +1,5 @@
-import { VerifyPhone } from './users/entities/verify-phone.entity';
-import { VerifyEmail } from './users/entities/verify-email.entity';
+import { VerifyPhone } from './users/entities/verify-phone.entity'
+import { VerifyEmail } from './users/entities/verify-email.entity'
 import * as Joi from 'joi'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
@@ -17,7 +17,7 @@ import { ClinicsModule } from './clinics/clinics.module'
 import { Role } from './roles/entities/role.entity'
 import { Clinic } from './clinics/entities/clinic.entity'
 import { EmailModule } from './email/email.module'
-import { PhoneModule } from './phone/phone.module';
+import { PhoneModule } from './phone/phone.module'
 
 @Module({
     imports: [

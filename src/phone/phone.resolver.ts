@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common'
 import { Resolver, Mutation, Args } from '@nestjs/graphql'
+import { AuthGuard } from 'src/auth/auth.guard'
 import { PhoneService } from 'src/phone/phone.service'
 import { VerifyPhoneInput, VerifyPhoneOutput } from './dtos/verify-phone.dto'
 

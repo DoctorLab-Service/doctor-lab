@@ -18,6 +18,7 @@ import { Role } from './roles/entities/role.entity'
 import { Clinic } from './clinics/entities/clinic.entity'
 import { EmailModule } from './email/email.module'
 import { PhoneModule } from './phone/phone.module'
+import { PermissionsModule } from './permissions/permissions.module'
 
 @Module({
     imports: [
@@ -68,6 +69,7 @@ import { PhoneModule } from './phone/phone.module'
         ClinicsModule,
         EmailModule,
         PhoneModule,
+        PermissionsModule,
     ],
     controllers: [],
     providers: [],

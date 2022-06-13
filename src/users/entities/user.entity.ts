@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne } from 'typeorm'
-import { ELanguage, EUserGender, EUserRoles, EUserSuccess } from 'src/common/common.enums'
+import { ELanguage, EUserGender, EUserRoles, EUserPermissions } from 'src/common/common.enums'
 import { InternalServerErrorException } from '@nestjs/common'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { CoreEntity } from 'src/common/entities/core.entity'
@@ -9,13 +9,13 @@ import { Role } from 'src/roles/entities/role.entity'
 import { Clinic } from 'src/clinics/entities/clinic.entity'
 
 registerEnumType(ELanguage, { name: 'ELanguage' })
-registerEnumType(EUserSuccess, { name: 'EUserSuccess' })
+registerEnumType(EUserPermissions, { name: 'EUserPermissions' })
 registerEnumType(EUserGender, { name: 'EUserGender' })
 registerEnumType(EUserRoles, { name: 'EUserRoles' })
 
 @InputType({ isAbstract: true })
 @ObjectType()
-@Entity()
+@Entity('users')
 export class User extends CoreEntity {
     @Column()
     @Field(() => String)
@@ -77,9 +77,9 @@ export class User extends CoreEntity {
     @Field(() => EUserGender)
     gender: EUserGender
 
-    @Column({ type: 'enum', enum: EUserSuccess, nullable: true })
-    @Field(() => EUserSuccess)
-    success: EUserSuccess
+    @Column({ type: 'enum', enum: EUserPermissions, nullable: true })
+    @Field(() => EUserPermissions)
+    permissions: EUserPermissions
 
     @Column({ type: 'enum', enum: EUserRoles, default: EUserRoles.Clinic })
     @Field(() => EUserRoles)
@@ -99,23 +99,23 @@ export class User extends CoreEntity {
 
     //messages: Messages // from chat service
     //clinics: Clinic[] // Pat
-    //doctors: User[success='Doctor'][]//Pat, with dent
-    //patients: User[success='Patient'][] // Dr/pat
+    //doctors: User[Permissions='Doctor'][]//Pat, with dent
+    //patients: User[Permissions='Patient'][] // Dr/pat
     //treatments: Treatment[] // Dr/pat
     //appointments: Appointment[] // Dr/pat
     //payments: Payments // from Payments service
     //rate: Ratings
 
     @BeforeInsert()
-    async setSuccess(): Promise<void> {
+    async setPermissions(): Promise<void> {
         if (this.role === EUserRoles.Admin) {
-            this.success = EUserSuccess.Support
+            this.permissions = EUserPermissions.Support
         }
         if (this.role === EUserRoles.Clinic) {
-            this.success = EUserSuccess.Doctor
+            this.permissions = EUserPermissions.Doctor
         }
         if (this.role === EUserRoles.Patient) {
-            this.success = EUserSuccess.Patient
+            this.permissions = EUserPermissions.Patient
         }
     }
 

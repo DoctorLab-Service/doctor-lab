@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { EmailService } from 'src/email/email.service'
 import { ValidationException } from 'src/exceptions/validation.exception'
 import { JwtService } from 'src/jwt/jwt.service'
-import { NotifiesService } from 'src/notifies/notifies.service'
 import { PhoneService } from 'src/phone/phone.service'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
@@ -25,7 +24,6 @@ export class UserService {
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(VerifyEmail) private readonly verifyEmail: Repository<VerifyEmail>,
         @InjectRepository(VerifyPhone) private readonly verifyPhone: Repository<VerifyPhone>,
-        private notifiesService: NotifiesService,
         private emailService: EmailService,
         private phoneService: PhoneService,
         private jwtService: JwtService,
@@ -88,7 +86,7 @@ export class UserService {
         return { ok: Boolean(user), user }
     }
 
-    async findByEmail({ email }: FindByEmailInput, ...args): Promise<FindByOutput> {W
+    async findByEmail({ email }: FindByEmailInput, ...args): Promise<FindByOutput> {
         const user = await this.users.findOne({ where: { email } })
         if (!user && args.length) throw new ValidationException({ email: args[0].users.isNotFound.user })
 

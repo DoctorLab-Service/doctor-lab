@@ -52,10 +52,10 @@ export class Clinic extends CoreEntity {
     @Field(() => [Role])
     roles: Role[]
 
-    // doctors: User[success='Doctor'][]// with dentist
-    // patients: User[success='Patient'][]
-    // managers: User[success='Manager'][]
-    // assistants: User[success='Assistant'][]
+    // doctors: User[permissions='Doctor'][]// with dentist
+    // patients: User[permissions='Patient'][]
+    // managers: User[permissions='Manager'][]
+    // assistants: User[permissions='Assistant'][]
     // treatments: Treatment[]
     // appointments: Appointment[]
     // rate: Ratings // Clinic rate

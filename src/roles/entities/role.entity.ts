@@ -2,12 +2,12 @@ import { User } from './../../users/entities/user.entity'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { CoreEntity } from 'src/common/entities/core.entity'
 import { Column, Entity, ManyToOne } from 'typeorm'
-import { EUserRoles, EUserSuccess } from 'src/common/common.enums'
+import { EUserRoles, EUserPermissions } from 'src/common/common.enums'
 import { Clinic } from 'src/clinics/entities/clinic.entity'
 import { IsBoolean, Length } from 'class-validator'
 
 registerEnumType(EUserRoles, { name: 'EUserRoles' })
-registerEnumType(EUserSuccess, { name: 'EUserSuccess' })
+registerEnumType(EUserPermissions, { name: 'EUserPermissions' })
 
 @InputType({ isAbstract: true })
 @ObjectType()

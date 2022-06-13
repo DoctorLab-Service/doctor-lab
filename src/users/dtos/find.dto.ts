@@ -9,16 +9,13 @@ import { User } from '../entities/user.entity'
 export class FindByIdInput extends PickType(User, ['id']) {}
 
 @InputType()
-export class FindByPhoneInput extends PickType(User, ['phone', 'language']) {}
+export class FindByPhoneInput extends PickType(User, ['phone']) {}
 
 @InputType()
-export class FindByEmailInput extends PickType(User, ['email', 'language']) {}
+export class FindByEmailInput extends PickType(User, ['email']) {}
 
 @InputType()
-export class FindAllByRoleInput extends PickType(User, ['role', 'language']) {}
-
-@InputType()
-export class FindAllInput extends PickType(User, ['language']) {}
+export class FindAllByRoleInput extends PickType(User, ['role']) {}
 
 /*
     Outputs

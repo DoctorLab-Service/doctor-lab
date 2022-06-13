@@ -128,7 +128,6 @@ export class User extends CoreEntity {
     async hashPassword(): Promise<void> {
         if (this.password) {
             try {
-                console.log('test hesh password')
                 this.password = await bcrypt.hash(this.password, 12)
             } catch (error) {
                 console.log(error)

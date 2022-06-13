@@ -10,9 +10,10 @@ export class NotifiesService {
      * Language notify
      * Notify of service
      */
-    init(lng: string, service: string): void {
+    init(lng: string, service: string): string {
         this.lng = lng || 'ru'
         this.service = service
+        return lng
     }
 
     async notify(type: string, name?: string): Promise<NotifyDto | MassageDto | any> {

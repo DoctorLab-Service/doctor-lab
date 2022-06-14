@@ -1,13 +1,12 @@
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ResetModule } from './reset/reset.module'
-import { VerificationModule } from './verification/verification.module'
-import { AuthModule } from './auth/auth.module'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
-import { AppResolvers } from './app.resolver'
 import { Module } from '@nestjs/common'
+import { UsersModule } from './users/users.module'
+import { CommonModule } from './common/common.module'
 import * as Joi from 'joi'
+import { User } from './users/entities/users.entity'
 
 @Module({
     imports: [
@@ -37,17 +36,16 @@ import * as Joi from 'joi'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [],
+            entities: [User],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             path: 'auth',
             autoSchemaFile: true,
         }),
-        AuthModule,
-        VerificationModule,
-        ResetModule,
+        UsersModule,
+        CommonModule,
     ],
-    providers: [AppResolvers],
+    providers: [],
 })
 export class AppModule {}

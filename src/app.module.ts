@@ -1,5 +1,3 @@
-import { VerifyPhone } from './users/entities/verify-phone.entity'
-import { VerifyEmail } from './users/entities/verify-email.entity'
 import * as Joi from 'joi'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
@@ -19,6 +17,10 @@ import { Clinic } from './clinics/entities/clinic.entity'
 import { EmailModule } from './email/email.module'
 import { PhoneModule } from './phone/phone.module'
 import { PermissionsModule } from './permissions/permissions.module'
+import { AuthModule } from './auth/auth.module'
+import { VerificationsModule } from './verifications/verifications.module'
+import { VerifyEmail } from './verifications/entities/verify-email.entity'
+import { VerifyPhone } from './verifications/entities/verify-phone.entity'
 
 @Module({
     imports: [
@@ -70,6 +72,8 @@ import { PermissionsModule } from './permissions/permissions.module'
         EmailModule,
         PhoneModule,
         PermissionsModule,
+        AuthModule,
+        VerificationsModule,
     ],
     controllers: [],
     providers: [],

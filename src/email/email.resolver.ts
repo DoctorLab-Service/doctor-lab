@@ -1,6 +1,4 @@
-import { UseGuards } from '@nestjs/common'
 import { Resolver, Mutation, Args } from '@nestjs/graphql'
-import { AuthGuard } from 'src/auth/auth.guard'
 import { EmailService } from 'src/email/email.service'
 import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto'
 

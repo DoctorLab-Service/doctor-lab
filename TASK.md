@@ -15,28 +15,45 @@
 - [x] - FindByEmail
 - [x] - FindAll
 
+### Auth
+- [] - Login
+- [] - Login By Facebook
+- [] - Login By Google
+- [] - Logout
+- [] - Session Entity
+- [] - Session 
+
 ### Verifycation
 
 - [x] - Verify Email Entity
 - [x] - Verify Phone Entity
-- [] - Verify Email
-- [] - Verify Phone
+- [x] - Verify Email
+- [x] - Verify Phone
+- [] - Reset Password
+- [] - Change Password
 - [] - Reset Email
 - [] - Change Email
 - [] - Change Phone
-- [] - Reset Password
-- [] - Change Password
 
 ### Roles
 
 - [x] - Role Entity
 - [] - Add Role
+- [] - Set Role
 - [] - Update Role
 - [] - Delete Role
 - [] - Find By Role
 
-### Clinic
+### Permissions
+- [] - Entity
+- [] - Add Permission
+- [] - Update Permission
+- [] - Set Permission
+- [] - Remove Permission
 
+
+### Clinic
+#### Base
 - [x] - Clinic Entity
 - [] - Create
 - [] - Update

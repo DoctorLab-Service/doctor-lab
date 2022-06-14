@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common'
 import { EmailResolver } from './email.resolver'
 import { User } from 'src/users/entities/user.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { VerifyEmail } from 'src/users/entities/verify-email.entity'
+import { VerifyEmail } from 'src/verifications/entities/verify-email.entity'
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, VerifyEmail]), NotifiesModule],

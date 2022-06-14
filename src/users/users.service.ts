@@ -4,6 +4,8 @@ import { EmailService } from 'src/email/email.service'
 import { ValidationException } from 'src/exceptions/validation.exception'
 import { JwtService } from 'src/jwt/jwt.service'
 import { PhoneService } from 'src/phone/phone.service'
+import { VerifyEmail } from 'src/verifications/entities/verify-email.entity'
+import { VerifyPhone } from 'src/verifications/entities/verify-phone.entity'
 import { Repository } from 'typeorm'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import {
@@ -15,8 +17,6 @@ import {
     FindByPhoneInput,
 } from './dtos/find.dto'
 import { User } from './entities/user.entity'
-import { VerifyEmail } from './entities/verify-email.entity'
-import { VerifyPhone } from './entities/verify-phone.entity'
 
 @Injectable()
 export class UserService {

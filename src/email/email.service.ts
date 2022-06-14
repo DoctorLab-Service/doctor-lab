@@ -1,4 +1,3 @@
-import { VerifyEmail } from './../users/entities/verify-email.entity'
 import { EmailMessage } from './dtos/message.dto'
 import { Injectable } from '@nestjs/common'
 import * as sgMail from '@sendgrid/mail'
@@ -9,6 +8,7 @@ import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from 'src/users/entities/user.entity'
+import { VerifyEmail } from 'src/verifications/entities/verify-email.entity'
 
 @Injectable()
 export class EmailService {

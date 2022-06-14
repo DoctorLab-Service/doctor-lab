@@ -73,6 +73,14 @@ export class User extends CoreEntity {
     @IsBoolean()
     verifiedEmail: boolean // false
 
+    @Column({ nullable: true })
+    @Field(() => String)
+    facebookId: string
+
+    @Column({ nullable: true })
+    @Field(() => String)
+    googleId: string
+
     @Column({ type: 'enum', enum: EUserGender, default: EUserGender.NotChosen })
     @Field(() => EUserGender)
     gender: EUserGender

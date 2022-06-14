@@ -4,7 +4,7 @@ import { NotifiesModule } from 'src/notifies/notifies.module'
 import { PhoneResolver } from './phone.resolver'
 import { PhoneService } from './phone.service'
 import { User } from 'src/users/entities/user.entity'
-import { VerifyPhone } from 'src/users/entities/verify-phone.entity'
+import { VerifyPhone } from 'src/verifications/entities/verify-phone.entity'
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, VerifyPhone]), NotifiesModule],

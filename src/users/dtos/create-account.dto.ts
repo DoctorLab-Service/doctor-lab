@@ -1,6 +1,6 @@
 import { CoreOutput } from 'src/common/dtos/output.dto'
 import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType } from '@nestjs/graphql'
-import { User } from '../entities/users.entity'
+import { User } from '../entities/user.entity'
 
 @InputType()
 export class NoRequiredInput extends PartialType(PickType(User, ['facebookId', 'googleId'])) {}

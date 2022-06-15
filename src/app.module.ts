@@ -1,12 +1,17 @@
+import { JwtMiddleware } from './jwt/jwt.middleware'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
-import { Module } from '@nestjs/common'
-import { UsersModule } from './users/users.module'
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { CommonModule } from './common/common.module'
 import * as Joi from 'joi'
-import { User } from './users/entities/users.entity'
+import { JwtModule } from './jwt/jwt.module'
+import { Token } from './jwt/entities/token.entity'
+import { UsersModule } from './users/users.module'
+import { User } from './users/entities/user.entity'
+import { NotifiesModule } from './notifies/notifies.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
     imports: [
@@ -22,7 +27,8 @@ import { User } from './users/entities/users.entity'
                 DB_USERNAME: Joi.string().required(),
                 DB_PASSWORDS: Joi.string().required(),
                 DB_NAME: Joi.string().required(),
-                PRIVATE_KEY: Joi.string().required(),
+                JWT_ACCESS_SECRET: Joi.string().required(),
+                JWT_REFRESH_SECRET: Joi.string().required(),
                 SENDGRID_API_KEY: Joi.string().required(),
                 SENDGRID_EMAIL: Joi.string().required(),
             }),
@@ -36,16 +42,29 @@ import { User } from './users/entities/users.entity'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [User],
+            entities: [User, Token],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             path: 'auth',
             autoSchemaFile: true,
+            context: ({ req }) => ({
+                user: req['user'], // set req['user'] to context for graphql resolvers
+            }),
         }),
         UsersModule,
         CommonModule,
+        NotifiesModule,
+        JwtModule,
+        AuthModule,
     ],
     providers: [],
 })
-export class AppModule {}
+export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(JwtMiddleware).forRoutes({
+            path: '/auth',
+            method: RequestMethod.ALL,
+        })
+    }
+}

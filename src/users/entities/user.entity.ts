@@ -10,7 +10,7 @@ registerEnumType(ELanguage, { name: 'ELanguage' })
 
 @InputType({ isAbstract: true })
 @ObjectType()
-@Entity()
+@Entity('users')
 export class User extends CoreEntity {
     @Column()
     @Field(() => String)

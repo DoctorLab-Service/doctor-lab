@@ -5,6 +5,7 @@ import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'cl
 import { ELanguage } from 'src/common/common.enums'
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm'
 import { CoreEntity } from 'src/common/entities/core.entity'
+import { Exclude } from 'class-transformer'
 
 registerEnumType(ELanguage, { name: 'ELanguage' })
 
@@ -53,9 +54,10 @@ export class User extends CoreEntity {
     @Length(3, 32)
     experience: string
 
-    @Column({ select: false })
+    @Column()
     @Field(() => String)
     @Length(6, 32)
+    @Exclude() // @Column({ select: false })
     password: string
 
     @Column({ default: false })
@@ -68,11 +70,11 @@ export class User extends CoreEntity {
     @IsBoolean()
     verifiedEmail: boolean // false
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, unique: true })
     @Field(() => String)
     facebookId: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, unique: true })
     @Field(() => String)
     googleId: string
 
@@ -146,8 +148,7 @@ export class User extends CoreEntity {
 
     async checkPassword(aPassword: string): Promise<boolean> {
         try {
-            const statusCompare: boolean = await bcrypt.compare(aPassword, this.password)
-            return statusCompare
+            return bcrypt.compare(aPassword, this.password)
         } catch (error) {
             console.log(error)
             throw new InternalServerErrorException()

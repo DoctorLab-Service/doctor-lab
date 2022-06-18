@@ -46,11 +46,10 @@ import { AuthModule } from './auth/auth.module'
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
+            cors: false,
             path: 'auth',
             autoSchemaFile: true,
-            context: ({ req }) => ({
-                user: req['user'], // set req['user'] to context for graphql resolvers
-            }),
+            context: ({ req, res }) => ({ req, res }),
         }),
         UsersModule,
         CommonModule,
@@ -58,7 +57,6 @@ import { AuthModule } from './auth/auth.module'
         JwtModule,
         AuthModule,
     ],
-    providers: [],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {

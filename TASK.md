@@ -1,10 +1,8 @@
 ### Auth Service
 
-- [] - Register
-- [] - Register by Facebook
-- [] - Register by Google
-- [] - Login
-- [] - Session
+- [x] - Login
+- [x] - Logout
+- [] - RefreshToken
 
 ### Verification Service
 
@@ -24,16 +22,16 @@
 ### Users Service
 
 - [] - Entity
-- [] - CreateAccount
+- [x] - CreateAccount
 - [] - UpdateAccount
 - [] - DeleteAccount
   
 ### Find Service
 
-- [] - FindAll
-- [] - FindById
-- [] - FindByPhone
-- [] - FindByEmail
+- [x] - FindAll
+- [x] - FindById
+- [x] - FindByPhone
+- [x] - FindByEmail
 
 ### Roles Service
 
@@ -43,7 +41,7 @@
 - [] - DeleteRole
 - [] - SetRole
 - [] - RemoveRole
-- [] - FindByRole
+- [x] - FindByRole
 
 ### Permissions Service
 

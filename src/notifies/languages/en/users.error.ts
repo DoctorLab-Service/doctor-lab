@@ -8,6 +8,10 @@ export const notifies: NotifyDto = {
             phone: 'There is user with that phone already',
             email: 'There is user with that email already',
         },
+        isNotExist: {
+            phone: 'No user found with this phone number',
+            email: 'User with this email address not found',
+        },
         isEmpty: {
             rePassword: 'Please repeat your password',
         },

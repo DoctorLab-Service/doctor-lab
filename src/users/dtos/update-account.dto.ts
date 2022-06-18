@@ -1,5 +1,5 @@
 import { CoreOutput } from 'src/common/dtos/output.dto'
-import { InputType, ObjectType, PartialType, PickType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType, PartialType, PickType } from '@nestjs/graphql'
 import { User } from '../entities/user.entity'
 
 @InputType()
@@ -8,4 +8,7 @@ export class UpdateAccountInput extends PartialType(
 ) {}
 
 @ObjectType()
-export class UpdateAccountOutput extends CoreOutput {}
+export class UpdateAccountOutput extends CoreOutput {
+    @Field(() => User, { nullable: true })
+    user?: User
+}

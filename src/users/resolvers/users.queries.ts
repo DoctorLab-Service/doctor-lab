@@ -9,8 +9,11 @@ import {
     FindByPhoneInput,
 } from '../dtos/find.dto'
 import { setLanguageMessage } from 'src/notifies/set-language'
+import { AuthGuard } from 'src/auth/auth.guard'
+import { UseGuards } from '@nestjs/common'
 
 @Resolver()
+@UseGuards(AuthGuard)
 export class UsersQueries {
     constructor(private readonly usersService: UsersService) {}
 
@@ -54,6 +57,7 @@ export class UsersQueries {
         return await this.usersService.findByPhone(body, errors)
     }
 
+    @UseGuards(AuthGuard)
     @Query(() => FindByOutput)
     async findByEmail(@Args('input') body: FindByEmailInput, @Context() { req: { user } }): Promise<FindByOutput> {
         const errors = await setLanguageMessage({

@@ -1,5 +1,5 @@
 import { UsersService } from './../users.service'
-import { Args, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, CONTEXT, Context, Query, Resolver } from '@nestjs/graphql'
 import {
     FindAllByRoleInput,
     FindAllOutput,
@@ -10,61 +10,44 @@ import {
 } from '../dtos/find.dto'
 import { setLanguageMessage } from 'src/notifies/set-language'
 import { AuthGuard } from 'src/auth/auth.guard'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
+import { Notifies } from 'src/notifies/dtos/notify.dto'
 
 @Resolver()
 @UseGuards(AuthGuard)
 export class UsersQueries {
-    constructor(private readonly usersService: UsersService) {}
-
-    @Query(() => FindAllOutput)
-    async findAll(@Context() { req: { user } }): Promise<FindAllOutput> {
-        const errors = await setLanguageMessage({
-            user: user.user,
+    errors: Notifies
+    constructor(@Inject(CONTEXT) private context, private readonly usersService: UsersService) {
+        setLanguageMessage({
+            user: this.context.req.user.user,
             serviceName: ['users'],
             type: 'error',
-        })
-        return await this.usersService.findAll(errors)
+        }).then(res => (this.errors = res))
     }
 
     @Query(() => FindAllOutput)
-    async findAllByRole(@Args('input') body: FindAllByRoleInput, @Context() { req: { user } }): Promise<FindAllOutput> {
-        const errors = await setLanguageMessage({
-            user: user.user,
-            serviceName: ['users'],
-            type: 'error',
-        })
-        return await this.usersService.findAllByRole(body, errors)
+    async findAll(): Promise<FindAllOutput> {
+        return await this.usersService.findAll(this.errors)
+    }
+
+    @Query(() => FindAllOutput)
+    async findAllByRole(@Args('input') body: FindAllByRoleInput): Promise<FindAllOutput> {
+        return await this.usersService.findAllByRole(body, this.errors)
     }
 
     @Query(() => FindByOutput)
-    async findById(@Args('input') body: FindByIdInput, @Context() { req: { user } }): Promise<FindByOutput> {
-        const errors = await setLanguageMessage({
-            user: user.user,
-            serviceName: ['users'],
-            type: 'error',
-        })
-        return await this.usersService.findById(body, errors)
+    async findById(@Args('input') body: FindByIdInput): Promise<FindByOutput> {
+        return await this.usersService.findById(body, this.errors)
     }
 
     @Query(() => FindByOutput)
-    async findByPhone(@Args('input') body: FindByPhoneInput, @Context() { req: { user } }): Promise<FindByOutput> {
-        const errors = await setLanguageMessage({
-            user: user.user,
-            serviceName: ['users'],
-            type: 'error',
-        })
-        return await this.usersService.findByPhone(body, errors)
+    async findByPhone(@Args('input') body: FindByPhoneInput): Promise<FindByOutput> {
+        return await this.usersService.findByPhone(body, this.errors)
     }
 
     @UseGuards(AuthGuard)
     @Query(() => FindByOutput)
-    async findByEmail(@Args('input') body: FindByEmailInput, @Context() { req: { user } }): Promise<FindByOutput> {
-        const errors = await setLanguageMessage({
-            user: user.user,
-            serviceName: ['users'],
-            type: 'error',
-        })
-        return await this.usersService.findByEmail(body, errors)
+    async findByEmail(@Args('input') body: FindByEmailInput): Promise<FindByOutput> {
+        return await this.usersService.findByEmail(body, this.errors)
     }
 }

@@ -15,21 +15,27 @@ import {
 } from './dtos/find.dto'
 import { UpdateAccountInput, UpdateAccountOutput } from './dtos/update-account.dto'
 import { Repository } from 'typeorm'
-import { CONTEXT } from '@nestjs/graphql'
-import { REQUEST } from '@nestjs/core'
+import { VerificationEmail } from 'src/verifications/entities/verification-email.entiry'
+import { VerificationPhone } from 'src/verifications/entities/verification-phone.entiry'
+import { EmailService } from 'src/email/email.service'
+import { PhoneService } from 'src/phone/phone.service'
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
-        @Inject(CONTEXT) private context,
-        @Inject(REQUEST) private request,
+        @InjectRepository(VerificationEmail) private readonly verificationEmail: Repository<VerificationEmail>,
+        @InjectRepository(VerificationPhone) private readonly verificationPhone: Repository<VerificationPhone>,
         private readonly jwt: JwtService,
+        private readonly emailService: EmailService,
+        private readonly phoneService: PhoneService,
     ) {}
 
+    /*
+        Account
+    */
     async createAccount(body: CreateAccountInput, errors?: any): Promise<CreateAccountOutput> {
         const errorsExist: boolean = JSON.stringify(errors) !== '{}'
-
         // Check by exist to email
         const existEmail = await this.users.findOne({ where: { email: body.email } })
         if (existEmail && errorsExist) throw new ValidationException({ email: errors.users.isExist.email })
@@ -43,13 +49,14 @@ export class UsersService {
         if (!user && errorsExist) throw new ValidationException({ email: errors.users.isNotCreate.user })
 
         // Create Code for email and phone
-        // const codeEmail = await this.verifyEmail.save(this.verifyEmail.create({ user }))
-        // const codePhone = await this.verifyPhone.save(this.verifyPhone.create({ user }))
+        const codeEmail = await this.verificationEmail.save(this.verificationEmail.create({ user }))
+        const codePhone = await this.verificationPhone.save(this.verificationPhone.create({ user }))
 
         // Send verification on email and phone
-        // await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
+        await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
         // const phoneVerificationStatus = await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
-        // if (!phoneVerificationStatus && args.length) throw new ValidationException({ phone:  args[0].verify.isNotVerify.noSendSMS })
+        // if (!phoneVerificationStatus && errorsExist)
+        //     throw new ValidationException({ phone: errors.verify.isNotVerify.noSendSMS })
 
         // Create accessToken and refreshToken
         const tokens = await this.jwt.generateTokens({ id: user.id })
@@ -59,7 +66,6 @@ export class UsersService {
     }
 
     async updateAccount(body: UpdateAccountInput): Promise<UpdateAccountOutput> {
-        const cookies = this.request.cookies['refreshToken']
         return { ok: true }
     }
 
@@ -68,6 +74,9 @@ export class UsersService {
         return { ok: true }
     }
 
+    /*
+        Finds By ...
+    */
     async findById({ id }: FindByIdInput, errors?: any): Promise<FindByOutput> {
         const user = await this.users.findOne({ where: { id } })
         if (!user && JSON.stringify(errors) !== '{}')

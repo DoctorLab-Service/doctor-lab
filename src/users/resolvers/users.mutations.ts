@@ -19,7 +19,7 @@ export class UsersMutations {
     async createAccount(@Args('input') body: CreateAccountInput): Promise<CreateAccountOutput> {
         const errors = await setLanguageMessage({
             language: body.language,
-            serviceName: ['users'],
+            serviceName: ['users', 'verify'],
             type: 'error',
         })
         return this.usersService.createAccount(body, errors)

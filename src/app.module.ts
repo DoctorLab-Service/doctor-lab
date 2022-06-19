@@ -12,6 +12,11 @@ import { UsersModule } from './users/users.module'
 import { User } from './users/entities/user.entity'
 import { NotifiesModule } from './notifies/notifies.module'
 import { AuthModule } from './auth/auth.module'
+import { VerificationsModule } from './verifications/verifications.module'
+import { EmailModule } from './email/email.module'
+import { PhoneModule } from './phone/phone.module'
+import { VerificationEmail } from './verifications/entities/verification-email.entiry'
+import { VerificationPhone } from './verifications/entities/verification-phone.entiry'
 
 @Module({
     imports: [
@@ -42,7 +47,7 @@ import { AuthModule } from './auth/auth.module'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [User, Token],
+            entities: [User, Token, VerificationEmail, VerificationPhone],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -56,6 +61,9 @@ import { AuthModule } from './auth/auth.module'
         NotifiesModule,
         JwtModule,
         AuthModule,
+        VerificationsModule,
+        EmailModule,
+        PhoneModule,
     ],
 })
 export class AppModule {

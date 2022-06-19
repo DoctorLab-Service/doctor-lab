@@ -1,21 +1,10 @@
-import { ELanguage } from 'src/common/common.enums'
-import { User } from 'src/users/entities/user.entity'
-import { NotifyDto } from './dtos/notify.dto'
+import { Notifies, SetLanguageMessageParams } from './dtos/notify.dto'
 import { NotifiesService } from './notifies.service'
 
-type TParams = {
-    user?: User
-    language?: ELanguage
-    serviceName: string[]
-    type: string
-}
-type TNotifies = {
-    [key: string]: NotifyDto
-}
-export const setLanguageMessage = async (params: TParams) => {
+export const setLanguageMessage = async (params: SetLanguageMessageParams) => {
     const notifiesService = new NotifiesService()
     const language = params.user ? params.user.language : params.language ? params.language : 'ru'
-    const notifies: TNotifies = {}
+    const notifies: Notifies = {}
 
     for (let i = 0; i < params.serviceName.length; i++) {
         await notifiesService.init(language, params.serviceName[i])

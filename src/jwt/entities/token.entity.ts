@@ -10,7 +10,7 @@ export class Token extends CoreEntity {
     @JoinColumn()
     user: User
 
-    @Column({ unique: true })
+    @Column({ nullable: true, unique: true })
     accessToken: string
 
     @Column({ unique: true })

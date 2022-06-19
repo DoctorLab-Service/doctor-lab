@@ -2,7 +2,7 @@
 
 - [x] - Login
 - [x] - Logout
-- [] - RefreshToken
+- [x] - RefreshToken
 
 ### Verification Service
 

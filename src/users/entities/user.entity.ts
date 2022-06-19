@@ -57,7 +57,7 @@ export class User extends CoreEntity {
     @Column()
     @Field(() => String)
     @Length(6, 32)
-    @Exclude() // @Column({ select: false })
+    @Exclude({ toPlainOnly: true }) // User can't get this field
     password: string
 
     @Column({ default: false })
@@ -148,6 +148,7 @@ export class User extends CoreEntity {
 
     async checkPassword(aPassword: string): Promise<boolean> {
         try {
+            console.log(this.password)
             return bcrypt.compare(aPassword, this.password)
         } catch (error) {
             console.log(error)

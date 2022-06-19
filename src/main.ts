@@ -1,4 +1,5 @@
-import { NestFactory } from '@nestjs/core'
+import { ClassSerializerInterceptor } from '@nestjs/common'
+import { NestFactory, Reflector } from '@nestjs/core'
 import * as cookieParser from 'cookie-parser'
 import { AppModule } from './app.module'
 
@@ -9,6 +10,7 @@ async function bootstrap() {
         credentials: true,
     })
     app.use(cookieParser())
+    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector))) // Interceptor for @Exclude({ toPlainOnly: true })
 
     await app.listen(8000)
 }

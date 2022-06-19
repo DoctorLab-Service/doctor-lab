@@ -18,6 +18,10 @@ export class JwtMiddleware implements NestMiddleware {
                 }
             } catch (error) {
                 console.log(error.message)
+                if (error.message === 'jwt expired') {
+                    await this.jwtService.removeExpiredAccessToken(accessToken.toString())
+                    next(new ForbidenException({ error: 'Срок действия токена истек' }))
+                }
                 next(new ForbidenException({ error: 'Пользователь не авторизован' }))
             }
         }

@@ -8,7 +8,4 @@ export class LogoutInput {
 }
 
 @ObjectType()
-export class LogoutOutput extends CoreOutput {
-    @Field(() => String, { nullable: true })
-    refreshToken?: string
-}
+export class LogoutOutput extends CoreOutput {}

@@ -1,4 +1,3 @@
-import { ForbidenException } from 'src/exceptions/forbiden.exception'
 import * as jwt from 'jsonwebtoken'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -20,7 +19,8 @@ export class JwtService {
     ) {}
 
     generateTokens(payload: any): TGenerateTokens {
-        const accessToken = jwt.sign(payload, this.config.get('JWT_ACCESS_SECRET'), { expiresIn: '1d' })
+        console.log('payload:', payload)
+        const accessToken = jwt.sign(payload, this.config.get('JWT_ACCESS_SECRET'), { expiresIn: '60m' })
         const refreshToken = jwt.sign(payload, this.config.get('JWT_REFRESH_SECRET'), { expiresIn: '30d' })
 
         return { accessToken, refreshToken }
@@ -47,11 +47,19 @@ export class JwtService {
         return token
     }
 
-    async removeToken(refreshToken): Promise<DeleteResult> {
+    async removeToken(refreshToken: string): Promise<DeleteResult> {
         return this.token.delete({ refreshToken })
     }
 
-    async findToken(refreshToken) {
+    async removeExpiredAccessToken(accessToken: string): Promise<boolean> {
+        const token = await this.token.findOne({ where: { accessToken } })
+        token.accessToken = null
+        const newToken = await this.token.save({ ...token })
+        if (newToken.accessToken !== null) return false
+        return true
+    }
+
+    async findToken(refreshToken: string) {
         return this.token.findOne({ where: { refreshToken } })
     }
 }

@@ -1,3 +1,4 @@
+import { ForbidenException } from './../exceptions/forbiden.exception'
 import { ValidationException } from './../exceptions/validation.exception'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -65,11 +66,23 @@ export class AuthService {
     }
 
     async logout({ refreshToken }: LogoutInput): Promise<LogoutOutput> {
+        if (!refreshToken) throw new ForbidenException({ authorization: 'Пользователь не авторизован' })
         await this.jwt.removeToken(refreshToken)
         return { ok: true }
     }
 
-    async refreshToken(body: RefreshTokenInput): Promise<RefreshTokenOutput> {
-        return {}
+    async refreshToken({ refreshToken }: RefreshTokenInput): Promise<RefreshTokenOutput> {
+        if (!refreshToken) throw new ForbidenException({ authorization: 'Пользователь не авторизован' })
+
+        // Check refresh token in db and validate it
+        const userData = await this.jwt.validateRefreshToken(refreshToken)
+        const tokenFromDb = await this.jwt.findToken(refreshToken)
+        if (!userData || !tokenFromDb) throw new ForbidenException({ authorization: 'Пользователь не авторизован' })
+
+        const user = await this.users.findOne({ where: { id: userData.id } })
+        const tokens = this.jwt.generateTokens({ id: user.id })
+        await this.jwt.saveToken(user.id, tokens)
+
+        return { ok: true, ...tokens, user }
     }
 }

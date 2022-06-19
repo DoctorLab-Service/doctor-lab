@@ -11,7 +11,9 @@ export class RefreshTokenInput {
 @ObjectType()
 export class RefreshTokenOutput extends CoreOutput {
     @Field(() => String, { nullable: true })
-    token?: string
+    accessToken?: string
+
+    refreshToken?: string
 
     @Field(() => User, { nullable: true })
     user?: User

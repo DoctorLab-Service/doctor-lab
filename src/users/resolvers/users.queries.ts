@@ -1,5 +1,6 @@
+import { Messages } from './../../language/dtos/notify.dto'
 import { UsersService } from './../users.service'
-import { Args, CONTEXT, Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
     FindAllByRoleInput,
     FindAllOutput,
@@ -8,21 +9,17 @@ import {
     FindByOutput,
     FindByPhoneInput,
 } from '../dtos/find.dto'
-import { setLanguageMessage } from 'src/notifies/set-language'
 import { AuthGuard } from 'src/auth/auth.guard'
-import { Inject, UseGuards } from '@nestjs/common'
-import { Notifies } from 'src/notifies/dtos/notify.dto'
+import { UseGuards } from '@nestjs/common'
+import { LanguageService } from 'src/language/language.service'
 
 @Resolver()
 @UseGuards(AuthGuard)
 export class UsersQueries {
-    errors: Notifies
-    constructor(@Inject(CONTEXT) private context, private readonly usersService: UsersService) {
-        setLanguageMessage({
-            user: this.context.req.user.user,
-            serviceName: ['users'],
-            type: 'error',
-        }).then(res => (this.errors = res))
+    errors: Messages
+
+    constructor(private readonly usersService: UsersService, private readonly languageService: LanguageService) {
+        this.languageService.errors(['users']).then(res => (this.errors = res))
     }
 
     @Query(() => FindAllOutput)

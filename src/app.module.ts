@@ -10,13 +10,13 @@ import { JwtModule } from './jwt/jwt.module'
 import { Token } from './jwt/entities/token.entity'
 import { UsersModule } from './users/users.module'
 import { User } from './users/entities/user.entity'
-import { NotifiesModule } from './notifies/notifies.module'
 import { AuthModule } from './auth/auth.module'
 import { VerificationsModule } from './verifications/verifications.module'
 import { EmailModule } from './email/email.module'
 import { PhoneModule } from './phone/phone.module'
 import { VerificationEmail } from './verifications/entities/verification-email.entiry'
 import { VerificationPhone } from './verifications/entities/verification-phone.entiry'
+import { LanguageModule } from './language/language.module'
 
 @Module({
     imports: [
@@ -26,7 +26,8 @@ import { VerificationPhone } from './verifications/entities/verification-phone.e
             ignoreEnvFile: process.env.NODE_ENV === 'production',
             validationSchema: Joi.object({
                 NODE_ENV: Joi.string().valid('development', 'production').required(),
-                PORT: Joi.number().required(),
+                SERVER_PORT: Joi.number().required(),
+                SERVER_HOST: Joi.string().required(),
                 DB_HOST: Joi.string().required(),
                 DB_PORT: Joi.number().required(),
                 DB_USERNAME: Joi.string().required(),
@@ -58,12 +59,12 @@ import { VerificationPhone } from './verifications/entities/verification-phone.e
         }),
         UsersModule,
         CommonModule,
-        NotifiesModule,
         JwtModule,
         AuthModule,
         VerificationsModule,
         EmailModule,
         PhoneModule,
+        LanguageModule,
     ],
 })
 export class AppModule {

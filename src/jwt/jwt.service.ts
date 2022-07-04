@@ -19,7 +19,6 @@ export class JwtService {
     ) {}
 
     generateTokens(payload: any): TGenerateTokens {
-        console.log('payload:', payload)
         const accessToken = jwt.sign(payload, this.config.get('JWT_ACCESS_SECRET'), { expiresIn: '60m' })
         const refreshToken = jwt.sign(payload, this.config.get('JWT_REFRESH_SECRET'), { expiresIn: '30d' })
 

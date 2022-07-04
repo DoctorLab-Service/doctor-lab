@@ -5,9 +5,10 @@ import { Module } from '@nestjs/common'
 import { User } from 'src/users/entities/user.entity'
 import { UsersModule } from 'src/users/users.module'
 import { JwtModule } from 'src/jwt/jwt.module'
+import { LanguageModule } from 'src/language/language.module'
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User]), UsersModule, JwtModule],
+    imports: [TypeOrmModule.forFeature([User]), LanguageModule, UsersModule, JwtModule],
     providers: [AuthService, AuthResolver],
     exports: [AuthService],
 })

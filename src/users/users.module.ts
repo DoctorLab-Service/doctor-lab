@@ -9,6 +9,7 @@ import { User } from './entities/user.entity'
 import { UsersService } from './users.service'
 import { EmailModule } from 'src/email/email.module'
 import { PhoneModule } from 'src/phone/phone.module'
+import { LanguageModule } from 'src/language/language.module'
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { PhoneModule } from 'src/phone/phone.module'
         forwardRef(() => JwtModule),
         EmailModule,
         PhoneModule,
+        LanguageModule,
     ],
     providers: [UsersService, UsersMutations, UsersQueries],
     exports: [UsersService],

@@ -1,4 +1,4 @@
-import { ELanguage } from 'src/common/common.enums'
+import { ELanguage } from 'src/language/dtos/languages.dto'
 import { User } from 'src/users/entities/user.entity'
 
 export class NotifyDto {
@@ -21,6 +21,6 @@ export class SetLanguageMessageParams {
     serviceName: string[]
     type: string
 }
-export class Notifies {
+export class Messages {
     [key: string]: NotifyDto
 }

@@ -38,31 +38,58 @@ export class UsersService {
         const errorsExist: boolean = JSON.stringify(errors) !== '{}'
         // Check by exist to email
         const existEmail = await this.users.findOne({ where: { email: body.email } })
-        if (existEmail && errorsExist) throw new ValidationException({ email: errors.users.isExist.email })
+        if (existEmail)
+            throw new ValidationException({
+                email: errorsExist ? errors.users.isExist.email : 'There is user with that email already',
+            })
 
         // Check by exist to phone
         const existPhone = await this.users.findOne({ where: { phone: body.phone } })
-        if (existPhone && errorsExist) throw new ValidationException({ email: errors.users.isExist.phone })
+        if (existPhone)
+            throw new ValidationException({
+                email: errorsExist ? errors.users.isExist.phone : 'There is user with that phone already',
+            })
 
         // Create user if email and phone is not exist
         const user = await this.users.save(this.users.create({ ...body }))
-        if (!user && errorsExist) throw new ValidationException({ email: errors.users.isNotCreate.user })
+        if (!user)
+            throw new ValidationException({
+                email: errorsExist ? errors.users.isNotCreate.user : "Couldn't create account",
+            })
 
         // Create Code for email and phone
         const codeEmail = await this.verificationEmail.save(this.verificationEmail.create({ user }))
         const codePhone = await this.verificationPhone.save(this.verificationPhone.create({ user }))
 
         // Send verification on email and phone
-        await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
-        // const phoneVerificationStatus = await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
-        // if (!phoneVerificationStatus && errorsExist)
-        //     throw new ValidationException({ phone: errors.verify.isNotVerify.noSendSMS })
+        if (codeEmail) {
+            await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
+        } else {
+            throw new ValidationException({
+                phone: errorsExist ? errors.verify.isNotVerify.noSendEmail : 'Unable to send you email',
+            })
+        }
 
-        // Create accessToken and refreshToken
-        const tokens = await this.jwt.generateTokens({ id: user.id })
-        this.jwt.saveToken(user.id, tokens)
+        // if (codePhone) {
+        //     await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
+        // } else {
+        //     throw new ValidationException({
+        //         phone: errorsExist ? errors.verify.isNotVerify.noSendSMS : 'Unable to send you SMS',
+        //     })
+        // }
 
-        return { ok: Boolean(user), ...tokens, user }
+        try {
+            // Create accessToken and refreshToken
+            const tokens = await this.jwt.generateTokens({ id: user.id })
+            this.jwt.saveToken(user.id, tokens)
+
+            return { ok: Boolean(user), ...tokens, user }
+        } catch (error) {
+            console.log(error)
+            throw new ValidationException({
+                email: errorsExist ? errors.users.isNotCreate.token : "Couldn't create token, try to login",
+            })
+        }
     }
 
     async updateAccount(body: UpdateAccountInput): Promise<UpdateAccountOutput> {

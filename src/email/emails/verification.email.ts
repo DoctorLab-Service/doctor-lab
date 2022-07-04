@@ -243,7 +243,9 @@ export const VerificationEmailMessage = (
                                             <h2 style="font-size: 24px; line-height: 28px;">Thanks for getting started with our service!</h2>
                                             <h3 style="font-size: 18px; line-height: 24px; margin-top: 10px;">We need a little more information to complete your registration, including a confirmation of your email address.</h3>
                                             <h3 style="font-size: 18px; line-height: 24px; margin-top: 10px;">Click below to confirm your email address:</h3>
-                                            <p><a href="http://127.0.0.1:8000/confirm?${code}" class="btn btn-primary">Verification Email</a></p>
+                                            <p><a href="${
+                                                process.env.SERVER_HOST + process.env.SERVER_PORT
+                                            }/confirm?${code}" class="btn btn-primary">Verification Email</a></p>
                                         </div>
                                     </td>
                                 </tr>

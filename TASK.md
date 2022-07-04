@@ -6,10 +6,10 @@
 
 ### Verification Service
 
-- [] - Verification Email Entity
-- [] - Verification Phone Entity
-- [] - Verification Email
-- [] - Verification Phone
+- [x] - Verification Email Entity
+- [x] - Verification Phone Entity
+- [x] - Verification Email
+- [x] - Verification Phone
 
 ### Reset Service
 
@@ -21,7 +21,7 @@
   
 ### Users Service
 
-- [] - Entity
+- [x] - Entity
 - [x] - CreateAccount
 - [] - UpdateAccount
 - [] - DeleteAccount

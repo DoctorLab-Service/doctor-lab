@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { ValidationException } from 'src/exceptions/validation.exception'
-import { NotifiesService } from 'src/notifies/notifies.service'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from 'src/users/entities/user.entity'
@@ -15,23 +14,25 @@ export class VerificationsService {
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verifyPhone: Repository<VerificationPhone>,
-        private notifiesService: NotifiesService,
     ) {}
 
     /**
      * Verification phone by code
      */
-    async verificationEmail({ code }: VerificationEmailInput): Promise<VerificationEmailOutput> {
-        this.notifiesService.init('RU', 'verify')
-        const errorsVerify = await this.notifiesService.notify('error', 'isNotVeify')
-        try {
-            const verification = await this.verifyEmail.findOne({
-                where: { code },
-                relations: ['user'],
+    async verificationEmail({ code }: VerificationEmailInput, errors?: any): Promise<VerificationEmailOutput> {
+        const errorsExist: boolean = JSON.stringify(errors) !== '{}'
+
+        const verification = await this.verifyEmail.findOne({
+            where: { code },
+            relations: ['user'],
+        })
+
+        if (!verification)
+            throw new ValidationException({
+                error: errorsExist ? errors.verify.isNotVeify.email : 'Not a valid verification link',
             })
 
-            if (!verification) throw new ValidationException({ error: errorsVerify.email })
-
+        try {
             verification.user.verifiedEmail = true
             await this.users.save(verification.user)
             await this.verifyEmail.delete(verification.id)
@@ -39,31 +40,38 @@ export class VerificationsService {
             return { ok: true }
         } catch (error) {
             console.log(error)
-            throw new ValidationException({ email: errorsVerify.email })
+            throw new ValidationException({
+                email: errorsExist ? errors.verify.isNotVeify.email : 'Not a valid verification link',
+            })
         }
     }
 
     /**
      * Verification phone by code
      */
-    async verificationPhone({ code }: VerificationPhoneInput): Promise<VerificationPhoneOutput> {
-        this.notifiesService.init('RU', 'verify')
-        const errorsVerify = await this.notifiesService.notify('error', 'isNotVeify')
-        try {
-            const verification = await this.verifyPhone.findOne({
-                where: { code },
-                relations: ['user'],
+    async verificationPhone({ code }: VerificationPhoneInput, errors?: any): Promise<VerificationPhoneOutput> {
+        const errorsExist: boolean = JSON.stringify(errors) !== '{}'
+
+        const verification = await this.verifyPhone.findOne({
+            where: { code },
+            relations: ['user'],
+        })
+
+        if (!verification)
+            throw new ValidationException({
+                phone: errorsExist ? errors.verify.isNotVerify.phone : 'Invalid code',
             })
 
-            if (!verification) throw new ValidationException({ error: errorsVerify.phone })
-
+        try {
             verification.user.verifiedPhone = true
             await this.users.save(verification.user)
             await this.verifyPhone.delete(verification.id)
             return { ok: true }
         } catch (error) {
             console.log(error)
-            throw new ValidationException({ phone: errorsVerify.phone })
+            throw new ValidationException({
+                phone: errorsExist ? errors.verify.isNotVeify.phone : 'Invalid code',
+            })
         }
     }
 }

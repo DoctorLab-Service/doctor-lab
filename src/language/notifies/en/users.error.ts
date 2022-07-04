@@ -1,4 +1,4 @@
-import { NotifyDto } from 'src/notifies/dtos/notify.dto'
+import { NotifyDto } from 'src/language/dtos/notify.dto'
 
 export const notifies: NotifyDto = {
     serviceName: 'users',
@@ -35,6 +35,7 @@ export const notifies: NotifyDto = {
         },
         isNotCreate: {
             user: "Couldn't create account",
+            token: "Couldn't create token, try to login",
         },
     },
 }

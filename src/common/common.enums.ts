@@ -42,7 +42,7 @@
 /**
  * User can set custom lng, or set from client browser
  */
-export enum ELanguage {
-    RU = 'RU',
-    EN = 'EN',
-}
+// export enum ELanguage {
+//     RU = 'RU',
+//     EN = 'EN',
+// }

@@ -59,10 +59,16 @@ import { LanguageModule } from './language/language.module'
         }),
         UsersModule,
         CommonModule,
-        JwtModule,
+        JwtModule.forRoot({
+            accessSecret: process.env.JWT_ACCESS_SECRET,
+            refreshSecret: process.env.JWT_REFRESH_SECRET,
+        }),
         AuthModule,
         VerificationsModule,
-        EmailModule,
+        EmailModule.forRoot({
+            apiKey: process.env.SENDGRID_API_KEY,
+            fromEmail: process.env.SENDGRID_EMAIL,
+        }),
         PhoneModule,
         LanguageModule,
     ],

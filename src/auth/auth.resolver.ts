@@ -2,7 +2,6 @@ import { Inject, UseInterceptors } from '@nestjs/common'
 import { Args, CONTEXT, Mutation, Resolver } from '@nestjs/graphql'
 import { ClearTokenCookieInterceptor } from 'src/jwt/token/clear-cookie-token.interceptor copy'
 import { AccessTokenCookieInterceptor } from 'src/jwt/token/cookie-token.interceptor'
-import { ELanguage } from 'src/language/dtos/languages.dto'
 import { Messages } from 'src/language/dtos/notify.dto'
 import { LanguageService } from 'src/language/language.service'
 import { AuthService } from './auth.service'
@@ -19,7 +18,7 @@ export class AuthResolver {
         private readonly authService: AuthService,
         private readonly languageService: LanguageService,
     ) {
-        this.languageService.errors(['users']).then(res => (this.errors = res))
+        this.languageService.errors(['auth']).then(res => (this.errors = res))
     }
 
     @Mutation(() => LoginOutput)

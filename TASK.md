@@ -23,8 +23,8 @@
 
 - [x] - Entity
 - [x] - CreateAccount
-- [] - UpdateAccount
-- [] - DeleteAccount
+- [x] - UpdateAccount
+- [x] - DeleteAccount
   
 ### Find Service
 
@@ -51,3 +51,13 @@
 - [] - DeletePermission
 - [] - SetPermission
 - [] - RemovePermission
+
+### Language Service
+
+- [x] - Error
+
+### Files Service
+
+- [] - Upload File
+- [] - Update File
+- [] - Delete File

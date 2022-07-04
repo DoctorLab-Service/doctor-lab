@@ -13,6 +13,10 @@ registerEnumType(ELanguage, { name: 'ELanguage' })
 @ObjectType()
 @Entity('users')
 export class User extends CoreEntity {
+    @Column({ nullable: true })
+    @Field(() => String)
+    avatar: string
+
     @Column()
     @Field(() => String)
     @Length(3, 64)

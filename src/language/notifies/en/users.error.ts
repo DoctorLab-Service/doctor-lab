@@ -37,5 +37,11 @@ export const notifies: NotifyDto = {
             user: "Couldn't create account",
             token: "Couldn't create token, try to login",
         },
+        isNotUpdate: {
+            user: "Couldn't update account",
+        },
+        isNotDeleted: {
+            user: "Couldn't deleted account",
+        },
     },
 }

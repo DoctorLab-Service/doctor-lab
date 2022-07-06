@@ -10,6 +10,7 @@ import { UsersService } from './users.service'
 import { EmailModule } from 'src/email/email.module'
 import { PhoneModule } from 'src/phone/phone.module'
 import { LanguageModule } from 'src/language/language.module'
+import { UserRoles } from 'src/roles/entities/user_roles.entity'
 
 @Module({
     imports: [

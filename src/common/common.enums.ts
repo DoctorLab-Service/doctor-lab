@@ -1,3 +1,13 @@
+// /**
+//  * User can set gender
+//  * Default NotChosen
+//  */
+// export enum EGender {
+//     NotChosen = 'Not Choisen',
+//     Male = 'Male',
+//     Female = 'Female',
+// }
+
 /**
  * Base Admin can create and set permissions
  * Default Admin
@@ -19,17 +29,6 @@
 
 //     Patient = 'Patient', // P
 // }
-
-// /**
-//  * User can set gender
-//  * Default NotChosen
-//  */
-// export enum EUserGender {
-//     NotChosen = 'Not Choisen',
-//     Male = 'Male',
-//     Female = 'Female',
-// }
-
 // /**
 //  * User change Patient or clinic
 //  */

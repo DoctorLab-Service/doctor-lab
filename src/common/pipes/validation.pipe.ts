@@ -1,12 +1,11 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
+import { ArgumentMetadata, Inject, Injectable, PipeTransform, Scope } from '@nestjs/common'
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import { string } from 'joi'
 import { ValidationException } from 'src/exceptions/validation.exception'
 import { LanguageService } from 'src/language/language.service'
 
 @Injectable()
-export class AccountValidationPipe implements PipeTransform {
+export class ValidationPipe implements PipeTransform {
     serviceName: string
     constructor(serviceName: string) {
         this.serviceName = serviceName
@@ -15,7 +14,6 @@ export class AccountValidationPipe implements PipeTransform {
     async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
         const errors = {}
         const fields = plainToClass(metadata.metatype, value)
-
         /**
          * Set custom valid messages on languages
          */
@@ -26,6 +24,7 @@ export class AccountValidationPipe implements PipeTransform {
                 const errorsMessage = await languageService.errors([this.serviceName], key)
                 errors[property[0]] = errorsMessage[property[1] || property[0]]
             }
+
             /**
              * Validate fields
              */
@@ -55,7 +54,6 @@ export class AccountValidationPipe implements PipeTransform {
                     }
                 }
             }
-            console.log(errors)
             if (JSON.stringify(errors) !== '{}') {
                 throw new ValidationException(errors)
             }

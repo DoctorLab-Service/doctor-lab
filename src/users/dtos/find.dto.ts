@@ -14,8 +14,8 @@ export class FindByPhoneInput extends PickType(User, ['phone']) {}
 @InputType()
 export class FindByEmailInput extends PickType(User, ['email']) {}
 
-@InputType()
-export class FindAllByRoleInput extends PickType(User, ['role']) {}
+// @InputType()
+// export class FindAllByRoleInput extends PickType(User, ['role']) {}
 
 /*
     Outputs

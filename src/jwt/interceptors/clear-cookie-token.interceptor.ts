@@ -6,6 +6,7 @@ import { Observable, tap } from 'rxjs'
 export class ClearTokenCookieInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         const ctx = GqlExecutionContext.create(context).getContext()
+
         return next.handle().pipe(tap(() => ctx.res.clearCookie('refreshToken')))
     }
 }

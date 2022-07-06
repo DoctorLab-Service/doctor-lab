@@ -17,6 +17,11 @@ import { PhoneModule } from './phone/phone.module'
 import { VerificationEmail } from './verifications/entities/verification-email.entiry'
 import { VerificationPhone } from './verifications/entities/verification-phone.entiry'
 import { LanguageModule } from './language/language.module'
+import { FilesModule } from './files/files.module'
+import { RolesModule } from './roles/roles.module'
+import { PermissionsModule } from './permissions/permissions.module'
+import { Role } from './roles/entities/role.entity'
+import { UserRoles } from './roles/entities/user_roles.entity'
 
 @Module({
     imports: [
@@ -48,7 +53,7 @@ import { LanguageModule } from './language/language.module'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [User, Token, VerificationEmail, VerificationPhone],
+            entities: [User, Token, VerificationEmail, VerificationPhone, Role, UserRoles],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -71,6 +76,9 @@ import { LanguageModule } from './language/language.module'
         }),
         PhoneModule,
         LanguageModule,
+        FilesModule,
+        RolesModule,
+        PermissionsModule,
     ],
 })
 export class AppModule {

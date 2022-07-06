@@ -35,13 +35,14 @@
 
 ### Roles Service
 
-- [] - Entity
-- [] - AddRole
+- [x] - Role Entity
+- [x] - UserRole Entity
+- [] - CreateRole
 - [] - UpdateRole
 - [] - DeleteRole
 - [] - SetRole
 - [] - RemoveRole
-- [x] - FindByRole
+- [] - FindByRole
 
 ### Permissions Service
 
@@ -55,6 +56,10 @@
 ### Language Service
 
 - [x] - Error
+
+### Custom Errors Translator
+
+- [x] - ValidationPipe
 
 ### Files Service
 

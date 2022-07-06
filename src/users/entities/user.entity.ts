@@ -3,11 +3,14 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { ELanguage } from 'src/language/dtos/languages.dto'
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
 import { CoreEntity } from 'src/common/entities/core.entity'
 import { Exclude } from 'class-transformer'
+import { Role } from 'src/roles/entities/role.entity'
+import { EGender } from '../users.enum'
 
 registerEnumType(ELanguage, { name: 'ELanguage' })
+registerEnumType(EGender, { name: 'EGender' })
 
 @InputType({ isAbstract: true })
 @ObjectType()
@@ -82,18 +85,17 @@ export class User extends CoreEntity {
     @Field(() => String)
     googleId: string
 
-    @Column()
-    @Field(() => String)
-    @Length(4, 32)
-    role: string
-
     @Column({ type: 'enum', enum: ELanguage, default: ELanguage.RU })
     @Field(() => ELanguage)
     language: ELanguage
 
-    // @Column({ type: 'enum', enum: EUserGender, default: EUserGender.NotChosen })
-    // @Field(() => EUserGender)
-    // gender: EUserGender
+    @Column({ type: 'enum', enum: EGender, default: EGender.NotChosen })
+    @Field(() => EGender)
+    gender: EGender
+
+    @OneToMany(() => Role, roles => roles.user)
+    // @Field(() => [Role])
+    roles: Role[]
 
     // @Column({ type: 'enum', enum: EUserPermissions, nullable: true })
     // @Field(() => EUserPermissions)
@@ -102,10 +104,6 @@ export class User extends CoreEntity {
     // @Column({ type: 'enum', enum: EUserRoles, default: EUserRoles.Clinic })
     // @Field(() => EUserRoles)
     // role: EUserRoles
-
-    // @OneToMany(() => Role, roles => roles.user)
-    // @Field(() => [Role])
-    // roles: Role[]
 
     // @OneToOne(() => Clinic, clinic => clinic.owner)
     // @Field(() => Clinic)

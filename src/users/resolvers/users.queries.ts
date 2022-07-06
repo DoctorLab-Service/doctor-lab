@@ -2,7 +2,7 @@ import { Messages } from './../../language/dtos/notify.dto'
 import { UsersService } from './../users.service'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
-    FindAllByRoleInput,
+    // FindAllByRoleInput,
     FindAllOutput,
     FindByEmailInput,
     FindByIdInput,
@@ -27,10 +27,10 @@ export class UsersQueries {
         return await this.usersService.findAll(this.errors)
     }
 
-    @Query(() => FindAllOutput)
-    async findAllByRole(@Args('input') body: FindAllByRoleInput): Promise<FindAllOutput> {
-        return await this.usersService.findAllByRole(body, this.errors)
-    }
+    // @Query(() => FindAllOutput)
+    // async findAllByRole(@Args('input') body: FindAllByRoleInput): Promise<FindAllOutput> {
+    //     return await this.usersService.findAllByRole(body, this.errors)
+    // }
 
     @Query(() => FindByOutput)
     async findById(@Args('input') body: FindByIdInput): Promise<FindByOutput> {

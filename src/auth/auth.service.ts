@@ -55,7 +55,7 @@ export class AuthService {
             throw new ValidationException({
                 password: errorsExist
                     ? errors.users.isLength.password
-                    : 'Password must be longer than or equal to 6 characters',
+                    : 'Password must be longer than or equal to 6 and no longer than 32 characters',
             })
 
         const passwordCorrect = await user.checkPassword(body.password)

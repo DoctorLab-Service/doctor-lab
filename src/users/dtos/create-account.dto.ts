@@ -1,7 +1,7 @@
 import { CoreOutput } from 'src/common/dtos/output.dto'
 import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType } from '@nestjs/graphql'
 import { User } from '../entities/user.entity'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsString, Length } from 'class-validator'
 
 @InputType()
 export class NoRequiredInput extends PartialType(PickType(User, ['facebookId', 'googleId'])) {}
@@ -15,7 +15,6 @@ export class RequiredInput extends PickType(User, [
     'phone',
     'email',
     'password',
-    'role',
     'language',
 ]) {}
 
@@ -25,6 +24,10 @@ export class CreateAccountInput extends IntersectionType(RequiredInput, NoRequir
     @IsString()
     @IsNotEmpty()
     rePassword?: string
+
+    @Field(() => String)
+    @Length(4, 32)
+    role: string
 }
 
 @ObjectType()

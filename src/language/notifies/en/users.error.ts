@@ -16,13 +16,13 @@ export const notifies: NotifyDto = {
             rePassword: 'Please repeat your password',
         },
         isLength: {
-            fullname: 'Fullname must be longer than or equal to 3 characters',
+            fullname: 'Fullname must be longer than or equal to 3 and no longer than 64 characters',
             country: 'Country must be no longer than 64 characters',
             state: 'State must be no longer than 64 characters',
             address: 'Address must be no longer than 64 characters',
-            email: 'Email must be longer than or equal to 3 characters',
+            email: 'Email must be longer than or equal to 4 and no longer than 64 characters',
             experience: 'Experianse must be longer than or equal to 3 characters',
-            password: 'Password must be longer than or equal to 6 characters',
+            password: 'Password must be longer than or equal to 6 and no longer than 32 characters',
         },
         isValid: {
             phone: 'Invalid phone number',
@@ -31,17 +31,13 @@ export const notifies: NotifyDto = {
         },
         isNotFound: {
             user: 'The user is not found',
-            users: 'Usr found',
+            users: "Users don't found",
         },
-        isNotCreate: {
-            user: "Couldn't create account",
+        isNot: {
+            createUser: "Couldn't create account",
+            updateUser: "Couldn't update account",
+            deleteUser: "Couldn't deleted account",
             token: "Couldn't create token, try to login",
-        },
-        isNotUpdate: {
-            user: "Couldn't update account",
-        },
-        isNotDeleted: {
-            user: "Couldn't deleted account",
         },
     },
 }

@@ -6,7 +6,7 @@ import { JwtService } from 'src/jwt/jwt.service'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import { DeleteAccountOutput } from './dtos/delete-account.dto'
 import {
-    FindAllByRoleInput,
+    // FindAllByRoleInput,
     FindAllOutput,
     FindByEmailInput,
     FindByIdInput,
@@ -57,7 +57,7 @@ export class UsersService {
         const user = await this.users.save(this.users.create({ ...body }))
         if (!user)
             throw new ValidationException({
-                email: errorsExist ? errors.users.isNotCreate.user : "Couldn't create account",
+                email: errorsExist ? errors.users.isNot.createUser : "Couldn't create account",
             })
 
         // Create Code for email and phone
@@ -90,7 +90,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: errorsExist ? errors.users.isNotCreate.token : "Couldn't create token, try to login",
+                email: errorsExist ? errors.users.isNot.token : "Couldn't create token, try to login",
             })
         }
     }
@@ -122,7 +122,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                error: errorsExist ? errors.users.isNotUpdate.user : "Couldn't update account",
+                error: errorsExist ? errors.users.isNot.updateUser : "Couldn't update account",
             })
         }
     }
@@ -140,7 +140,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                error: errorsExist ? errors.users.isNotUp.user : "Couldn't deleted account",
+                error: errorsExist ? errors.users.isNot.deleteUser : "Couldn't deleted account",
             })
         }
     }
@@ -180,11 +180,11 @@ export class UsersService {
         return { ok: Boolean(users.length), users }
     }
 
-    async findAllByRole({ role }: FindAllByRoleInput, errors?: any): Promise<FindAllOutput> {
-        const users = await this.users.find({ where: { role } })
-        if (!users.length && JSON.stringify(errors) !== '{}')
-            throw new ValidationException({ email: errors.users.isNotFound.user })
+    // async findAllByRole({ role }: FindAllByRoleInput, errors?: any): Promise<FindAllOutput> {
+    //     const users = await this.users.find({ where: { role } })
+    //     if (!users.length && JSON.stringify(errors) !== '{}')
+    //         throw new ValidationException({ email: errors.users.isNotFound.user })
 
-        return { ok: Boolean(users.length), users }
-    }
+    //     return { ok: Boolean(users.length), users }
+    // }
 }

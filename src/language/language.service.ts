@@ -10,7 +10,10 @@ export class LanguageService {
     lng: ELanguage | undefined
     type: string
 
-    constructor(@Inject(CONTEXT) private context?, @Optional() @Inject(LANGUAGE) private clanguage?: string) {
+    constructor(
+        @Inject(CONTEXT) private context?,
+        @Optional() @Inject(LANGUAGE) private clanguage?: ELanguage | string,
+    ) {
         // Set language ni global lng
         this.lng = this.clanguage && this.clanguage !== undefined ? this.language(this.clanguage) : this.language()
     }
@@ -61,28 +64,27 @@ export class LanguageService {
             if (lng === undefined) return defaultLanguage
             return lng
         }
+        if (this.context.req !== undefined) {
+            // Get language from custom headers
+            const customLanguage: string = this.context.req.headers['language']
+            if (customLanguage) {
+                const vLanguage = customLanguage.split('-')[0].toUpperCase()
+                lng = ELanguage[vLanguage]
 
-        // Get language from custom headers
-        const customLanguage: string = this.context.req.headers['language']
+                if (lng === undefined) return defaultLanguage
+                return lng
+            }
 
-        if (customLanguage) {
-            const vLanguage = customLanguage.split('-')[0].toUpperCase()
-            lng = ELanguage[vLanguage]
+            // Get language from headers['accept-language']
+            const acceptLanguage: string = this.context.req.headers['accept-language'] // ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,fr;q=0.6,pl;q=0.5,und;q=0.4
+            if (acceptLanguage) {
+                const alanguage = acceptLanguage.split(',')[1].split(';')[0]
+                const vLanguage = alanguage.split('-')[0].toUpperCase()
+                lng = ELanguage[vLanguage]
 
-            if (lng === undefined) return defaultLanguage
-            return lng
-        }
-
-        // Get language from headers['accept-language']
-        const acceptLanguage: string = this.context.req.headers['accept-language'] // ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,fr;q=0.6,pl;q=0.5,und;q=0.4
-
-        if (acceptLanguage) {
-            const alanguage = acceptLanguage.split(',')[1].split(';')[0]
-            const vLanguage = alanguage.split('-')[0].toUpperCase()
-            lng = ELanguage[vLanguage]
-
-            if (lng === undefined) return defaultLanguage
-            return lng
+                if (lng === undefined) return defaultLanguage
+                return lng
+            }
         }
     }
 
@@ -98,7 +100,8 @@ export class LanguageService {
             return messages
         }
 
-        const messages: Messages = await this.translate(serviceName, defaultService)
+        const messages: Messages | Record<string, any> = await this.translate(serviceName, defaultService)
+
         return messages
     }
 }

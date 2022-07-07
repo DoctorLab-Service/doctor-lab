@@ -13,6 +13,7 @@ export const notifies: NotifyDto = {
         },
         isEmpty: {
             role: 'Роль не может быть пустой',
+            all: 'Нет данных для обновления роли',
         },
         isNotFound: {
             role: 'Роль не найдена',
@@ -21,6 +22,11 @@ export const notifies: NotifyDto = {
             createRole: 'Не удалось создать роль',
             updateRole: 'Не удалось обновить роль',
             deleteRole: 'Не удалось удалить роль',
+        },
+        permission: {
+            createSystemRole: 'У вас нет прав для создания системной роли',
+            updateSystemRole: (role: string): string => `У вас нет прав для изменения ${role} роли`,
+            deleteSystemRole: (role: string): string => `У вас нет прав для удаления ${role} роли`,
         },
     },
 }

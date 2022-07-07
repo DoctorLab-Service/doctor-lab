@@ -7,21 +7,29 @@ import { VerificationEmail } from 'src/verifications/entities/verification-email
 import { VerificationEmailInput, VerificationEmailOutput } from './dtos/verification-email.dto'
 import { VerificationPhoneInput, VerificationPhoneOutput } from './dtos/verification-phone.dto'
 import { VerificationPhone } from './entities/verification-phone.entiry'
+import { LanguageService } from 'src/language/language.service'
+import { Messages } from 'src/language/dtos/notify.dto'
 
 @Injectable()
 export class VerificationsService {
+    private errors: Messages | Record<string, any>
+    private errorsExist: boolean
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verifyPhone: Repository<VerificationPhone>,
-    ) {}
+        private readonly languageService: LanguageService,
+    ) {
+        this.languageService.errors(['verify']).then(errors => {
+            this.errors = errors
+            this.errorsExist = JSON.stringify(errors) !== '{}'
+        })
+    }
 
     /**
      * Verification phone by code
      */
-    async verificationEmail({ code }: VerificationEmailInput, errors?: any): Promise<VerificationEmailOutput> {
-        const errorsExist: boolean = JSON.stringify(errors) !== '{}'
-
+    async verificationEmail({ code }: VerificationEmailInput): Promise<VerificationEmailOutput> {
         const verification = await this.verifyEmail.findOne({
             where: { code },
             relations: ['user'],
@@ -29,7 +37,7 @@ export class VerificationsService {
 
         if (!verification)
             throw new ValidationException({
-                error: errorsExist ? errors.verify.isNotVeify.email : 'Not a valid verification link',
+                error: this.errorsExist ? this.errors.verify.isNotVeify.email : 'Not a valid verification link',
             })
 
         try {
@@ -41,7 +49,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: errorsExist ? errors.verify.isNotVeify.email : 'Not a valid verification link',
+                email: this.errorsExist ? this.errors.verify.isNotVeify.email : 'Not a valid verification link',
             })
         }
     }
@@ -49,9 +57,7 @@ export class VerificationsService {
     /**
      * Verification phone by code
      */
-    async verificationPhone({ code }: VerificationPhoneInput, errors?: any): Promise<VerificationPhoneOutput> {
-        const errorsExist: boolean = JSON.stringify(errors) !== '{}'
-
+    async verificationPhone({ code }: VerificationPhoneInput): Promise<VerificationPhoneOutput> {
         const verification = await this.verifyPhone.findOne({
             where: { code },
             relations: ['user'],
@@ -59,7 +65,7 @@ export class VerificationsService {
 
         if (!verification)
             throw new ValidationException({
-                phone: errorsExist ? errors.verify.isNotVerify.phone : 'Invalid code',
+                phone: this.errorsExist ? this.errors.verify.isNotVerify.phone : 'Invalid code',
             })
 
         try {
@@ -70,7 +76,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                phone: errorsExist ? errors.verify.isNotVeify.phone : 'Invalid code',
+                phone: this.errorsExist ? this.errors.verify.isNotVeify.phone : 'Invalid code',
             })
         }
     }

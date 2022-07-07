@@ -12,7 +12,11 @@ export class MassagesDto {
 }
 
 export class MassageDto {
-    readonly [key: string]: string | number
+    readonly [key: string]: string | number | MassageFnDto
+}
+
+export interface MassageFnDto {
+    (arg: string | number): string | number
 }
 
 export class SetLanguageMessageParams {

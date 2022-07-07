@@ -6,17 +6,16 @@ import { MassageDto, Messages, NotifyDto } from './dtos/notify.dto'
 
 @Injectable()
 export class LanguageService {
-    service: string
-    lng: ELanguage | undefined
-    type: string
+    private service: string
+    private lng: ELanguage | undefined
 
     constructor(
-        @Inject(CONTEXT) private context?,
-        @Optional() @Inject(LANGUAGE) private clanguage?: ELanguage | string,
+        @Inject(CONTEXT) private readonly context?,
+        @Optional() @Inject(LANGUAGE) private readonly clanguage?: ELanguage | string,
     ) {
-        // Set language ni global lng
         this.lng = this.clanguage && this.clanguage !== undefined ? this.language(this.clanguage) : this.language()
     }
+
     /**
      * Fetch messages from notifies filder by params
      */
@@ -55,7 +54,6 @@ export class LanguageService {
     language(cLanguage?: string): ELanguage {
         let lng: ELanguage | undefined
         const defaultLanguage = ELanguage.EN
-
         // Set custom language
         if (cLanguage && cLanguage !== undefined) {
             const vLanguage = cLanguage.split('-')[0].toUpperCase()
@@ -64,28 +62,36 @@ export class LanguageService {
             if (lng === undefined) return defaultLanguage
             return lng
         }
-        if (this.context.req !== undefined) {
+        if (this.context !== undefined) {
             // Get language from custom headers
-            const customLanguage: string = this.context.req.headers['language']
+            const customLanguage: string =
+                this.context.req !== undefined ? this.context.req.headers['language'] : this.context.headers['language']
             if (customLanguage) {
                 const vLanguage = customLanguage.split('-')[0].toUpperCase()
                 lng = ELanguage[vLanguage]
 
                 if (lng === undefined) return defaultLanguage
+
                 return lng
             }
 
             // Get language from headers['accept-language']
-            const acceptLanguage: string = this.context.req.headers['accept-language'] // ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,fr;q=0.6,pl;q=0.5,und;q=0.4
+            // ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,fr;q=0.6,pl;q=0.5,und;q=0.4
+            const acceptLanguage: string =
+                this.context.req !== undefined
+                    ? this.context.req.headers['accept-language']
+                    : this.context.headers['accept-language']
             if (acceptLanguage) {
                 const alanguage = acceptLanguage.split(',')[1].split(';')[0]
                 const vLanguage = alanguage.split('-')[0].toUpperCase()
                 lng = ELanguage[vLanguage]
 
                 if (lng === undefined) return defaultLanguage
+
                 return lng
             }
         }
+        return defaultLanguage
     }
 
     /**

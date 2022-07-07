@@ -18,10 +18,10 @@ export class LenguageInterceptor implements NestInterceptor {
         body && body.input
             ? !body.input.language
                 ? (body.input.language = lng.language())
-                : (body.input.language = ELanguage.EN)
+                : body.input.language
             : !body.language
             ? (body.input.language = lng.language())
-            : (body.language = ELanguage.EN)
+            : body.language
 
         return next.handle()
     }

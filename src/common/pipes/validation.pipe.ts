@@ -1,7 +1,7 @@
-import { ArgumentMetadata, Inject, Injectable, PipeTransform, Scope } from '@nestjs/common'
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import { ValidationException } from 'src/exceptions/validation.exception'
+import { ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
 
 @Injectable()
@@ -20,7 +20,7 @@ export class ValidationPipe implements PipeTransform {
         if (fields !== undefined) {
             const languageService = new LanguageService(undefined, fields.language)
 
-            const setMassage = async (property: [string, string?], key: string): Promise<void> => {
+            const setMessage = async (property: [string, string?], key: string): Promise<void> => {
                 const errorsMessage = await languageService.errors([this.serviceName], key)
                 errors[property[0]] = errorsMessage[property[1] || property[0]]
             }
@@ -34,13 +34,13 @@ export class ValidationPipe implements PipeTransform {
                 for (let i = 0; i < vErrors.length; i++) {
                     const key = Object.keys(vErrors[i].constraints)[0]
                     if (key === 'isLength' || key === 'maxLength') {
-                        await setMassage([vErrors[i].property], 'isLength')
+                        await setMessage([vErrors[i].property], 'isLength')
                     }
                     if (key === 'isNotEmpty') {
-                        await setMassage([vErrors[i].property], 'isEmpty')
+                        await setMessage([vErrors[i].property], 'isEmpty')
                     }
                     if (key === 'isEmail' || key === 'isPhoneNumber') {
-                        await setMassage([vErrors[i].property], 'isValid')
+                        await setMessage([vErrors[i].property], 'isValid')
                     }
                 }
             }
@@ -50,7 +50,7 @@ export class ValidationPipe implements PipeTransform {
                  */
                 if (field === 'rePassword') {
                     if (fields.password !== fields[field]) {
-                        await setMassage([field, 'passwordEqual'], 'isValid')
+                        await setMessage([field, 'passwordEqual'], 'isValid')
                     }
                 }
             }

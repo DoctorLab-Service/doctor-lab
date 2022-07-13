@@ -1,4 +1,3 @@
-import { UsersService } from './../users.service'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { UpdateAccountInput, UpdateAccountOutput } from '../dtos/update-account.dto'
 import { DeleteAccountOutput } from '../dtos/delete-account.dto'
@@ -9,6 +8,7 @@ import { ValidationPipe } from 'src/common/pipes/validation.pipe'
 import { AccessTokenCookieInterceptor } from 'src/jwt/interceptors/cookie-token.interceptor'
 import { ClearTokenCookieInterceptor } from 'src/jwt/interceptors/clear-cookie-token.interceptor'
 import { LenguageInterceptor } from 'src/language/language.interceptor'
+import { UsersService } from '../users.service'
 
 @Resolver()
 export class UsersMutations {

@@ -1,16 +1,7 @@
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
 import { Observable, tap } from 'rxjs'
-import { CookieOptions } from 'express'
-
-const cookieOptions: CookieOptions = {
-    domain: 'localhost', // <- Change to your client domain
-    secure: process.env.NODE_ENV === 'production', // <- Should be true if !development
-    // sameSite: 'strict',
-    httpOnly: true,
-    path: '/',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30d
-}
+import { cookieOptions, REFRESH_TOKEN } from '../jwt.config'
 
 @Injectable()
 export class AccessTokenCookieInterceptor implements NestInterceptor {
@@ -18,7 +9,7 @@ export class AccessTokenCookieInterceptor implements NestInterceptor {
         const ctx = GqlExecutionContext.create(context).getContext()
         return next.handle().pipe(
             tap(({ refreshToken }) => {
-                ctx.res.cookie('refreshToken', refreshToken.toString(), cookieOptions)
+                ctx.res.cookie(REFRESH_TOKEN, refreshToken.toString(), cookieOptions)
             }),
         )
     }

@@ -1,18 +1,11 @@
+import { relationsConfig } from 'src/common/configs/relations.config'
 import { User } from 'src/users/entities/user.entity'
-import { Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { ValidationException } from 'src/exceptions/validation.exception'
 import { JwtService } from 'src/jwt/jwt.service'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
 import { DeleteAccountOutput } from './dtos/delete-account.dto'
-import {
-    // FindAllByRoleInput,
-    FindAllOutput,
-    FindByEmailInput,
-    FindByIdInput,
-    FindByOutput,
-    FindByPhoneInput,
-} from './dtos/find.dto'
+import { FindAllUsersOutput, FindByEmailInput, FindByIdInput, FindByOutput, FindByPhoneInput } from './dtos/find.dto'
 import { UpdateAccountInput, UpdateAccountOutput } from './dtos/update-account.dto'
 import { Repository } from 'typeorm'
 import { VerificationEmail } from 'src/verifications/entities/verification-email.entiry'
@@ -20,18 +13,18 @@ import { VerificationPhone } from 'src/verifications/entities/verification-phone
 import { EmailService } from 'src/email/email.service'
 import { PhoneService } from 'src/phone/phone.service'
 import { CONTEXT } from '@nestjs/graphql'
-import { ForbidenException } from 'src/exceptions/forbiden.exception'
+import { ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
-import { Messages } from 'src/language/dtos/notify.dto'
+import { UserRoles } from 'src/roles/entities/user_roles.entity'
+import { defaultErrors } from 'src/language/notifies/default.errors'
 
 @Injectable()
 export class UsersService {
     private user: User
-    private errors: Messages | Record<string, any>
-    private errorsExist: boolean
 
     constructor(
         @Inject(CONTEXT) private readonly context,
+        @InjectRepository(UserRoles) private readonly userRoles: Repository<UserRoles>,
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(VerificationEmail) private readonly verificationEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verificationPhone: Repository<VerificationPhone>,
@@ -40,45 +33,38 @@ export class UsersService {
         private readonly phoneService: PhoneService,
         private readonly languageService: LanguageService,
     ) {
-        this.languageService.errors(['users', 'auth', 'verify']).then(errors => {
-            this.errors = errors
-            this.errorsExist = JSON.stringify(errors) !== '{}'
-
-            if (this.context && this.context.req) {
-                if ('user' in this.context.req) {
-                    this.user = this.context.req.user
-                } else {
-                    throw new ForbidenException({
-                        auth: this.errorsExist ? errors.auth.isNotAuth.auth : 'User is not authorized',
-                    })
-                }
+        if (this.context && this.context.req) {
+            if ('user' in this.context.req) {
+                this.user = this.context.req.user
+            } else {
+                throw new ForbiddenException({ auth: defaultErrors.auth })
             }
-        })
+        }
     }
 
     /*
-        Account
+        Account actions
     */
     async createAccount(body: CreateAccountInput): Promise<CreateAccountOutput> {
         // Check by exist to email
         const existEmail = await this.users.findOne({ where: { email: body.email } })
         if (existEmail)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isExist.email : 'There is user with that email already',
+                email: await this.languageService.setError(['isExists', 'email']),
             })
 
         // Check by exist to phone
         const existPhone = await this.users.findOne({ where: { phone: body.phone } })
         if (existPhone)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isExist.phone : 'There is user with that phone already',
+                email: await this.languageService.setError(['isExists', 'phone']),
             })
 
         // Create user if email and phone is not exist
         const user = await this.users.save(this.users.create({ ...body }))
         if (!user)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isNot.createUser : "Couldn't create account",
+                email: await this.languageService.setError(['isNot', 'createUser']),
             })
 
         // Create Code for email and phone
@@ -90,7 +76,7 @@ export class UsersService {
             await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
         } else {
             throw new ValidationException({
-                phone: this.errorsExist ? this.errors.verify.isNotVerify.noSendEmail : 'Unable to send you email',
+                phone: await this.languageService.setError(['isNotVerify', 'noSendEmail']),
             })
         }
 
@@ -98,7 +84,7 @@ export class UsersService {
         //     await this.phoneService.sendVerificationSMS(user.phone, codePhone.code)
         // } else {
         //     throw new ValidationException({
-        //         phone: this.errorsExist ? this.errors.verify.isNotVerify.noSendSMS : 'Unable to send you SMS',
+        // phone: await this.languageService.setError(['isNotVerify', 'noSendSMS']),
         //     })
         // }
 
@@ -111,17 +97,17 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isNot.token : "Couldn't create token, try to login",
+                email: await this.languageService.setError(['token', 'notCreated']),
             })
         }
     }
 
     async updateAccount(body: UpdateAccountInput): Promise<UpdateAccountOutput> {
         // Find user in DB
-        const user = await this.users.findOne({ where: { id: this.user.id } })
+        const user = await this.users.findOne({ where: { id: this.user.id }, ...relationsConfig.users })
         if (!user)
             throw new ValidationException({
-                user: this.errorsExist ? this.errors.users.isNotFound.user : 'The user is not found',
+                user: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         try {
@@ -139,7 +125,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                error: this.errorsExist ? this.errors.users.isNot.updateUser : "Couldn't update account",
+                error: await this.languageService.setError(['isNot', 'updateUser']),
             })
         }
     }
@@ -151,7 +137,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                error: this.errorsExist ? this.errors.users.isNot.deleteUser : "Couldn't deleted account",
+                error: await this.languageService.setError(['isNot', 'deleteUser']),
             })
         }
     }
@@ -159,41 +145,41 @@ export class UsersService {
     /*
         Finds By ...
     */
-    async findById({ id }: FindByIdInput, errors?: any): Promise<FindByOutput> {
-        const user = await this.users.findOne({ where: { id } })
-        if (!user && JSON.stringify(errors) !== '{}')
+    async findById({ id }: FindByIdInput): Promise<FindByOutput> {
+        const user = await this.users.findOne({ where: { id }, ...relationsConfig.users })
+        if (!user)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isNotFound.user : 'The user is not found',
+                email: await this.languageService.setError(['isNot', 'foundUser']),
             })
 
         return { ok: Boolean(user), user }
     }
 
-    async findByPhone({ phone }: FindByPhoneInput, errors?: any): Promise<FindByOutput> {
-        const user = await this.users.findOne({ where: { phone } })
-        if (!user && JSON.stringify(errors) !== '{}')
+    async findByPhone({ phone }: FindByPhoneInput): Promise<FindByOutput> {
+        const user = await this.users.findOne({ where: { phone }, ...relationsConfig.users })
+        if (!user)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isNotFound.user : 'The user is not found',
+                email: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         return { ok: Boolean(user), user }
     }
 
-    async findByEmail({ email }: FindByEmailInput, errors?: any): Promise<FindByOutput> {
-        const user = await this.users.findOne({ where: { email } })
-        if (!user && JSON.stringify(errors) !== '{}')
+    async findByEmail({ email }: FindByEmailInput): Promise<FindByOutput> {
+        const user = await this.users.findOne({ where: { email }, ...relationsConfig.users })
+        if (!user)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isNotFound.user : 'The user is not found',
+                email: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         return { ok: Boolean(user), user }
     }
 
-    async findAll(errors?: any): Promise<FindAllOutput> {
-        const users = await this.users.find({})
-        if (!users.length && JSON.stringify(errors) !== '{}')
+    async findAllUsers(): Promise<FindAllUsersOutput> {
+        const users = await this.users.find({ ...relationsConfig.users })
+        if (!users.length)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.users.isNotFound.user : 'The user is not found',
+                email: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         return { ok: Boolean(users.length), users }

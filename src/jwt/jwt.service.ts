@@ -1,12 +1,12 @@
 import * as jwt from 'jsonwebtoken'
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Token } from './entities/token.entity'
 import { DeleteResult, Repository } from 'typeorm'
 import { User } from 'src/users/entities/user.entity'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
 import { JwtModuleoptions } from './dtos/jwt.dto'
+import { tokenConfig } from './jwt.config'
 
 type TGenerateTokens = {
     accessToken: string
@@ -18,12 +18,11 @@ export class JwtService {
     constructor(
         @InjectRepository(Token) private readonly token: Repository<Token>,
         @Inject(CONFIG_OPTIONS) private readonly secrets: JwtModuleoptions,
-        private readonly config: ConfigService,
     ) {}
 
     generateTokens(payload: any): TGenerateTokens {
-        const accessToken = jwt.sign(payload, this.secrets.accessSecret, { expiresIn: '60m' })
-        const refreshToken = jwt.sign(payload, this.secrets.refreshSecret, { expiresIn: '30d' })
+        const accessToken = jwt.sign(payload, this.secrets.accessSecret, tokenConfig.access)
+        const refreshToken = jwt.sign(payload, this.secrets.refreshSecret, tokenConfig.refresh)
 
         return { accessToken, refreshToken }
     }

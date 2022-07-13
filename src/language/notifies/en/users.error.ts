@@ -4,7 +4,7 @@ export const notifies: NotifyDto = {
     serviceName: 'users',
     language: 'EN',
     messages: {
-        isExist: {
+        isExists: {
             phone: 'There is user with that phone already',
             email: 'There is user with that email already',
         },
@@ -28,16 +28,15 @@ export const notifies: NotifyDto = {
             phone: 'Invalid phone number',
             email: 'Invalid email address',
             passwordEqual: "Passwords don't match",
-        },
-        isNotFound: {
-            user: 'The user is not found',
-            users: "Users don't found",
+            googleId: 'Invalid google',
+            facebookId: 'Invalid facebook',
         },
         isNot: {
+            foundUser: 'The user is not found',
+            foundUsers: "Users don't found",
             createUser: "Couldn't create account",
             updateUser: "Couldn't update account",
             deleteUser: "Couldn't deleted account",
-            token: "Couldn't create token, try to login",
         },
     },
 }

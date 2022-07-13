@@ -1,6 +1,5 @@
-import { ForbidenException } from './../exceptions/forbiden.exception'
-import { ValidationException } from './../exceptions/validation.exception'
-import { Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, ValidationException } from 'src/exceptions'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from 'src/jwt/jwt.service'
 import { User } from 'src/users/entities/user.entity'
@@ -13,19 +12,11 @@ import { Messages } from 'src/language/dtos/notify.dto'
 
 @Injectable()
 export class AuthService {
-    errors: Messages | Record<string, any>
-    errorsExist: boolean
-
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
         private readonly jwt: JwtService,
         private readonly languageService: LanguageService,
-    ) {
-        this.languageService.errors(['users', 'auth']).then(errors => {
-            this.errors = errors
-            this.errorsExist = JSON.stringify(errors) !== '{}'
-        })
-    }
+    ) {}
 
     async login(body: LoginInput): Promise<LoginOutput> {
         let user: User
@@ -57,24 +48,23 @@ export class AuthService {
             : body.googleId && 'googleId'
         if (!user && (body.phone || body.email)) {
             throw new ValidationException({
-                [key]: this.errorsExist ? this.errors.users.isNotExist[key] : `There is user with that ${key} already`,
+                [key]: await this.languageService.setError(['isNotExist', key]),
             })
         }
 
-        if (!user && (body.facebookId || body.googleId)) throw new ValidationException({ [key]: `Invalid ${key}` })
+        if (!user && (body.facebookId || body.googleId))
+            throw new ValidationException({ [key]: await this.languageService.setError(['isValid', key]) })
 
         // Check Password
         if (!body.password)
             throw new ValidationException({
-                password: this.errorsExist
-                    ? this.errors.users.isLength.password
-                    : 'Password must be longer than or equal to 6 and no longer than 32 characters',
+                password: await this.languageService.setError(['isLength', 'password']),
             })
 
         const passwordCorrect = await user.checkPassword(body.password)
         if (!passwordCorrect)
             throw new ValidationException({
-                password: this.errorsExist ? this.errors.users.isValid.passwordEqual : "Passwords don't match",
+                password: await this.languageService.setError(['isValid', 'passwordEqual']),
             })
 
         // Generate and save token
@@ -86,8 +76,8 @@ export class AuthService {
 
     async logout({ refreshToken }: LogoutInput): Promise<LogoutOutput> {
         if (!refreshToken)
-            throw new ForbidenException({
-                auth: this.errorsExist ? this.errors.auth.isNotAuth.auth : 'User is not authorized',
+            throw new ForbiddenException({
+                auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
 
         try {
@@ -95,24 +85,24 @@ export class AuthService {
             return { ok: true }
         } catch (error) {
             console.log(error)
-            new ForbidenException({
-                auth: this.errorsExist ? this.errors.auth.isNotAuth.auth : 'User is not authorized',
+            throw new ForbiddenException({
+                auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
         }
     }
 
     async refreshToken({ refreshToken }: RefreshTokenInput): Promise<RefreshTokenOutput> {
         if (!refreshToken)
-            throw new ForbidenException({
-                auth: this.errorsExist ? this.errors.auth.isNotAuth.auth : 'User is not authorized',
+            throw new ForbiddenException({
+                auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
 
         // Check refresh token in db and validate it
         const userData = await this.jwt.validateRefreshToken(refreshToken)
         const tokenFromDb = await this.jwt.findToken(refreshToken)
         if (!userData || !tokenFromDb)
-            throw new ForbidenException({
-                auth: this.errorsExist ? this.errors.auth.isNotAuth.auth : 'User is not authorized',
+            throw new ForbiddenException({
+                auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
 
         try {
@@ -123,8 +113,8 @@ export class AuthService {
             return { ok: true, ...tokens, user }
         } catch (error) {
             console.log(error)
-            new ForbidenException({
-                auth: this.errorsExist ? this.errors.auth.isNotAuth.auth : 'User is not authorized',
+            throw new ForbiddenException({
+                auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
         }
     }

@@ -14,7 +14,7 @@ export class AuthResolver {
     @Mutation(() => LoginOutput)
     @UseInterceptors(new AccessTokenCookieInterceptor())
     async login(@Args('input') body: LoginInput): Promise<LoginOutput> {
-        return await this.authService.login(body)
+        return this.authService.login(body)
     }
 
     @Mutation(() => LogoutOutput)

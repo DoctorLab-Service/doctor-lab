@@ -1,16 +1,18 @@
 import { LenguageInterceptor } from 'src/language/language.interceptor'
-import { RolesService } from './roles.service'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { DeleteRoleInput, DeleteRoleOutput } from './dtos/delete-role.dto'
-import { UpdateRoleInput, UpdateRoleOutput } from './dtos/update-role.dto'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common'
 import { ValidationPipe } from 'src/common/pipes/validation.pipe'
-import { CreateRoleInput, CreateRoleOutput } from './dtos/create-role.dto'
+import { RolesService } from '../roles.service'
+import { CreateRoleInput, CreateRoleOutput } from '../dtos/create-role.dto'
+import { UpdateRoleInput, UpdateRoleOutput } from '../dtos/update-role.dto'
+import { DeleteRoleInput, DeleteRoleOutput } from '../dtos/delete-role.dto'
+import { SetUserRoleInput, SetUserRoleOutput } from '../dtos/set-user-role.dto'
+import { DeleteUserRoleInput, DeleteUserRoleOutput } from '../dtos/delete-user-role.dto'
 
 @UseGuards(AuthGuard)
 @Resolver()
-export class RolesResolver {
+export class RolesMutations {
     constructor(private readonly rolesService: RolesService) {}
 
     @Mutation(() => CreateRoleOutput)
@@ -30,5 +32,14 @@ export class RolesResolver {
     @Mutation(() => DeleteRoleOutput)
     async deleteRole(@Args('input') body: DeleteRoleInput): Promise<DeleteRoleOutput> {
         return this.rolesService.deleteRole(body)
+    }
+
+    @Mutation(() => SetUserRoleOutput)
+    async setUserRole(@Args('input') body: SetUserRoleInput): Promise<SetUserRoleOutput> {
+        return this.rolesService.setUserRole(body)
+    }
+    @Mutation(() => DeleteUserRoleOutput)
+    async deleteUserRole(@Args('input') body: DeleteUserRoleInput): Promise<DeleteUserRoleOutput> {
+        return this.rolesService.deleteUserRole(body)
     }
 }

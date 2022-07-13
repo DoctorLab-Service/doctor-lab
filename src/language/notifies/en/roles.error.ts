@@ -4,8 +4,11 @@ export const notifies: NotifyDto = {
     serviceName: 'roles',
     language: 'EN',
     messages: {
-        isExist: {
+        isExists: {
             role: 'Role already exists',
+        },
+        isNotExist: {
+            role: 'Role does not exist',
         },
         isLength: {
             role: 'Role must be longer than or equal to 4 and no longer than 64 characters',
@@ -16,10 +19,9 @@ export const notifies: NotifyDto = {
             role: "Role can't be empty",
             all: 'Role update data missing',
         },
-        isNotFound: {
-            role: 'The role is not found',
-        },
         isNot: {
+            foundRole: 'The role is not found',
+            foundRoles: 'Roles is not found',
             createRole: "Couldn't create role",
             updateRole: "Couldn't update role",
             deleteRole: "Couldn't deleted role",

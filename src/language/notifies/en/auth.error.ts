@@ -7,5 +7,9 @@ export const notifies: NotifyDto = {
         isNotAuth: {
             auth: 'User is not authorized',
         },
+        token: {
+            expired: 'Token has expired',
+            notCreated: "Couldn't create token, try to login",
+        },
     },
 }

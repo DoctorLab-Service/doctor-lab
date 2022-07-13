@@ -7,5 +7,9 @@ export const notifies: NotifyDto = {
         isNotAuth: {
             auth: 'Пользователь не авторизован',
         },
+        token: {
+            expired: 'Срок действия токена истек',
+            notCreate: 'Не удалось создать токен, попробуйте авторизоваться',
+        },
     },
 }

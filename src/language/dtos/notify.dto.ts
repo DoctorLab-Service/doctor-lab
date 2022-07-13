@@ -4,18 +4,21 @@ import { User } from 'src/users/entities/user.entity'
 export class NotifyDto {
     readonly serviceName: string
     readonly language: ELanguage | string
-    readonly messages: MassagesDto
+    readonly messages: MessagesDto
 }
 
-export class MassagesDto {
-    readonly [key: string]: MassageDto | string
+export class MessagesDto {
+    readonly [key: string]: MessageDto | string
+}
+export class DeffaultMessages {
+    [key: string]: MessagesDto | MessageDto | MessageFnDto | string
 }
 
-export class MassageDto {
-    readonly [key: string]: string | number | MassageFnDto
+export class MessageDto {
+    readonly [key: string]: string | number | MessageFnDto
 }
 
-export interface MassageFnDto {
+export interface MessageFnDto {
     (arg: string | number): string | number
 }
 

@@ -4,14 +4,9 @@ import { CoreOutput } from 'src/common/dtos/output.dto'
 import { IsString, Length } from 'class-validator'
 
 @InputType()
-export class RequiredInput extends PartialType(PickType(Role, ['system', 'description'])) {}
+export class RequiredInput extends PartialType(PickType(Role, ['role', 'system', 'description'])) {}
 @InputType()
-export class NoRequiredInput extends PickType(Role, ['role']) {
-    @Field(() => String, { nullable: true, description: 'Update name role' })
-    @IsString()
-    @Length(4, 64)
-    roleName?: string
-}
+export class NoRequiredInput extends PickType(Role, ['id']) {}
 @InputType()
 export class UpdateRoleInput extends IntersectionType(RequiredInput, NoRequiredInput) {}
 

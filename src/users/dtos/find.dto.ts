@@ -27,7 +27,7 @@ export class FindByOutput extends CoreOutput {
 }
 
 @ObjectType()
-export class FindAllOutput extends CoreOutput {
+export class FindAllUsersOutput extends CoreOutput {
     @Field(() => [User], { nullable: true })
     users?: User[]
 }

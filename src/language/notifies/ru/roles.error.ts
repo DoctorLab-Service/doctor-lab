@@ -4,8 +4,11 @@ export const notifies: NotifyDto = {
     serviceName: 'roles',
     language: 'RU',
     messages: {
-        isExist: {
+        isExists: {
             role: 'Роль уже существует',
+        },
+        isNotExist: {
+            role: 'Роль не существует',
         },
         isLength: {
             role: 'Роль должна быть длиннее или равно 4 и не длиннее 32 символов',
@@ -15,10 +18,9 @@ export const notifies: NotifyDto = {
             role: 'Роль не может быть пустой',
             all: 'Нет данных для обновления роли',
         },
-        isNotFound: {
-            role: 'Роль не найдена',
-        },
         isNot: {
+            foundRole: 'Роль не найдена',
+            foundRoles: 'Ролей не найдено',
             createRole: 'Не удалось создать роль',
             updateRole: 'Не удалось обновить роль',
             deleteRole: 'Не удалось удалить роль',

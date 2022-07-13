@@ -1,5 +1,6 @@
+import { relationsConfig } from 'src/common/configs/'
 import { Injectable } from '@nestjs/common'
-import { ValidationException } from 'src/exceptions/validation.exception'
+import { ValidationException } from 'src/exceptions'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from 'src/users/entities/user.entity'
@@ -19,26 +20,16 @@ export class VerificationsService {
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verifyPhone: Repository<VerificationPhone>,
         private readonly languageService: LanguageService,
-    ) {
-        this.languageService.errors(['verify']).then(errors => {
-            this.errors = errors
-            this.errorsExist = JSON.stringify(errors) !== '{}'
-        })
-    }
+    ) {}
 
     /**
      * Verification phone by code
      */
     async verificationEmail({ code }: VerificationEmailInput): Promise<VerificationEmailOutput> {
-        const verification = await this.verifyEmail.findOne({
-            where: { code },
-            relations: ['user'],
-        })
+        const verification = await this.verifyEmail.findOne({ where: { code }, ...relationsConfig.verifications })
 
         if (!verification)
-            throw new ValidationException({
-                error: this.errorsExist ? this.errors.verify.isNotVeify.email : 'Not a valid verification link',
-            })
+            throw new ValidationException({ error: await this.languageService.setError(['isNotVerify', 'email']) })
 
         try {
             verification.user.verifiedEmail = true
@@ -49,7 +40,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: this.errorsExist ? this.errors.verify.isNotVeify.email : 'Not a valid verification link',
+                email: await this.languageService.setError(['isNotVerify', 'email']),
             })
         }
     }
@@ -58,15 +49,10 @@ export class VerificationsService {
      * Verification phone by code
      */
     async verificationPhone({ code }: VerificationPhoneInput): Promise<VerificationPhoneOutput> {
-        const verification = await this.verifyPhone.findOne({
-            where: { code },
-            relations: ['user'],
-        })
+        const verification = await this.verifyPhone.findOne({ where: { code }, ...relationsConfig.verifications })
 
         if (!verification)
-            throw new ValidationException({
-                phone: this.errorsExist ? this.errors.verify.isNotVerify.phone : 'Invalid code',
-            })
+            throw new ValidationException({ phone: await this.languageService.setError(['isNotVerify', 'phone']) })
 
         try {
             verification.user.verifiedPhone = true
@@ -75,9 +61,7 @@ export class VerificationsService {
             return { ok: true }
         } catch (error) {
             console.log(error)
-            throw new ValidationException({
-                phone: this.errorsExist ? this.errors.verify.isNotVeify.phone : 'Invalid code',
-            })
+            throw new ValidationException({ phone: await this.languageService.setError(['isNotVerify', 'phone']) })
         }
     }
 }

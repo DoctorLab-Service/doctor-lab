@@ -1,5 +1,3 @@
-import { VerificationPhone } from './../verifications/entities/verification-phone.entiry'
-import { VerificationEmail } from './../verifications/entities/verification-email.entiry'
 import { JwtModule } from 'src/jwt/jwt.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { UsersQueries } from './resolvers/users.queries'
@@ -11,10 +9,12 @@ import { EmailModule } from 'src/email/email.module'
 import { PhoneModule } from 'src/phone/phone.module'
 import { LanguageModule } from 'src/language/language.module'
 import { UserRoles } from 'src/roles/entities/user_roles.entity'
+import { VerificationEmail } from 'src/verifications/entities/verification-email.entiry'
+import { VerificationPhone } from 'src/verifications/entities/verification-phone.entiry'
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, VerificationEmail, VerificationPhone]),
+        TypeOrmModule.forFeature([User, UserRoles, VerificationEmail, VerificationPhone]),
         forwardRef(() => JwtModule),
         EmailModule,
         PhoneModule,

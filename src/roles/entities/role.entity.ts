@@ -1,8 +1,10 @@
+import { InternalServerErrorException } from '@nestjs/common'
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { IsBoolean, IsString, Length, MaxLength } from 'class-validator'
 import { CoreEntity } from 'src/common/entities/core.entity'
+import { string } from 'src/common/helpers'
 import { User } from 'src/users/entities/user.entity'
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 
 @InputType({ isAbstract: true })
 @ObjectType()
@@ -13,6 +15,12 @@ export class Role extends CoreEntity {
     @IsString()
     @Length(4, 32)
     role: string
+
+    @Column({ unique: true })
+    @Field(() => String)
+    @IsString()
+    @Length(4, 32)
+    roleKey: string
 
     @Column()
     @Field(() => String)
@@ -25,7 +33,24 @@ export class Role extends CoreEntity {
     @IsBoolean()
     system: boolean
 
-    @OneToOne(() => User, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, user => user.createdRoles, { onDelete: 'CASCADE' })
     @JoinColumn()
     user: User
+
+    /**
+        Create Role Key
+     */
+    @BeforeInsert()
+    @BeforeUpdate()
+    async addRoleKey(): Promise<void> {
+        if (this.role) {
+            console.log(this.role)
+            try {
+                this.roleKey = string.trimRole(this.role)
+            } catch (error) {
+                console.log(error)
+                throw new InternalServerErrorException()
+            }
+        }
+    }
 }

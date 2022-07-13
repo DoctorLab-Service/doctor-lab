@@ -4,7 +4,7 @@ export const notifies: NotifyDto = {
     serviceName: 'users',
     language: 'RU',
     messages: {
-        isExist: {
+        isExists: {
             phone: 'Пользователь с таким номером телефона уже есть',
             email: 'Пользователь с таким адресом электронной почты уже есть',
         },
@@ -28,16 +28,15 @@ export const notifies: NotifyDto = {
             phone: 'Не валидный номер телефона',
             email: 'Не валидный адрес електронной почты',
             passwordEqual: 'Пароли не совпадают',
-        },
-        isNotFound: {
-            user: 'Пользователь не найден',
-            users: 'Ничего не найдено',
+            googleId: 'Не валидный googleId',
+            facebookId: 'Не валидный facebookId',
         },
         isNot: {
+            foundUser: 'Пользователь не найден',
+            foundUsers: 'Ничего не найдено',
             createUser: 'Не удалось создать учетную запись',
             updateUser: 'Не удалось обновить учетную запись',
             deleteUser: 'Не удалось удалить учетную запись',
-            token: 'Не удалось создать токен, попробуйте авторизоваться',
         },
     },
 }

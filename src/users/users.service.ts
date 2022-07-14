@@ -1,6 +1,6 @@
 import { relationsConfig } from 'src/common/configs/relations.config'
 import { User } from 'src/users/entities/user.entity'
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from 'src/jwt/jwt.service'
 import { CreateAccountInput, CreateAccountOutput } from './dtos/create-account.dto'
@@ -13,10 +13,10 @@ import { VerificationPhone } from 'src/verifications/entities/verification-phone
 import { EmailService } from 'src/email/email.service'
 import { PhoneService } from 'src/phone/phone.service'
 import { CONTEXT } from '@nestjs/graphql'
-import { ValidationException } from 'src/exceptions'
+import { ForbiddenException, ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
 import { UserRoles } from 'src/roles/entities/user_roles.entity'
-import { defaultErrors } from 'src/language/notifies/default.errors'
+import { MyAccountOutput } from './dtos/my-account.dto'
 
 @Injectable()
 export class UsersService {
@@ -33,13 +33,7 @@ export class UsersService {
         private readonly phoneService: PhoneService,
         private readonly languageService: LanguageService,
     ) {
-        if (this.context && this.context.req) {
-            if ('user' in this.context.req) {
-                this.user = this.context.req.user
-            } else {
-                throw new ForbiddenException({ auth: defaultErrors.auth })
-            }
-        }
+        this.jwt.getContextUser(this.context).then(user => (this.user = user))
     }
 
     /*
@@ -142,6 +136,14 @@ export class UsersService {
         }
     }
 
+    async myAccount(): Promise<MyAccountOutput> {
+        const user = await this.users.findOne({ where: { id: this.user.id }, ...relationsConfig.user })
+        if (!user) {
+            throw new ForbiddenException({ auth: await this.languageService.setError(['isNotAuth', 'auth']) })
+        }
+        return { ok: Boolean(user), user }
+    }
+
     /*
         Finds By ...
     */
@@ -184,12 +186,4 @@ export class UsersService {
 
         return { ok: Boolean(users.length), users }
     }
-
-    // async findAllByRole({ role }: FindAllByRoleInput, errors?: any): Promise<FindAllOutput> {
-    //     const users = await this.users.find({ where: { role } })
-    //     if (!users.length && JSON.stringify(errors) !== '{}')
-    //         throw new ValidationException({ email: errors.users.isNotFound.user })
-
-    //     return { ok: Boolean(users.length), users }
-    // }
 }

@@ -8,9 +8,10 @@ import { User } from 'src/users/entities/user.entity'
 import { RolesQueries } from './resolvers/roles.queries'
 import { RolesMutations } from './resolvers/roles.mutations'
 import { UsersModule } from 'src/users/users.module'
+import { JwtModule } from 'src/jwt/jwt.module'
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Role, UserRoles, User]), LanguageModule, UsersModule],
+    imports: [TypeOrmModule.forFeature([Role, UserRoles, User]), LanguageModule, UsersModule, JwtModule],
     providers: [RolesService, RolesMutations, RolesQueries],
     exports: [RolesService],
 })

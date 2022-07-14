@@ -3,7 +3,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { CONTEXT } from '@nestjs/graphql'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ForbiddenException, ValidationException } from 'src/exceptions'
-import { Messages } from 'src/language/dtos/notify.dto'
 import { LanguageService } from 'src/language/language.service'
 import { User } from 'src/users/entities/user.entity'
 import { Repository } from 'typeorm'
@@ -15,14 +14,12 @@ import { Role } from './entities/role.entity'
 import { DeleteUserRoleInput, DeleteUserRoleOutput } from './dtos/delete-user-role.dto'
 import { UserRoles } from './entities/user_roles.entity'
 import { string } from 'src/common/helpers'
-import { languageErrorsParams, relationsConfig } from 'src/common/configs'
-import { defaultErrors } from 'src/language/notifies/default.errors'
+import { relationsConfig } from 'src/common/configs'
+import { JwtService } from 'src/jwt/jwt.service'
 
 @Injectable()
 export class RolesService {
     private user: User
-    private errors: Messages | Record<string, any>
-    private errorsExist: boolean
 
     constructor(
         @Inject(CONTEXT) private readonly context,
@@ -30,14 +27,9 @@ export class RolesService {
         @InjectRepository(UserRoles) private readonly userRoles: Repository<UserRoles>,
         @InjectRepository(Role) private readonly roles: Repository<Role>,
         private readonly languageService: LanguageService,
+        private readonly jwt: JwtService,
     ) {
-        if (this.context && this.context.req) {
-            if ('user' in this.context.req) {
-                this.user = this.context.req.user
-            } else {
-                throw new ForbiddenException({ auth: defaultErrors.auth })
-            }
-        }
+        this.jwt.getContextUser(this.context).then(user => (this.user = user))
     }
     async createRole(body: CreateRoleInput): Promise<CreateRoleOutput> {
         const checkRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
@@ -130,10 +122,7 @@ export class RolesService {
 
     async deleteRole({ id }: DeleteRoleInput): Promise<DeleteRoleOutput> {
         const dRole = await this.roles.findOne({ where: { id } })
-        if (!dRole)
-            throw new ValidationException({
-                role: await this.languageService.setError(['isNotFound', 'role']),
-            })
+        if (!dRole) throw new ValidationException({ role: await this.languageService.setError(['isNotFound', 'role']) })
 
         // Succes to delete system role
         if (dRole.system === true) {
@@ -152,9 +141,7 @@ export class RolesService {
             return { ok: true }
         } catch (error) {
             console.log(error)
-            throw new ValidationException({
-                role: await this.languageService.setError(['isNot', 'deleteRole']),
-            })
+            throw new ValidationException({ role: await this.languageService.setError(['isNot', 'deleteRole']) })
         }
     }
 

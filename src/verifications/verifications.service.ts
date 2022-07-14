@@ -13,8 +13,6 @@ import { Messages } from 'src/language/dtos/notify.dto'
 
 @Injectable()
 export class VerificationsService {
-    private errors: Messages | Record<string, any>
-    private errorsExist: boolean
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,

@@ -5,22 +5,19 @@ import { Token } from './entities/token.entity'
 import { DeleteResult, Repository } from 'typeorm'
 import { User } from 'src/users/entities/user.entity'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
-import { JwtModuleoptions } from './dtos/jwt.dto'
-import { tokenConfig } from './jwt.config'
-
-type TGenerateTokens = {
-    accessToken: string
-    refreshToken: string
-}
+import { JWT_TOKEN, tokenConfig } from './jwt.config'
+import { GenerateTokens, JwtModuleOptions } from './types'
+import { relationsConfig } from 'src/common/configs'
 
 @Injectable()
 export class JwtService {
     constructor(
         @InjectRepository(Token) private readonly token: Repository<Token>,
-        @Inject(CONFIG_OPTIONS) private readonly secrets: JwtModuleoptions,
+        @InjectRepository(User) private readonly users: Repository<User>,
+        @Inject(CONFIG_OPTIONS) private readonly secrets: JwtModuleOptions,
     ) {}
 
-    generateTokens(payload: any): TGenerateTokens {
+    generateTokens(payload: any): GenerateTokens {
         const accessToken = jwt.sign(payload, this.secrets.accessSecret, tokenConfig.access)
         const refreshToken = jwt.sign(payload, this.secrets.refreshSecret, tokenConfig.refresh)
 
@@ -29,7 +26,6 @@ export class JwtService {
 
     async validateAccessToken(accessToken: string): Promise<User | null> {
         const token = await this.token.findOne({ where: { accessToken } })
-        if (!token) throw new Error()
         return jwt.verify(token.accessToken, this.secrets.accessSecret)
     }
 
@@ -62,5 +58,21 @@ export class JwtService {
 
     async findToken(refreshToken: string) {
         return this.token.findOne({ where: { refreshToken } })
+    }
+
+    /**
+     * Get User from context headers
+     * @param context any
+     * @returns User object
+     */
+    async getContextUser(context: any): Promise<User> {
+        if (JWT_TOKEN in context.headers) {
+            const accessToken = context.headers[JWT_TOKEN]
+            const decoded = await this.validateAccessToken(accessToken.toString())
+            if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+                const user = await this.users.findOne({ where: { id: decoded.id }, ...relationsConfig.users })
+                return user
+            }
+        }
     }
 }

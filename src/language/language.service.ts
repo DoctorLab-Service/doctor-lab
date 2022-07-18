@@ -150,7 +150,7 @@ export class LanguageService {
      * @param service service named
      * @returns message
      */
-    async setError(params: [string, string?], service?: string, arg?: string): Promise<string> {
+    async setError(params: [string, string?], service?: string): Promise<string> {
         const defaultService = 'error'
         const defErrorMessage = 'An error has occurred'
 
@@ -209,18 +209,10 @@ export class LanguageService {
         // Set errors if param[1] exist
         const errorMsg: Messages = params[1]
             ? serviceName in errors
-                ? typeof params[1] === 'function'
-                    ? errors[serviceName][params[0]][params[1]](arg)
-                    : errors[serviceName][params[0]][params[1]]
-                : typeof params[0] === 'function'
-                ? errors[params[0]][params[1]](arg)
+                ? errors[serviceName][params[0]][params[1]]
                 : errors[params[0]][params[1]]
             : serviceName in errors
-            ? typeof params[1] === 'function'
-                ? errors[serviceName][params[0]](arg)
-                : errors[serviceName][params[0]]
-            : typeof params[0] === 'function'
-            ? errors[params[0]](arg)
+            ? errors[serviceName][params[0]]
             : errors[params[0]]
 
         const defaultErrorMsg = params[1] ? defaultErrors[params[0]][params[1]] : defaultErrors[params[0]]

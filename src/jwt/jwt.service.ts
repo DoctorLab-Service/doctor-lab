@@ -6,6 +6,8 @@ import { DeleteResult, Repository } from 'typeorm'
 import { User } from 'src/users/entities/user.entity'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
 import { JWT_TOKEN, tokenConfig } from './jwt.config'
+import { ForbiddenException } from 'src/exceptions'
+import { LanguageService } from 'src/language/language.service'
 import { GenerateTokens, JwtModuleOptions } from './types'
 import { relationsConfig } from 'src/common/configs'
 
@@ -15,6 +17,7 @@ export class JwtService {
         @InjectRepository(Token) private readonly token: Repository<Token>,
         @InjectRepository(User) private readonly users: Repository<User>,
         @Inject(CONFIG_OPTIONS) private readonly secrets: JwtModuleOptions,
+        private readonly languageService: LanguageService,
     ) {}
 
     generateTokens(payload: any): GenerateTokens {
@@ -26,6 +29,10 @@ export class JwtService {
 
     async validateAccessToken(accessToken: string): Promise<User | null> {
         const token = await this.token.findOne({ where: { accessToken } })
+
+        if (!token) {
+            throw new Error()
+        }
         return jwt.verify(token.accessToken, this.secrets.accessSecret)
     }
 
@@ -66,12 +73,24 @@ export class JwtService {
      * @returns User object
      */
     async getContextUser(context: any): Promise<User> {
-        if (JWT_TOKEN in context.headers) {
-            const accessToken = context.headers[JWT_TOKEN]
-            const decoded = await this.validateAccessToken(accessToken.toString())
-            if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-                const user = await this.users.findOne({ where: { id: decoded.id }, ...relationsConfig.users })
-                return user
+        if (context) {
+            let headers = context.headers
+            if (headers === undefined) {
+                headers = context.req.headers
+            }
+            if (JWT_TOKEN in headers) {
+                const accessToken = headers[JWT_TOKEN]
+                if (!accessToken) {
+                    throw new ForbiddenException({
+                        auth: await this.languageService.setError(['isNotAuth', 'auth'], 'auth'),
+                    })
+                }
+
+                const decoded = await this.validateAccessToken(accessToken.toString())
+                if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+                    const user = await this.users.findOne({ where: { id: decoded.id }, ...relationsConfig.users })
+                    return user
+                }
             }
         }
     }

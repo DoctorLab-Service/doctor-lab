@@ -3,7 +3,7 @@ import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType }
 import { CoreOutput } from 'src/common/dtos/output.dto'
 
 @InputType()
-export class RequiredInput extends PartialType(PickType(Role, ['system'])) {}
+export class RequiredInput extends PartialType(PickType(Role, ['type'])) {}
 @InputType()
 export class NoRequiredInput extends PickType(Role, ['role', 'description']) {}
 @InputType()

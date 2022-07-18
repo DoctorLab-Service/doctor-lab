@@ -9,8 +9,12 @@ import { UpdateRoleInput, UpdateRoleOutput } from '../dtos/update-role.dto'
 import { DeleteRoleInput, DeleteRoleOutput } from '../dtos/delete-role.dto'
 import { SetUserRoleInput, SetUserRoleOutput } from '../dtos/set-user-role.dto'
 import { DeleteUserRoleInput, DeleteUserRoleOutput } from '../dtos/delete-user-role.dto'
+import { RolesGuard } from '../roles.guard'
+import { Roles } from '../roles.decorator'
+import { EDefaultRoles, ESystemsRoles } from '../roles.enums'
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(EDefaultRoles.admin, EDefaultRoles.doctor, ESystemsRoles.superAdmin)
 @Resolver()
 export class RolesMutations {
     constructor(private readonly rolesService: RolesService) {}

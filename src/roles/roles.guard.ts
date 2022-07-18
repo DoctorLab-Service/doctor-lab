@@ -8,23 +8,68 @@ import { ROLES_KEY } from './roles.decorator'
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ])
-        if (!requiredRoles) {
+        // Get all required roles
+        const mainRole = this.reflector.get<string[]>(ROLES_KEY, context.getClass()) || []
+        const requiredRoles = this.reflector.get<string[]>(ROLES_KEY, context.getHandler()) || []
+
+        // Get current user from Context
+        const gqlContext = GqlExecutionContext.create(context).getContext()
+        if (gqlContext.req && gqlContext.req.user) {
+            // Get current user
+            const currentUser = gqlContext.req.user.user
+            if (!currentUser.roles.length) return false
+
+            // Check to mainRoles by exists
+            if (mainRole.length) {
+                const mainUserRoles = []
+                mainRole.forEach(mRole => {
+                    currentUser.roles.filter(cRole => {
+                        if (cRole.role.roleKey === mRole) {
+                            mainUserRoles.push(cRole.role)
+                        }
+                    })
+                })
+
+                if (mainUserRoles.length) {
+                    // Check required toles by  exists if exist main role
+                    if (requiredRoles.length) {
+                        console.log(requiredRoles)
+                        const requiredUserRoles = []
+                        requiredRoles.forEach(rRole => {
+                            currentUser.roles.filter(cRole => {
+                                if (cRole.role.roleKey === rRole) {
+                                    requiredUserRoles.push(cRole.role)
+                                }
+                            })
+                        })
+
+                        if (requiredUserRoles.length) return true
+                        return false
+                    }
+
+                    return true
+                }
+
+                return false
+            }
+
+            // Check required roles if not main roles by  exists
+            if (requiredRoles.length) {
+                const requiredUserRoles = []
+                requiredRoles.forEach(rRole => {
+                    currentUser.roles.filter(cRole => {
+                        if (cRole.role.roleKey === rRole) {
+                            requiredUserRoles.push(cRole.role)
+                        }
+                    })
+                })
+
+                if (requiredUserRoles.length) return true
+                return false
+            }
             return false
         }
 
-        const gqlContext = GqlExecutionContext.create(context).getContext()
-        if (gqlContext.req && gqlContext.req.user) {
-            const { roles } = gqlContext.req.user.user
-            // if (!roles.length) return false
-            const success = roles.map(role => {
-                requiredRoles.filter(rRole => console.log(rRole, role))
-            })
-        }
-        return true
-        // return matchRoles(roles, user.roles)
+        return false
     }
 }

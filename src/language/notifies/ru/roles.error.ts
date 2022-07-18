@@ -27,8 +27,8 @@ export const notifies: NotifyDto = {
         },
         permission: {
             createSystemRole: 'У вас нет прав для создания системной роли',
-            updateSystemRole: (role: string): string => `У вас нет прав для изменения ${role} роли`,
-            deleteSystemRole: (role: string): string => `У вас нет прав для удаления ${role} роли`,
+            updateSystemRole: 'У вас нет прав для изменения роли',
+            deleteSystemRole: 'У вас нет прав для удаления роли',
         },
     },
 }

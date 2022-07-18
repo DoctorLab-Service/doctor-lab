@@ -20,8 +20,6 @@ import { MyAccountOutput } from './dtos/my-account.dto'
 
 @Injectable()
 export class UsersService {
-    private user: User
-
     constructor(
         @Inject(CONTEXT) private readonly context,
         @InjectRepository(UserRoles) private readonly userRoles: Repository<UserRoles>,
@@ -32,9 +30,7 @@ export class UsersService {
         private readonly emailService: EmailService,
         private readonly phoneService: PhoneService,
         private readonly languageService: LanguageService,
-    ) {
-        this.jwt.getContextUser(this.context).then(user => (this.user = user))
-    }
+    ) {}
 
     /*
         Account actions
@@ -98,7 +94,8 @@ export class UsersService {
 
     async updateAccount(body: UpdateAccountInput): Promise<UpdateAccountOutput> {
         // Find user in DB
-        const user = await this.users.findOne({ where: { id: this.user.id }, ...relationsConfig.users })
+        const currentUser: User = await this.jwt.getContextUser(this.context)
+        const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user)
             throw new ValidationException({
                 user: await this.languageService.setError(['isNotFound', 'user']),
@@ -126,7 +123,8 @@ export class UsersService {
 
     async deleteAccount(): Promise<DeleteAccountOutput> {
         try {
-            await this.users.delete(this.user.id)
+            const currentUser: User = await this.jwt.getContextUser(this.context)
+            await this.users.delete(currentUser.id)
             return { ok: true }
         } catch (error) {
             console.log(error)
@@ -137,7 +135,8 @@ export class UsersService {
     }
 
     async myAccount(): Promise<MyAccountOutput> {
-        const user = await this.users.findOne({ where: { id: this.user.id }, ...relationsConfig.user })
+        const currentUser: User = await this.jwt.getContextUser(this.context)
+        const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ForbiddenException({ auth: await this.languageService.setError(['isNotAuth', 'auth']) })
         }

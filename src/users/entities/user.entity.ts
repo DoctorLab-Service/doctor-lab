@@ -3,7 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { ELanguage } from 'src/language/dtos/languages.dto'
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToMany, OneToMany } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
 import { CoreEntity } from 'src/common/entities/core.entity'
 import { Exclude } from 'class-transformer'
 import { Role } from 'src/roles/entities/role.entity'
@@ -99,8 +99,12 @@ export class User extends CoreEntity {
     roles: UserRoles[]
 
     @OneToMany(() => Role, roles => roles.user)
-    @Field(() => [Role])
+    @Field(() => [Role], { defaultValue: [] })
     createdRoles: Role[]
+
+    @OneToMany(() => UserRoles, roles => roles.setTheRole)
+    @Field(() => [UserRoles], { defaultValue: [] })
+    setRoles: UserRoles[]
 
     // @OneToMany(() => Role, roles => roles.user)
     // @Field(() => [Role])

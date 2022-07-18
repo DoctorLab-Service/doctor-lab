@@ -28,8 +28,8 @@ export const notifies: NotifyDto = {
         },
         permission: {
             createSystemRole: 'You do not have permission to create the system role',
-            updateSystemRole: (role: string): string => `You do not have permission to update the ${role} role`,
-            deleteSystemRole: (role: string): string => `You do not have permission to remove the ${role} role`,
+            updateSystemRole: 'You do not have permission to update the role',
+            deleteSystemRole: 'You do not have permission to remove the role',
         },
     },
 }

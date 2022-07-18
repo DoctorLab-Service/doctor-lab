@@ -3,6 +3,7 @@ import { DynamicModule, Global, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Token } from './entities/token.entity'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
+import { LanguageModule } from 'src/language/language.module'
 import { User } from 'src/users/entities/user.entity'
 import { JwtModuleOptions } from './types'
 
@@ -19,7 +20,7 @@ export class JwtModule {
                 },
                 JwtService,
             ],
-            imports: [TypeOrmModule.forFeature([Token, User])],
+            imports: [TypeOrmModule.forFeature([Token, User]), LanguageModule],
             exports: [JwtService],
         }
     }

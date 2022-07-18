@@ -11,15 +11,11 @@ export class MessagesDto {
     readonly [key: string]: MessageDto | string
 }
 export class DeffaultMessages {
-    [key: string]: MessagesDto | MessageDto | MessageFnDto | string
+    [key: string]: MessagesDto | MessageDto | string
 }
 
 export class MessageDto {
-    readonly [key: string]: string | number | MessageFnDto
-}
-
-export interface MessageFnDto {
-    (arg: string | number): string | number
+    readonly [key: string]: string | number
 }
 
 export class SetLanguageMessageParams {

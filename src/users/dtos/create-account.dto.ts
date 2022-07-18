@@ -1,7 +1,18 @@
+import { EDefaultRoles } from 'src/roles/roles.enums'
 import { CoreOutput } from 'src/common/dtos/output.dto'
-import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType } from '@nestjs/graphql'
+import {
+    Field,
+    InputType,
+    IntersectionType,
+    ObjectType,
+    PartialType,
+    PickType,
+    registerEnumType,
+} from '@nestjs/graphql'
 import { User } from '../entities/user.entity'
-import { IsNotEmpty, IsString, Length } from 'class-validator'
+import { IsNotEmpty, IsString } from 'class-validator'
+
+registerEnumType(EDefaultRoles, { name: 'EDefaultRoles' })
 
 @InputType()
 export class NoRequiredInput extends PartialType(PickType(User, ['facebookId', 'googleId'])) {}
@@ -25,9 +36,8 @@ export class CreateAccountInput extends IntersectionType(RequiredInput, NoRequir
     @IsNotEmpty()
     rePassword?: string
 
-    @Field(() => String)
-    @Length(4, 32)
-    role: string
+    @Field(() => EDefaultRoles)
+    role: EDefaultRoles
 }
 
 @ObjectType()

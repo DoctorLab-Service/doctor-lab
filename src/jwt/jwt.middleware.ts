@@ -1,14 +1,18 @@
+import { LanguageService } from 'src/language/language.service'
 import { Injectable, NestMiddleware } from '@nestjs/common'
 import { NextFunction, Request, Response } from 'express'
 import { ForbiddenException } from 'src/exceptions'
-import { defaultErrors } from 'src/language/notifies/default.errors'
 import { UsersService } from 'src/users/users.service'
 import { JWT_TOKEN } from './jwt.config'
 import { JwtService } from './jwt.service'
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-    constructor(private readonly jwtService: JwtService, private readonly usersService: UsersService) {}
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly usersService: UsersService,
+        private readonly languageService: LanguageService,
+    ) {}
     async use(req: Request, res: Response, next: NextFunction) {
         if (JWT_TOKEN in req.headers) {
             const accessToken = req.headers[JWT_TOKEN]
@@ -22,9 +26,17 @@ export class JwtMiddleware implements NestMiddleware {
                 console.log(error.message)
                 if (error.message === 'jwt expired') {
                     await this.jwtService.removeExpiredAccessToken(accessToken.toString())
-                    next(new ForbiddenException({ error: defaultErrors.tokenExpired }))
+                    next(
+                        new ForbiddenException({
+                            token_expired: await this.languageService.setError(['token', 'expired'], 'auth'),
+                        }),
+                    )
                 }
-                next(new ForbiddenException({ error: defaultErrors.auth }))
+                next(
+                    new ForbiddenException({
+                        auth: await this.languageService.setError(['isNotAuth', 'auth'], 'auth'),
+                    }),
+                )
             }
         }
         next()

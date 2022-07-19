@@ -4,9 +4,13 @@ import { AuthGuard } from 'src/auth/auth.guard'
 import { UseGuards } from '@nestjs/common'
 import { UsersService } from '../users.service'
 import { MyAccountOutput } from '../dtos/my-account.dto'
+import { RolesGuard } from 'src/roles/roles.guard'
+import { EDefaultRoles } from 'src/roles/roles.enums'
+import { Roles } from 'src/roles/roles.decorator'
 
+@UseGuards(AuthGuard, RolesGuard)
+@Roles(EDefaultRoles.admin, EDefaultRoles.doctor)
 @Resolver()
-@UseGuards(AuthGuard)
 export class UsersQueries {
     constructor(private readonly usersService: UsersService) {}
 

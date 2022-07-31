@@ -19,9 +19,10 @@ import { VerificationPhone } from './verifications/entities/verification-phone.e
 import { LanguageModule } from './language/language.module'
 import { FilesModule } from './files/files.module'
 import { RolesModule } from './roles/roles.module'
-import { PermissionsModule } from './permissions/permissions.module'
 import { Role } from './roles/entities/role.entity'
 import { UserRoles } from './roles/entities/user_roles.entity'
+// import { MulterModule } from '@nestjs/platform-express'
+// import { memoryStorage } from 'multer'
 
 @Module({
     imports: [
@@ -42,6 +43,12 @@ import { UserRoles } from './roles/entities/user_roles.entity'
                 JWT_REFRESH_SECRET: Joi.string().required(),
                 SENDGRID_API_KEY: Joi.string().required(),
                 SENDGRID_EMAIL: Joi.string().required(),
+                CLOUDINARY_API_KEY: Joi.number().required(),
+                CLOUDINARY_API_SECRET: Joi.string().required(),
+                CLOUDINARY_CLOUD_NAME: Joi.string().required(),
+                CLOUDINARY_UPLOAD_PRESET: Joi.string().required(),
+                CLOUDINARY_API_URL: Joi.string().required(),
+                CLOUDINARY_URL: Joi.string().required(),
             }),
         }),
         TypeOrmModule.forRoot({
@@ -62,23 +69,30 @@ import { UserRoles } from './roles/entities/user_roles.entity'
             autoSchemaFile: true,
             context: ({ req, res }) => ({ req, res }),
         }),
-        UsersModule,
-        CommonModule,
         JwtModule.forRoot({
             accessSecret: process.env.JWT_ACCESS_SECRET,
             refreshSecret: process.env.JWT_REFRESH_SECRET,
         }),
-        AuthModule,
-        VerificationsModule,
         EmailModule.forRoot({
             apiKey: process.env.SENDGRID_API_KEY,
             fromEmail: process.env.SENDGRID_EMAIL,
         }),
+        FilesModule.forRoot({
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET,
+            secure: true, // true if https
+        }),
+        // MulterModule.register({
+        //     storage: memoryStorage,
+        // }),
+        UsersModule,
+        CommonModule,
+        AuthModule,
+        VerificationsModule,
         PhoneModule,
         LanguageModule,
-        FilesModule,
         RolesModule,
-        PermissionsModule,
     ],
 })
 export class AppModule {

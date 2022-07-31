@@ -1,3 +1,4 @@
+import { ValidationException } from './../exceptions/validation.exception'
 import { object } from './../common/helpers'
 import { Inject, Injectable, Optional } from '@nestjs/common'
 import { CONTEXT } from '@nestjs/graphql'
@@ -77,6 +78,7 @@ export class LanguageService {
     language(cLanguage?: string): ELanguage {
         let lng: ELanguage | undefined
         const defaultLanguage = ELanguage.EN
+
         // Set custom language
         if (cLanguage && cLanguage !== undefined) {
             const vLanguage = cLanguage.split('-')[0].toUpperCase()
@@ -104,6 +106,7 @@ export class LanguageService {
                 this.context.req !== undefined
                     ? this.context.req.headers['accept-language']
                     : this.context.headers['accept-language']
+
             if (acceptLanguage) {
                 const alanguage = acceptLanguage.split(',')[1].split(';')[0]
                 const vLanguage = alanguage.split('-')[0].toUpperCase()
@@ -122,7 +125,6 @@ export class LanguageService {
      * @returns service name
      */
     private getServiceName(): string {
-        let serviceName: string
         const arrPath: string[] = []
         const errs = new Error().stack.split('at ')
         // Get  clear src path
@@ -135,13 +137,30 @@ export class LanguageService {
             }
         }
 
+        // Check errors path to filter out files
+        const arrCandidates = arrPath.filter(path => path.includes('.service.ts') || path.includes('.resolver.ts'))
+        const services = arrCandidates.map(c => {
+            let name: string
+            c.split('\\').forEach(cl => {
+                if (cl.includes('.service.ts') || cl.includes('.resolver.ts')) {
+                    if (cl.split('.')[0].length) {
+                        name = cl.split('.')[0]
+                        return
+                    }
+                    return
+                }
+            })
+            return name
+        })
+
         // Check files and set service name
-        const arr = arrPath[arrPath.length - 1].split('\\')
-        const fileName = arr[arr.length - 1].split(':')[0]
-        if (fileName.includes('.service.ts') || fileName.includes('.resolver.ts')) {
-            serviceName = fileName.split('.')[0]
+        const service = services[services.length - 1]
+
+        if (!service) {
+            throw new ValidationException({ service_name_error: 'Service is not exist' })
         }
-        return serviceName || ''
+
+        return service
     }
 
     /**

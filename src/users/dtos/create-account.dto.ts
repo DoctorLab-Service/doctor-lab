@@ -15,7 +15,7 @@ import { IsNotEmpty, IsString } from 'class-validator'
 registerEnumType(EDefaultRoles, { name: 'EDefaultRoles' })
 
 @InputType()
-export class NoRequiredInput extends PartialType(PickType(User, ['facebookId', 'googleId'])) {}
+export class NoRequiredInput extends PartialType(PickType(User, ['gender', 'facebookId', 'googleId'])) {}
 @InputType()
 export class RequiredInput extends PickType(User, [
     'fullname',

@@ -47,8 +47,10 @@ export const defaultErrors: DeffaultMessages = {
         createRole: "Couldn't create role",
         updateRole: "Couldn't update role",
         deleteRole: "Couldn't delete role",
+        upload: 'Failed to upload file(s)',
     },
     isEmpty: {
         all: 'Role update data missing',
+        upload: 'Upload file(s) missing',
     },
 }

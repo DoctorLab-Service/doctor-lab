@@ -10,7 +10,6 @@ export class ValidationPipe implements PipeTransform {
     constructor(serviceName: string) {
         this.serviceName = serviceName
     }
-
     async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
         const errors = {}
         const fields = plainToClass(metadata.metatype, value)

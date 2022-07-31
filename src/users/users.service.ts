@@ -17,6 +17,7 @@ import { ForbiddenException, ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
 import { UserRoles } from 'src/roles/entities/user_roles.entity'
 import { MyAccountOutput } from './dtos/my-account.dto'
+import { FilesService } from 'src/files/files.services'
 
 @Injectable()
 export class UsersService {
@@ -27,6 +28,7 @@ export class UsersService {
         @InjectRepository(VerificationEmail) private readonly verificationEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verificationPhone: Repository<VerificationPhone>,
         private readonly jwt: JwtService,
+        private readonly files: FilesService,
         private readonly emailService: EmailService,
         private readonly phoneService: PhoneService,
         private readonly languageService: LanguageService,
@@ -137,6 +139,7 @@ export class UsersService {
     async myAccount(): Promise<MyAccountOutput> {
         const currentUser: User = await this.jwt.getContextUser(this.context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
+        // await this.files.setAvatar()
         if (!user) {
             throw new ForbiddenException({ auth: await this.languageService.setError(['isNotAuth', 'auth']) })
         }

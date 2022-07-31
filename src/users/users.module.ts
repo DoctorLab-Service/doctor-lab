@@ -11,11 +11,13 @@ import { LanguageModule } from 'src/language/language.module'
 import { UserRoles } from 'src/roles/entities/user_roles.entity'
 import { VerificationEmail } from 'src/verifications/entities/verification-email.entiry'
 import { VerificationPhone } from 'src/verifications/entities/verification-phone.entiry'
+import { FilesModule } from 'src/files/files.module'
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([User, UserRoles, VerificationEmail, VerificationPhone]),
         forwardRef(() => JwtModule),
+        FilesModule,
         EmailModule,
         PhoneModule,
         LanguageModule,

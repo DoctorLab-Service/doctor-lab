@@ -92,10 +92,11 @@ export class AuthService {
     }
 
     async refreshToken({ refreshToken }: RefreshTokenInput): Promise<RefreshTokenOutput> {
-        if (!refreshToken)
+        if (!refreshToken) {
             throw new ForbiddenException({
                 auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
+        }
 
         // Check refresh token in db and validate it
         const userData = await this.jwt.validateRefreshToken(refreshToken)

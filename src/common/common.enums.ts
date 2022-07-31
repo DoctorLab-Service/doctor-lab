@@ -1,13 +1,3 @@
-// /**
-//  * User can set gender
-//  * Default NotChosen
-//  */
-// export enum EGender {
-//     NotChosen = 'Not Choisen',
-//     Male = 'Male',
-//     Female = 'Female',
-// }
-
 /**
  * Base Admin can create and set permissions
  * Default Admin
@@ -28,20 +18,4 @@
 //     Dentist = 'Dentist', // D
 
 //     Patient = 'Patient', // P
-// }
-// /**
-//  * User change Patient or clinic
-//  */
-// export enum EUserRoles {
-//     Patient = 'Patient',
-//     Clinic = 'Clinic',
-//     Admin = 'Admin',
-// }
-
-/**
- * User can set custom lng, or set from client browser
- */
-// export enum ELanguage {
-//     RU = 'RU',
-//     EN = 'EN',
 // }

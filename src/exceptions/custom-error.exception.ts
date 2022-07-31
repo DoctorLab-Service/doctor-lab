@@ -19,7 +19,6 @@ export const CustomErrorException = (consoleMessage?: string, message?: string):
         }
     }
 
-    console.log('')
-    console.error(errorColors, `[CUSTOM_ERROR] ${consoleMessage}: \n`, ` \n ${errorPath.join('')}`)
+    console.error(errorColors, `\n [CUSTOM_ERROR] ${consoleMessage}: \n`, ` \n ${errorPath.join('')}`)
     return message
 }

@@ -9,12 +9,12 @@ export class LenguageInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         const ctxGql = GqlExecutionContext.create(context)
         const ctx = ctxGql.getContext()
-
         // Get Language
         let lng: LanguageService
         ctx ? (lng = new LanguageService(ctx)) : (lng = new LanguageService(undefined, ELanguage.EN))
-
         const body = ctxGql.getArgs()
+
+        console.log(body.input)
         body && body.input
             ? !body.input.language
                 ? (body.input.language = lng.language())

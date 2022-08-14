@@ -22,6 +22,7 @@ import { RolesModule } from './roles/roles.module'
 import { Role } from './roles/entities/role.entity'
 import { UserRoles } from './roles/entities/user_roles.entity'
 import { DefaultRolesMiddleware } from './common/middlewares/default.middleware'
+import { ResetModule } from './reset/reset.module';
 
 @Module({
     imports: [
@@ -89,6 +90,7 @@ import { DefaultRolesMiddleware } from './common/middlewares/default.middleware'
         PhoneModule,
         LanguageModule,
         RolesModule,
+        ResetModule,
     ],
 })
 export class AppModule {

@@ -13,17 +13,20 @@
 
 ### Reset Service
 
+- [] - Reset Entity
 - [] - Reset Password
-- [] - Confirm Password
-- [] - Reset Change Password
+- [] - Change Password
 - [] - Reset Email
+- [] - Change Email
 - [] - Reset Phone
+- [] - Change Phone
   
 ### Users Service
 
 - [x] - Entity
 - [x] - CreateAccount
 - [x] - UpdateAccount
+- [x] - Set Avatar
 - [x] - DeleteAccount
   
 ### Find Service
@@ -37,12 +40,12 @@
 
 - [x] - Role Entity
 - [x] - UserRole Entity
-- [] - CreateRole
-- [] - UpdateRole
-- [] - DeleteRole
-- [] - SetRole
-- [] - RemoveRole
-- [] - FindByRole
+- [x] - CreateRole
+- [x] - UpdateRole
+- [x] - DeleteRole
+- [x] - SetUserRole
+- [x] - DeleteUserRole
+- [x] - FindAllRole
 
 ### Permissions Service
 
@@ -63,6 +66,5 @@
 
 ### Files Service
 
-- [] - Upload File
-- [] - Update File
-- [] - Delete File
+- [x] - Upload File
+- [x] - Delete File

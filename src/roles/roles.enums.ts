@@ -4,6 +4,7 @@
 export enum EDefaultRoles {
     patient = 'patient',
     doctor = 'doctor',
+    dentist = 'dentist',
     admin = 'admin',
 }
 

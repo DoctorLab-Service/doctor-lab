@@ -22,6 +22,7 @@ export class VerificationsService {
 
     /**
      * Verification phone by code
+     * @param body code
      */
     async verificationEmail({ code }: VerificationEmailInput): Promise<VerificationEmailOutput> {
         const verification = await this.verifyEmail.findOne({ where: { code }, ...relationsConfig.verifications })
@@ -45,6 +46,7 @@ export class VerificationsService {
 
     /**
      * Verification phone by code
+     * @param body code
      */
     async verificationPhone({ code }: VerificationPhoneInput): Promise<VerificationPhoneOutput> {
         const verification = await this.verifyPhone.findOne({ where: { code }, ...relationsConfig.verifications })

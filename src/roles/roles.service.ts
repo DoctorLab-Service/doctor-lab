@@ -131,6 +131,11 @@ export class RolesService {
         }
     }
 
+    /**
+     * Create new role
+     * @param body roles data
+     * @returns created role
+     */
     async createRole(body: CreateRoleInput): Promise<CreateRoleOutput> {
         const checkRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
         if (checkRole)
@@ -169,6 +174,11 @@ export class RolesService {
         }
     }
 
+    /**
+     * Update role by id
+     * @param body roles data, and id
+     * @returns updated role
+     */
     async updateRole(body: UpdateRoleInput): Promise<UpdateRoleOutput> {
         // Find role by id
         const role = await this.roles.findOne({ where: { id: body.id } })
@@ -240,6 +250,11 @@ export class RolesService {
         }
     }
 
+    /**
+     * Delete role by id
+     * @param body role's id
+     * @returns boolean
+     */
     async deleteRole({ id }: DeleteRoleInput): Promise<DeleteRoleOutput> {
         const dRole = await this.roles.findOne({ where: { id } })
         if (!dRole) throw new ValidationException({ role: await this.languageService.setError(['isNot', 'foundRole']) })
@@ -275,10 +290,13 @@ export class RolesService {
         }
     }
 
-    /*
-        ! NO ALL ALL USERS WITH ADMIN OR DOCTOR CAN SET ROLE
-        TODO USING PERMISSIONS
-    */
+    /**
+     * Set user role by user id and role
+     * @param body user id, and role
+     * @returns role, user
+     * ! NO ALL ALL USERS WITH ADMIN OR DOCTOR CAN SET ROLE
+     * TODO USING PERMISSIONS
+     */
     async setUserRole(body: SetUserRoleInput, system = false): Promise<SetUserRoleOutput> {
         // Check candidat for role
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
@@ -314,10 +332,13 @@ export class RolesService {
         return { ok: true, role, user }
     }
 
-    /*
-        ! NO ALL ALL USERS WITH ADMIN OR DOCTOR CAN SET ROLE
-        TODO USING PERMISSIONS
-    */
+    /**
+     * Delete user role by user id and role
+     * @param body user id, and role
+     * @returns true if deleted
+     * ! NO ALL ALL USERS WITH ADMIN OR DOCTOR CAN SET ROLE
+     * TODO USING PERMISSIONS
+     */
     async deleteUserRole(body: DeleteUserRoleInput): Promise<DeleteUserRoleOutput> {
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
         if (!candidate) {
@@ -340,6 +361,12 @@ export class RolesService {
         }
     }
 
+    /**
+     * Find all role
+     * @returns roles array
+     * ! NO ALL ALL USERS WITH ADMIN OR DOCTOR CAN SET ROLE
+     * TODO USING PERMISSIONS
+     */
     async findAllRoles(): Promise<FindAllRolesOutput> {
         // ! TEST this test function
         // this._deffaultRoles()

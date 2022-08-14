@@ -12,15 +12,18 @@ import { UserRoles } from 'src/roles/entities/user_roles.entity'
 import { VerificationEmail } from 'src/verifications/entities/verification-email.entiry'
 import { VerificationPhone } from 'src/verifications/entities/verification-phone.entiry'
 import { FilesModule } from 'src/files/files.module'
+import { RolesModule } from 'src/roles/roles.module'
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([User, UserRoles, VerificationEmail, VerificationPhone]),
         forwardRef(() => JwtModule),
+        forwardRef(() => RolesModule),
         FilesModule,
         EmailModule,
         PhoneModule,
         LanguageModule,
+        RolesModule,
     ],
     providers: [UsersService, UsersMutations, UsersQueries],
     exports: [UsersService],

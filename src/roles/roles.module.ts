@@ -1,5 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { RolesService } from './roles.service'
 import { Role } from './entities/role.entity'
 import { UserRoles } from './entities/user_roles.entity'
@@ -11,7 +11,12 @@ import { UsersModule } from 'src/users/users.module'
 import { JwtModule } from 'src/jwt/jwt.module'
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Role, UserRoles, User]), LanguageModule, UsersModule, JwtModule],
+    imports: [
+        TypeOrmModule.forFeature([Role, UserRoles, User]),
+        forwardRef(() => UsersModule),
+        LanguageModule,
+        JwtModule,
+    ],
     providers: [RolesService, RolesMutations, RolesQueries],
     exports: [RolesService],
 })

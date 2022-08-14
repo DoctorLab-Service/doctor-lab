@@ -4,17 +4,7 @@ import { User } from '../entities/user.entity'
 
 @InputType()
 export class UpdateAccountInput extends PartialType(
-    PickType(User, [
-        'avatar',
-        'fullname',
-        'birthdate',
-        'country',
-        'gender',
-        'state',
-        'address',
-        'experience',
-        'language',
-    ]),
+    PickType(User, ['fullname', 'birthdate', 'country', 'gender', 'state', 'address', 'experience', 'language']),
 ) {}
 
 @ObjectType()

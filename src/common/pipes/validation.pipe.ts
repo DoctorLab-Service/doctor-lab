@@ -2,6 +2,7 @@ import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
 import { ValidationException } from 'src/exceptions'
+import { ELanguage } from 'src/language/dtos/languages.dto'
 import { LanguageService } from 'src/language/language.service'
 
 @Injectable()
@@ -12,12 +13,13 @@ export class ValidationPipe implements PipeTransform {
     }
     async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
         const errors = {}
-        const fields = plainToClass(metadata.metatype, value)
+        const fields = plainToClass(metadata.metatype, value) || {}
         /**
          * Set custom valid messages on languages
          */
         if (fields !== undefined) {
-            const languageService = new LanguageService(undefined, fields.language)
+            const language = fields.language ? fields.language : ELanguage.EN
+            const languageService = new LanguageService(undefined, language)
 
             const setMessage = async (property: [string, string?], key: string): Promise<void> => {
                 const errorsMessage = await languageService.errors([this.serviceName], key)

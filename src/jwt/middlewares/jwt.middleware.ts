@@ -3,8 +3,8 @@ import { Injectable, NestMiddleware } from '@nestjs/common'
 import { NextFunction, Request, Response } from 'express'
 import { ForbiddenException } from 'src/exceptions'
 import { UsersService } from 'src/users/users.service'
-import { JWT_TOKEN } from './jwt.config'
-import { JwtService } from './jwt.service'
+import { JWT_TOKEN } from '../jwt.config'
+import { JwtService } from '../jwt.service'
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
@@ -20,7 +20,7 @@ export class JwtMiddleware implements NestMiddleware {
                 const decoded = await this.jwtService.validateAccessToken(accessToken.toString())
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
                     const user = await this.usersService.findById({ id: decoded.id })
-                    req['user'] = user
+                    req['user'] = user.user
                 }
             } catch (error) {
                 console.log(error.message)

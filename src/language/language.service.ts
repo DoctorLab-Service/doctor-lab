@@ -1,5 +1,5 @@
-import { ValidationException } from './../exceptions/validation.exception'
-import { object } from './../common/helpers'
+import { ValidationException } from 'src/exceptions/validation.exception'
+import { object } from 'src/common/helpers'
 import { Inject, Injectable, Optional } from '@nestjs/common'
 import { CONTEXT } from '@nestjs/graphql'
 import { LANGUAGE } from 'src/common/common.constants'
@@ -172,8 +172,8 @@ export class LanguageService {
     async setError(params: [string, string?], service?: string): Promise<string> {
         const defaultService = 'error'
         const defErrorMessage = 'An error has occurred'
-
         let serviceName: string = service || this.getServiceName()
+
         let errors: Messages | Record<string, any> = await this.translate(defaultService, [serviceName])
         // Fetch services name
         const services: string[] = await this.fetchServiceNames()
@@ -185,13 +185,13 @@ export class LanguageService {
         }
 
         // Check Errors exists by params[0 ]
-        if (object.empty(errors)) {
+        if (!object.isEmpty(errors)) {
             // Check Errors exists by params[0]
             if (!(params[0] in errors[serviceName])) {
                 const services: string[] = await this.fetchServiceNames()
                 const messages: Messages = await this.translate(defaultService, services)
 
-                if (object.empty(messages)) {
+                if (!object.isEmpty(messages)) {
                     services.forEach(s => {
                         if (params[0] in messages[s]) {
                             serviceName = s
@@ -236,7 +236,7 @@ export class LanguageService {
 
         const defaultErrorMsg = params[1] ? defaultErrors[params[0]][params[1]] : defaultErrors[params[0]]
 
-        return object.empty(errors) ? errorMsg : defaultErrorMsg
+        return !object.isEmpty(errors) ? errorMsg : defaultErrorMsg
     }
 
     /**

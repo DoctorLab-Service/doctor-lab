@@ -12,6 +12,8 @@ async function bootstrap() {
     })
     app.use(cookieParser())
     app.use(graphqlUploadExpress())
+
+    // Interceptors
     app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector))) // Interceptor for @Exclude({ toPlainOnly: true })
     await app.listen(8000)
 }

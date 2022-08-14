@@ -10,6 +10,18 @@ export class AuthGuard implements CanActivate {
         const gqlContext = GqlExecutionContext.create(context).getContext()
         const user = gqlContext.req['user']
         if (!user) return false
+        if (!user.verfiedPhone) {
+            // ? Info if dont verified user
+            console.log('=============================================')
+            console.log()
+            console.log()
+            console.log('[ AUTH ]')
+            console.log('User is not verified phone')
+            console.log()
+            console.log()
+            console.log('=============================================')
+            return false
+        }
         return true
     }
 }

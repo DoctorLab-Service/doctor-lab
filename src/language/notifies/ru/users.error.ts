@@ -34,6 +34,7 @@ export const notifies: NotifyDto = {
         isNot: {
             foundUser: 'Пользователь не найден',
             foundUsers: 'Ничего не найдено',
+            createSystemUser: 'Не удалось создать системную учетную запись',
             createUser: 'Не удалось создать учетную запись',
             updateUser: 'Не удалось обновить учетную запись',
             deleteUser: 'Не удалось удалить учетную запись',

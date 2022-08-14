@@ -1,3 +1,4 @@
+import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { UpdateAccountInput, UpdateAccountOutput } from '../dtos/update-account.dto'
 import { DeleteAccountOutput } from '../dtos/delete-account.dto'
@@ -24,8 +25,11 @@ export class UsersMutations {
     @UseGuards(AuthGuard)
     @Mutation(() => UpdateAccountOutput)
     @UsePipes(new ValidationPipe('users'))
-    async updateAccount(@Args('input') body: UpdateAccountInput): Promise<UpdateAccountOutput> {
-        return this.usersService.updateAccount(body)
+    async updateAccount(
+        @Args('input') body: UpdateAccountInput,
+        @Args({ name: 'file', nullable: true, type: () => GraphQLUpload }) file: FileUpload | null,
+    ): Promise<UpdateAccountOutput> {
+        return this.usersService.updateAccount(body, file)
     }
 
     @UseGuards(AuthGuard)

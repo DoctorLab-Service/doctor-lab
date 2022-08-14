@@ -1,10 +1,30 @@
 import { WithoutProperties } from './types'
 
 export class CustomObject {
-    empty(object: object): boolean {
-        return JSON.stringify(object || {}) !== '{}'
+    /**
+     * Check objec to empty or not if empry return true
+     * @param obj any object
+     * @returns boolean if empty return true if not return false
+     */
+    isEmpty(obj: object): boolean {
+        return JSON.stringify(obj) === '{}'
     }
 
+    /**
+     * Check object length
+     * @param obj any object
+     * @returns count of objtct keys length
+     */
+    length(obj: object): number {
+        return Object.keys(obj).length
+    }
+
+    /**
+     * Get object without [keys]
+     * @param obj object
+     * @param keys array keys
+     * @returns Return new object without keys
+     */
     withoutProperties(obj: object, keys: string[]): WithoutProperties {
         const target = {}
         for (const i in obj) {

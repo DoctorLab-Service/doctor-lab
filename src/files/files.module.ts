@@ -2,7 +2,7 @@ import { LanguageModule } from 'src/language/language.module'
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
 import { JwtModule } from 'src/jwt/jwt.module'
-import { FilesModuleCloudinatyConfig } from './dtos/files.dto'
+import { FilesModuleCloudinatyConfig } from './files'
 import { FilesResolver } from './files.resolvers'
 import { FilesService } from './files.services'
 

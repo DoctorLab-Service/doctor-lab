@@ -21,6 +21,7 @@ export const notifies: NotifyDto = {
         isNot: {
             foundRole: 'Роль не найдена',
             foundRoles: 'Ролей не найдено',
+            createDefaultRole: 'Не удалось создать дефолтную роль',
             createRole: 'Не удалось создать роль',
             updateRole: 'Не удалось обновить роль',
             deleteRole: 'Не удалось удалить роль',

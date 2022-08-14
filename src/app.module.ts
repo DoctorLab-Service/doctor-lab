@@ -1,4 +1,4 @@
-import { JwtMiddleware } from './jwt/jwt.middleware'
+import { JwtMiddleware } from './jwt/middlewares/jwt.middleware'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ConfigModule } from '@nestjs/config'
@@ -21,8 +21,7 @@ import { FilesModule } from './files/files.module'
 import { RolesModule } from './roles/roles.module'
 import { Role } from './roles/entities/role.entity'
 import { UserRoles } from './roles/entities/user_roles.entity'
-// import { MulterModule } from '@nestjs/platform-express'
-// import { memoryStorage } from 'multer'
+import { DefaultRolesMiddleware } from './common/middlewares/default.middleware'
 
 @Module({
     imports: [
@@ -83,9 +82,6 @@ import { UserRoles } from './roles/entities/user_roles.entity'
             api_secret: process.env.CLOUDINARY_API_SECRET,
             secure: true, // true if https
         }),
-        // MulterModule.register({
-        //     storage: memoryStorage,
-        // }),
         UsersModule,
         CommonModule,
         AuthModule,
@@ -97,8 +93,8 @@ import { UserRoles } from './roles/entities/user_roles.entity'
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(JwtMiddleware).forRoutes({
-            path: '/auth',
+        consumer.apply(DefaultRolesMiddleware, JwtMiddleware).forRoutes({
+            path: '*',
             method: RequestMethod.ALL,
         })
     }

@@ -12,7 +12,11 @@ export class FilesResolver {
         @Args({ name: 'file', type: () => GraphQLUpload })
         file: FileUpload,
     ): Promise<UploadFilesOutput> {
-        return this.filesService.upload(file)
+        return this.filesService.uploadFiles(file, {
+            userId: 125,
+            key: 'avatar',
+            fullData: true,
+        })
     }
 
     @Mutation(() => UploadFilesOutput)
@@ -20,6 +24,10 @@ export class FilesResolver {
         @Args({ name: 'files', type: () => [GraphQLUpload] })
         files: FileUpload[],
     ): Promise<UploadFilesOutput> {
-        return this.filesService.upload(files)
+        return this.filesService.uploadFiles(files, {
+            userId: 125,
+            key: 'avatar',
+            fullData: true,
+        })
     }
 }

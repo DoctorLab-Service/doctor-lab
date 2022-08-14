@@ -35,7 +35,7 @@ export class Role extends CoreEntity {
     @Field(() => ERolesType)
     type: ERolesType
 
-    @ManyToOne(() => User, user => user.createdRoles, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, user => user.createdRoles, { nullable: true, onDelete: 'CASCADE' })
     @JoinColumn()
     user: User
 

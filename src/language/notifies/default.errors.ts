@@ -39,11 +39,13 @@ export const defaultErrors: DeffaultMessages = {
     },
     isNot: {
         foundUser: 'The user is not found',
+        createSystemUser: "Couldn't create system account",
         createUser: "Couldn't create account",
         updateUser: "Couldn't update account",
         deleteUser: "Couldn't deleted account",
         foundRole: 'The role is not found',
         foundRoles: 'Roles is not found',
+        createDefaultRole: "Couldn't create default role",
         createRole: "Couldn't create role",
         updateRole: "Couldn't update role",
         deleteRole: "Couldn't delete role",

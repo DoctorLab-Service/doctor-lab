@@ -18,7 +18,7 @@ registerEnumType(EGender, { name: 'EGender' })
 @Entity('users')
 export class User extends CoreEntity {
     @Column({ nullable: true })
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     avatar: string
 
     @Column()
@@ -27,22 +27,22 @@ export class User extends CoreEntity {
     fullname: string
 
     @Column({ nullable: true })
-    @Field(() => Date)
+    @Field(() => Date, { nullable: true })
     @IsDate()
     birthdate: Date
 
     @Column({ nullable: true })
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @MaxLength(64)
     country: string
 
     @Column({ nullable: true })
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @MaxLength(64)
     state: string
 
     @Column({ nullable: true })
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @MaxLength(64)
     address: string
 

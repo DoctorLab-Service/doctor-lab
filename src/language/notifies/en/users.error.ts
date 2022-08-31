@@ -9,11 +9,14 @@ export const notifies: NotifyDto = {
             email: 'There is user with that email already',
         },
         isNotExist: {
+            user: 'User is not found',
             phone: 'No user found with this phone number',
             email: 'User with this email address not found',
         },
         isEmpty: {
+            reEmail: 'Please repeat your email',
             rePassword: 'Please repeat your password',
+            fields: 'Fields missing',
         },
         isLength: {
             fullname: 'Fullname must be longer than or equal to 3 and no longer than 64 characters',
@@ -28,6 +31,7 @@ export const notifies: NotifyDto = {
             phone: 'Invalid phone number',
             email: 'Invalid email address',
             passwordEqual: "Passwords don't match",
+            emailEqual: 'Email address does not match',
             googleId: 'Invalid google',
             facebookId: 'Invalid facebook',
         },
@@ -38,6 +42,11 @@ export const notifies: NotifyDto = {
             createUser: "Couldn't create account",
             updateUser: "Couldn't update account",
             deleteUser: "Couldn't deleted account",
+        },
+        isChange: {
+            email: 'Unable to change email address',
+            phone: 'Failed to change phone number',
+            password: 'Unable to change password',
         },
     },
 }

@@ -1,5 +1,5 @@
 import { ELanguage } from 'src/language/dtos/languages.dto'
-import { User } from 'src/users/entities/user.entity'
+import { User } from 'src/users/entities'
 
 export class NotifyDto {
     readonly serviceName: string

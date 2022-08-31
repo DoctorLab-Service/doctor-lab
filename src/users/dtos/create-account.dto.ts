@@ -9,7 +9,7 @@ import {
     PickType,
     registerEnumType,
 } from '@nestjs/graphql'
-import { User } from '../entities/user.entity'
+import { User } from '../entities'
 import { IsNotEmpty, IsString } from 'class-validator'
 
 registerEnumType(EDefaultRoles, { name: 'EDefaultRoles' })
@@ -31,10 +31,10 @@ export class RequiredInput extends PickType(User, [
 
 @InputType()
 export class CreateAccountInput extends IntersectionType(RequiredInput, NoRequiredInput) {
-    @Field(() => String, { nullable: true })
+    @Field(() => String)
     @IsString()
     @IsNotEmpty()
-    rePassword?: string
+    rePassword: string
 
     @Field(() => EDefaultRoles)
     role: EDefaultRoles

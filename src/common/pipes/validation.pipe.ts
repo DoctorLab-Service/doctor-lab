@@ -22,15 +22,20 @@ export class ValidationPipe implements PipeTransform {
             const languageService = new LanguageService(undefined, language)
 
             const setMessage = async (property: [string, string?], key: string): Promise<void> => {
-                const errorsMessage = await languageService.errors([this.serviceName], key)
-                errors[property[0]] = errorsMessage[property[1] || property[0]]
+                errors[property[0]] = await languageService.setError(
+                    [key, property[1] || property[0]],
+                    this.serviceName,
+                )
             }
+            // const setMessage = async (property: [string, string?], key: string): Promise<void> => {
+            //     const errorsMessage = await languageService.errors([this.serviceName], key)
+            //     errors[property[0]] = errorsMessage[property[1] || property[0]]
+            // }
 
             /**
              * Validate fields
              */
             const vErrors = await validate(fields)
-
             if (vErrors.length) {
                 for (let i = 0; i < vErrors.length; i++) {
                     const key = Object.keys(vErrors[i].constraints)[0]
@@ -52,6 +57,14 @@ export class ValidationPipe implements PipeTransform {
                 if (field === 'rePassword') {
                     if (fields.password !== fields[field]) {
                         await setMessage([field, 'passwordEqual'], 'isValid')
+                    }
+                }
+                /**
+                 * Validation password to equal with rePassword
+                 */
+                if (field === 'reEmail') {
+                    if (fields.email !== fields[field]) {
+                        await setMessage([field, 'emailEqual'], 'isValid')
                     }
                 }
             }

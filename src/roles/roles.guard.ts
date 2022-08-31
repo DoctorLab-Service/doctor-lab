@@ -33,7 +33,6 @@ export class RolesGuard implements CanActivate {
                 if (mainUserRoles.length) {
                     // Check required toles by  exists if exist main role
                     if (requiredRoles.length) {
-                        console.log(requiredRoles)
                         const requiredUserRoles = []
                         requiredRoles.forEach(rRole => {
                             currentUser.roles.filter(cRole => {

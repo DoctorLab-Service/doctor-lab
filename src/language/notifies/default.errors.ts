@@ -14,12 +14,14 @@ export const defaultErrors: DeffaultMessages = {
         email: 'There is user with that email already',
     },
     isNotExist: {
+        user: 'User is not found',
         role: 'Role does not exist',
         phone: 'No user found with this phone number',
         email: 'User with this email address not found',
     },
     isValid: {
         passwordEqual: "Passwords don't match",
+        emailEqual: 'Email address does not match',
         googleId: 'Invalid google',
         facebookId: 'Invalid facebook',
     },
@@ -32,10 +34,11 @@ export const defaultErrors: DeffaultMessages = {
         deleteSystemRole: `You do not have permission to remove the system role`,
     },
     isNotVerify: {
+        email: 'Email is not verified',
+        phone: 'Phone is not verified',
         noSendEmail: 'Unable to send you email',
         noSendSMS: 'Unable to send you SMS',
-        email: 'Not a valid verification link',
-        phone: 'Invalid code',
+        code: 'Invalid code',
     },
     isNot: {
         foundUser: 'The user is not found',
@@ -54,5 +57,10 @@ export const defaultErrors: DeffaultMessages = {
     isEmpty: {
         all: 'Role update data missing',
         upload: 'Upload file(s) missing',
+    },
+    isChange: {
+        email: 'Unable to change email address',
+        phone: 'Failed to change phone number',
+        password: 'Unable to change password',
     },
 }

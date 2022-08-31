@@ -1,26 +1,24 @@
 import { ForbiddenException, ValidationException } from 'src/exceptions'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { JwtService } from 'src/jwt/jwt.service'
-import { User } from 'src/users/entities/user.entity'
+import { TokenService } from 'src/token/token.service'
 import { Repository } from 'typeorm'
 import { LoginInput, LoginOutput } from './dtos/login.dto'
 import { LogoutInput, LogoutOutput } from './dtos/logout.dto'
 import { RefreshTokenInput, RefreshTokenOutput } from './dtos/refresh-token.dto'
 import { LanguageService } from 'src/language/language.service'
-import { Messages } from 'src/language/dtos/notify.dto'
+import { User } from 'src/users/entities'
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
-        private readonly jwt: JwtService,
+        private readonly token: TokenService,
         private readonly languageService: LanguageService,
     ) {}
 
     async login(body: LoginInput): Promise<LoginOutput> {
         let user: User
-
         // Login by email
         if (body.email) {
             user = await this.users.findOne({ where: { email: body.email } })
@@ -62,14 +60,15 @@ export class AuthService {
             })
 
         const passwordCorrect = await user.checkPassword(body.password)
+
         if (!passwordCorrect)
             throw new ValidationException({
                 password: await this.languageService.setError(['isValid', 'passwordEqual']),
             })
 
         // Generate and save token
-        const tokens = await this.jwt.generateTokens({ id: user.id })
-        this.jwt.saveToken(user.id, tokens)
+        const tokens = await this.token.generateTokens({ id: user.id })
+        this.token.saveToken(user.id, tokens)
 
         return { ok: Boolean(user), ...tokens, user }
     }
@@ -81,7 +80,7 @@ export class AuthService {
             })
 
         try {
-            await this.jwt.removeToken(refreshToken)
+            await this.token.removeToken(refreshToken)
             return { ok: true }
         } catch (error) {
             console.log(error)
@@ -99,8 +98,8 @@ export class AuthService {
         }
 
         // Check refresh token in db and validate it
-        const userData = await this.jwt.validateRefreshToken(refreshToken)
-        const tokenFromDb = await this.jwt.findToken(refreshToken)
+        const userData = await this.token.validateRefreshToken(refreshToken)
+        const tokenFromDb = await this.token.findToken(refreshToken)
         if (!userData || !tokenFromDb)
             throw new ForbiddenException({
                 auth: await this.languageService.setError(['isNotAuth', 'auth']),
@@ -108,8 +107,8 @@ export class AuthService {
 
         try {
             const user = await this.users.findOne({ where: { id: userData.id } })
-            const tokens = this.jwt.generateTokens({ id: user.id })
-            await this.jwt.saveToken(user.id, tokens)
+            const tokens = this.token.generateTokens({ id: user.id })
+            await this.token.saveToken(user.id, tokens)
 
             return { ok: true, ...tokens, user }
         } catch (error) {

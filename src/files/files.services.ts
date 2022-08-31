@@ -45,7 +45,7 @@ export class FilesService {
     }
 
     async deleteFiles(userId: number): Promise<DeleteFilesOutput> {
-        this.cloudinary.deleteUserFile(userId)
-        return { ok: true }
+        const deletedFiles = this.cloudinary.deleteUserFile(userId)
+        return { ok: Boolean(deletedFiles) }
     }
 }

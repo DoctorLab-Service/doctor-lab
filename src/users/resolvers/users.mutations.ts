@@ -6,17 +6,18 @@ import { CreateAccountInput, CreateAccountOutput } from '../dtos/create-account.
 import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { ValidationPipe } from 'src/common/pipes/validation.pipe'
-import { AccessTokenCookieInterceptor } from 'src/jwt/interceptors/cookie-token.interceptor'
-import { ClearTokenCookieInterceptor } from 'src/jwt/interceptors/clear-cookie-token.interceptor'
+import { AccessTokenCookieInterceptor, ClearTokenCookieInterceptor } from 'src/token/interceptors'
 import { LenguageInterceptor } from 'src/language/language.interceptor'
 import { UsersService } from '../users.service'
+import { ChangeOutput, ChangeEmailInput, ChangePasswordInput, ChangePhoneInput } from '../dtos'
 
 @Resolver()
+@UseInterceptors(new LenguageInterceptor())
 export class UsersMutations {
     constructor(private readonly usersService: UsersService) {}
 
     @Mutation(() => CreateAccountOutput)
-    @UseInterceptors(new LenguageInterceptor(), new AccessTokenCookieInterceptor())
+    @UseInterceptors(new AccessTokenCookieInterceptor())
     @UsePipes(new ValidationPipe('users'))
     async createAccount(@Args('input') body: CreateAccountInput): Promise<CreateAccountOutput> {
         return this.usersService.createAccount(body)
@@ -37,5 +38,23 @@ export class UsersMutations {
     @UseInterceptors(new ClearTokenCookieInterceptor())
     async deleteAccount(): Promise<DeleteAccountOutput> {
         return this.usersService.deleteAccount()
+    }
+
+    @Mutation(() => ChangeOutput)
+    @UsePipes(new ValidationPipe('users'))
+    async changeEmail(@Args('input') body: ChangeEmailInput): Promise<ChangeOutput> {
+        return this.usersService.changeEmail(body)
+    }
+
+    @Mutation(() => ChangeOutput)
+    @UsePipes(new ValidationPipe('users'))
+    async changePassword(@Args('input') body: ChangePasswordInput): Promise<ChangeOutput> {
+        return this.usersService.changePassword(body)
+    }
+
+    @Mutation(() => ChangeOutput)
+    @UsePipes(new ValidationPipe('users'))
+    async changePhone(@Args('input') body: ChangePhoneInput): Promise<ChangeOutput> {
+        return this.usersService.changePhone(body)
     }
 }

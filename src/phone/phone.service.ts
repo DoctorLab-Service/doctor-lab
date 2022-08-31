@@ -22,9 +22,32 @@ export class PhoneService {
     }
 
     /**
-     *  Send verification sms with code
+     * Send verification sms with code
+     * @param to recipient phone address
+     * @param code code
+     * @returns boolean true if successful, false if not send
      */
     async sendVerificationSMS(to: string, code: string): Promise<boolean> {
-        return this.sendSMS(to, `Your verification key is: ${code}`)
+        return this.sendSMS(to, `Your verification code is: ${code}`)
+    }
+
+    /**
+     * Send recovery sms with code
+     * @param to recipient phone address
+     * @param code code
+     * @returns boolean true if successful, false if not send
+     */
+    async sendPasswordRecoverySMS(to: string, code: string): Promise<boolean> {
+        return this.sendSMS(to, `Your password recovery code is: ${code}`)
+    }
+
+    /**
+     * Send sms with code for change password
+     * @param to recipient phone address
+     * @param code code
+     * @returns boolean true if successful, false if not send
+     */
+    async sendChangePasswordSMS(to: string, code: string): Promise<boolean> {
+        return this.sendSMS(to, `Your code for change password is: ${code}`)
     }
 }

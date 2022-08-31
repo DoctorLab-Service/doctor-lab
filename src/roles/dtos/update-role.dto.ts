@@ -1,4 +1,4 @@
-import { Role } from 'src/roles/entities/role.entity'
+import { Role } from 'src/roles/entities'
 import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType } from '@nestjs/graphql'
 import { CoreOutput } from 'src/common/dtos/output.dto'
 

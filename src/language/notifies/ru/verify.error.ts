@@ -5,10 +5,11 @@ export const notifies: NotifyDto = {
     language: 'RU',
     messages: {
         isNotVerify: {
+            email: 'Электронная почта не подтверждена',
+            phone: 'Номер телефона не подтвержден',
             noSendEmail: 'Не удалось отправить вам сообщение на электронную почту',
             noSendSMS: 'Не удалось отправить вам смс',
-            email: 'Не валидная ссылка',
-            phone: 'Не верный код',
+            code: 'Не верный код',
         },
     },
 }

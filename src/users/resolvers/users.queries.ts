@@ -9,7 +9,7 @@ import { EDefaultRoles } from 'src/roles/roles.enums'
 import { Roles } from 'src/roles/roles.decorator'
 
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(EDefaultRoles.admin, EDefaultRoles.doctor)
+@Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist)
 @Resolver()
 export class UsersQueries {
     constructor(private readonly usersService: UsersService) {}

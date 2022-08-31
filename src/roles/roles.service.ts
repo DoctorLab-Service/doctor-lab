@@ -5,20 +5,19 @@ import { SetUserRoleInput, SetUserRoleOutput } from './dtos/set-user-role.dto'
 import { Inject, Injectable } from '@nestjs/common'
 import { CONTEXT } from '@nestjs/graphql'
 import { InjectRepository } from '@nestjs/typeorm'
-import { ForbiddenException, ValidationException } from 'src/exceptions'
+import { ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
-import { User } from 'src/users/entities/user.entity'
 import { Repository } from 'typeorm'
 import { CreateRoleInput, CreateRoleOutput } from './dtos/create-role.dto'
 import { DeleteRoleInput, DeleteRoleOutput } from './dtos/delete-role.dto'
 import { FindAllRolesOutput } from './dtos/find.dto'
 import { UpdateRoleInput, UpdateRoleOutput } from './dtos/update-role.dto'
-import { Role } from './entities/role.entity'
 import { DeleteUserRoleInput, DeleteUserRoleOutput } from './dtos/delete-user-role.dto'
-import { UserRoles } from './entities/user_roles.entity'
 import { string } from 'src/common/helpers'
 import { relationsConfig } from 'src/common/configs'
-import { JwtService } from 'src/jwt/jwt.service'
+import { TokenService } from 'src/token/token.service'
+import { User } from 'src/users/entities'
+import { UserRoles, Role } from './entities'
 
 @Injectable()
 export class RolesService {
@@ -28,7 +27,7 @@ export class RolesService {
         @InjectRepository(UserRoles) private readonly userRoles: Repository<UserRoles>,
         @InjectRepository(Role) private readonly roles: Repository<Role>,
         private readonly languageService: LanguageService,
-        private readonly jwt: JwtService,
+        private readonly token: TokenService,
     ) {}
 
     /**
@@ -66,7 +65,6 @@ export class RolesService {
                     try {
                         for (const key in _deffaultRoles) {
                             await existedRoles.forEach(async el => {
-                                console.log(key, 'key')
                                 if (el.role !== key) {
                                     await this.roles.save(
                                         this.roles.create({
@@ -97,7 +95,6 @@ export class RolesService {
             const _createDefaultRoles = async (_deffaultRoles: object): Promise<void> => {
                 try {
                     for (const key in _deffaultRoles) {
-                        console.log(_deffaultRoles[key])
                         await this.roles.save(
                             this.roles.create({
                                 role: key,
@@ -146,7 +143,7 @@ export class RolesService {
         // Succes to create system role
         if (body.type === ERolesType.system) {
             // Check current user role by existing systems roles
-            const currentUser: User = await this.jwt.getContextUser(this.context)
+            const currentUser: User = await this.token.getContextUser(this.context)
             const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
 
             if (!existSystemRole.length) {
@@ -155,12 +152,13 @@ export class RolesService {
                 })
             }
         }
-        const currentUser: User = await this.jwt.getContextUser(this.context)
+        const currentUser: User = await this.token.getContextUser(this.context)
         const user = await this.users.findOne({ where: { id: currentUser.id } })
-        if (!user)
-            throw new ForbiddenException({
-                auth: await this.languageService.setError(['isNotAuth', 'auth']),
+        if (!user) {
+            throw new ValidationException({
+                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
+        }
 
         // Create role
         try {
@@ -189,7 +187,7 @@ export class RolesService {
         }
 
         // Check current user role by existing systems roles
-        const currentUser: User = await this.jwt.getContextUser(this.context)
+        const currentUser: User = await this.token.getContextUser(this.context)
         const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
 
         // Check user, if he owner role or have permisiion to updatind role
@@ -260,7 +258,7 @@ export class RolesService {
         if (!dRole) throw new ValidationException({ role: await this.languageService.setError(['isNot', 'foundRole']) })
 
         // Check current user role by existing systems roles
-        const currentUser: User = await this.jwt.getContextUser(this.context)
+        const currentUser: User = await this.token.getContextUser(this.context)
         const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
 
         // Check user, if he owner role or have permisiion to updatind role
@@ -282,8 +280,8 @@ export class RolesService {
 
         // Delete role
         try {
-            // await this.roles.delete(id)
-            return { ok: true }
+            const deletedRole = await this.roles.delete(id)
+            return { ok: Boolean(deletedRole.affected > 0) }
         } catch (error) {
             console.log(error)
             throw new ValidationException({ role: await this.languageService.setError(['isNot', 'deleteRole']) })
@@ -307,11 +305,11 @@ export class RolesService {
 
         let userSetTheRole: User
         if (!system) {
-            const currentUser: User = await this.jwt.getContextUser(this.context)
+            const currentUser: User = await this.token.getContextUser(this.context)
             userSetTheRole = await this.users.findOne({ where: { id: currentUser.id } })
             if (!userSetTheRole) {
-                throw new ForbiddenException({
-                    auth: await this.languageService.setError(['isNotAuth', 'auth']),
+                throw new ValidationException({
+                    not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
                 })
             }
         }
@@ -325,7 +323,12 @@ export class RolesService {
             })
 
         await this.userRoles.save(
-            this.userRoles.create({ role, user: candidate, setTheRole: !system ? userSetTheRole : null }),
+            this.userRoles.create({
+                role,
+                user: candidate,
+                setTheRole: !system ? userSetTheRole : null,
+                type: ERolesType.system,
+            }),
         )
 
         const user = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
@@ -349,12 +352,32 @@ export class RolesService {
             throw new ValidationException({ error: await this.languageService.setError(['isNot', 'foundRole']) })
         }
 
-        try {
-            const roleKey = string.trimRole(body.role)
-            const role = candidate.roles.filter(role => role.role.roleKey === roleKey)[0]
+        // TODO: Check to system or not, if role system user  cant't delete it.
+        const roleKey = string.trimRole(body.role)
+        const role = candidate.roles.filter(role => role.role.roleKey === roleKey)[0]
+        let deletedRole: any
 
-            await this.userRoles.delete({ id: role.id })
-            return { ok: true }
+        // Check if the type role is system or not
+        if (role.type === ERolesType.system) {
+            // Check user role if it super_admin, delete it
+            const superAdmin = candidate.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
+            if (!superAdmin.length) {
+                throw new ValidationException({
+                    permission: await this.languageService.setError(['permission', 'deleteSystemRole']),
+                })
+            }
+
+            try {
+                deletedRole = await this.userRoles.delete({ id: role.id })
+                return { ok: Boolean(deletedRole.affected > 0) }
+            } catch (error) {
+                console.log(error)
+                throw new ValidationException({ error: await this.languageService.setError(['isNot', 'deleteRole']) })
+            }
+        }
+        try {
+            deletedRole = await this.userRoles.delete({ id: role.id })
+            return { ok: Boolean(deletedRole.affected > 0) }
         } catch (error) {
             console.log(error)
             throw new ValidationException({ error: await this.languageService.setError(['isNot', 'deleteRole']) })

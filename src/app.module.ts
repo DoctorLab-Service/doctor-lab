@@ -1,4 +1,4 @@
-import { JwtMiddleware } from './jwt/middlewares/jwt.middleware'
+import { TokenMiddleware } from './token/middlewares/token.middleware'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { ConfigModule } from '@nestjs/config'
@@ -6,23 +6,20 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { CommonModule } from './common/common.module'
 import * as Joi from 'joi'
-import { JwtModule } from './jwt/jwt.module'
-import { Token } from './jwt/entities/token.entity'
+import { TokenModule } from './token/token.module'
 import { UsersModule } from './users/users.module'
-import { User } from './users/entities/user.entity'
 import { AuthModule } from './auth/auth.module'
 import { VerificationsModule } from './verifications/verifications.module'
 import { EmailModule } from './email/email.module'
 import { PhoneModule } from './phone/phone.module'
-import { VerificationEmail } from './verifications/entities/verification-email.entiry'
-import { VerificationPhone } from './verifications/entities/verification-phone.entiry'
 import { LanguageModule } from './language/language.module'
 import { FilesModule } from './files/files.module'
 import { RolesModule } from './roles/roles.module'
-import { Role } from './roles/entities/role.entity'
-import { UserRoles } from './roles/entities/user_roles.entity'
-import { DefaultRolesMiddleware } from './common/middlewares/default.middleware'
-import { ResetModule } from './reset/reset.module';
+import { DefaultMiddleware } from './common/middlewares/default.middleware'
+import { Role, UserRoles } from './roles/entities'
+import { User } from './users/entities'
+import { ConfirmEmail, ConfirmPhone, VerificationEmail, VerificationPhone } from './verifications/entities'
+import { Token } from './token/entities'
 
 @Module({
     imports: [
@@ -32,17 +29,22 @@ import { ResetModule } from './reset/reset.module';
             ignoreEnvFile: process.env.NODE_ENV === 'production',
             validationSchema: Joi.object({
                 NODE_ENV: Joi.string().valid('development', 'production').required(),
+
                 SERVER_PORT: Joi.number().required(),
                 SERVER_HOST: Joi.string().required(),
+
                 DB_HOST: Joi.string().required(),
                 DB_PORT: Joi.number().required(),
                 DB_USERNAME: Joi.string().required(),
                 DB_PASSWORDS: Joi.string().required(),
                 DB_NAME: Joi.string().required(),
-                JWT_ACCESS_SECRET: Joi.string().required(),
-                JWT_REFRESH_SECRET: Joi.string().required(),
+
+                TOKEN_ACCESS_SECRET: Joi.string().required(),
+                TOKEN_REFRESH_SECRET: Joi.string().required(),
+
                 SENDGRID_API_KEY: Joi.string().required(),
                 SENDGRID_EMAIL: Joi.string().required(),
+
                 CLOUDINARY_API_KEY: Joi.number().required(),
                 CLOUDINARY_API_SECRET: Joi.string().required(),
                 CLOUDINARY_CLOUD_NAME: Joi.string().required(),
@@ -60,7 +62,7 @@ import { ResetModule } from './reset/reset.module';
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [User, Token, VerificationEmail, VerificationPhone, Role, UserRoles],
+            entities: [User, Token, VerificationEmail, VerificationPhone, Role, UserRoles, ConfirmEmail, ConfirmPhone],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -68,10 +70,16 @@ import { ResetModule } from './reset/reset.module';
             path: 'auth',
             autoSchemaFile: true,
             context: ({ req, res }) => ({ req, res }),
+            // formatError: (error: GraphQLError | any) => {
+            //     const graphQLFormattedError: GraphQLFormattedError = {
+            //         message: error.extensions?.exception?.response || error.message,
+            //     }
+            //     return process.env.NODE_ENV !== 'production' ? graphQLFormattedError : error
+            // },
         }),
-        JwtModule.forRoot({
-            accessSecret: process.env.JWT_ACCESS_SECRET,
-            refreshSecret: process.env.JWT_REFRESH_SECRET,
+        TokenModule.forRoot({
+            accessSecret: process.env.TOKEN_ACCESS_SECRET,
+            refreshSecret: process.env.TOKEN_REFRESH_SECRET,
         }),
         EmailModule.forRoot({
             apiKey: process.env.SENDGRID_API_KEY,
@@ -90,12 +98,11 @@ import { ResetModule } from './reset/reset.module';
         PhoneModule,
         LanguageModule,
         RolesModule,
-        ResetModule,
     ],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(DefaultRolesMiddleware, JwtMiddleware).forRoutes({
+        consumer.apply(DefaultMiddleware, TokenMiddleware).forRoutes({
             path: '*',
             method: RequestMethod.ALL,
         })

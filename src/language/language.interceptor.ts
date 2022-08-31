@@ -13,8 +13,6 @@ export class LenguageInterceptor implements NestInterceptor {
         let lng: LanguageService
         ctx ? (lng = new LanguageService(ctx)) : (lng = new LanguageService(undefined, ELanguage.EN))
         const body = ctxGql.getArgs()
-
-        console.log(body.input)
         body && body.input
             ? !body.input.language
                 ? (body.input.language = lng.language())

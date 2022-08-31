@@ -5,7 +5,7 @@ import { LanguageService } from 'src/language/language.service'
 import { UsersService } from 'src/users/users.service'
 
 @Injectable()
-export class DefaultRolesMiddleware implements NestMiddleware {
+export class DefaultMiddleware implements NestMiddleware {
     constructor(
         private readonly roleService: RolesService,
         private readonly userService: UsersService,

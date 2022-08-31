@@ -1,7 +1,7 @@
 import { Inject, UseInterceptors } from '@nestjs/common'
 import { Args, CONTEXT, Mutation, Resolver } from '@nestjs/graphql'
-import { ClearTokenCookieInterceptor } from 'src/jwt/interceptors/clear-cookie-token.interceptor'
-import { AccessTokenCookieInterceptor } from 'src/jwt/interceptors/cookie-token.interceptor'
+import { LenguageInterceptor } from 'src/language/language.interceptor'
+import { AccessTokenCookieInterceptor, ClearTokenCookieInterceptor } from 'src/token/interceptors'
 import { AuthService } from './auth.service'
 import { LoginInput, LoginOutput } from './dtos/login.dto'
 import { LogoutOutput } from './dtos/logout.dto'
@@ -12,7 +12,7 @@ export class AuthResolver {
     constructor(@Inject(CONTEXT) private context, private readonly authService: AuthService) {}
 
     @Mutation(() => LoginOutput)
-    @UseInterceptors(new AccessTokenCookieInterceptor())
+    @UseInterceptors(new LenguageInterceptor(), new AccessTokenCookieInterceptor())
     async login(@Args('input') body: LoginInput): Promise<LoginOutput> {
         return this.authService.login(body)
     }

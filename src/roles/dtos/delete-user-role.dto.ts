@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql'
-import { Role } from '../entities/role.entity'
+import { Role } from '../entities'
 import { CoreOutput } from 'src/common/dtos/output.dto'
 import { IsNumber } from 'class-validator'
 

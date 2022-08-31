@@ -14,7 +14,7 @@ import { Roles } from '../roles.decorator'
 import { EDefaultRoles, ESystemsRoles } from '../roles.enums'
 
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(EDefaultRoles.admin, EDefaultRoles.doctor, ESystemsRoles.super_admin)
+@Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, ESystemsRoles.super_admin)
 @Resolver()
 export class RolesMutations {
     constructor(private readonly rolesService: RolesService) {}

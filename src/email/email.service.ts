@@ -1,18 +1,22 @@
-import { EmailMessage } from './dtos/message.dto'
 import { Inject, Injectable } from '@nestjs/common'
 import * as sgMail from '@sendgrid/mail'
-import { VerificationEmailMessage } from './emails/verification.email'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
-import { EMailModuleOptions } from './dtos/mail.dtos'
+import {
+    verificationEmailMessage,
+    passwordRecoveryMessage,
+    changeEmailMessage,
+    changeInfoMessage,
+} from './emails/emails'
+import { MailMessage, MailModuleOptions } from './types'
 
 @Injectable()
 export class EmailService {
     private sgMail
-    constructor(@Inject(CONFIG_OPTIONS) private readonly options: EMailModuleOptions) {
+    constructor(@Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions) {
         this.sgMail = sgMail.setApiKey(this.options.apiKey)
     }
 
-    async sendMail(msg: EmailMessage): Promise<boolean> {
+    async sendMail(msg: MailMessage): Promise<boolean> {
         try {
             await this.sgMail.send(msg)
             return true
@@ -27,15 +31,64 @@ export class EmailService {
 
     /**
      * Send verification email
+     * @param to recipient email address
+     * @param fullname recipient user name
+     * @param code code
      */
     async sendVerificationEmail(to: string, fullname: string, code: string): Promise<boolean> {
-        const confirmLink = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/confirm?${code}`
+        const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/confirm?${code}`
         return this.sendMail({
             to,
             from: this.options.fromEmail,
             subject: 'Verification Email',
-            html: VerificationEmailMessage(fullname, confirmLink),
+            html: verificationEmailMessage({ fullname, link }),
         })
-        // return this.sendMail(VerificationEmailMessage(to, fullname, code))
+    }
+
+    /**
+     * Send forgot email, for reset password
+     * @param to recipient email address
+     * @param fullname recipient user name
+     * @param code code
+     */
+    async sendPasswordRecovery(to: string, code: string): Promise<boolean> {
+        const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/forgot-password?${code}`
+        return this.sendMail({
+            to,
+            from: this.options.fromEmail,
+            subject: 'Recovery password: forgot',
+            html: passwordRecoveryMessage({ link }),
+        })
+    }
+
+    /**
+     * Send forgot email, for reset password
+     * @param to recipient email address
+     * @param fullname recipient user name
+     * @param code code
+     */
+    async sendChangeEmail(to: string, fullname: string, code: string): Promise<boolean> {
+        const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/change-email?${code}`
+        return this.sendMail({
+            to,
+            from: this.options.fromEmail,
+            subject: 'Change Email',
+            html: changeEmailMessage({ fullname, link }),
+        })
+    }
+
+    /**
+     * Send forgot email, for reset password
+     * @param to recipient email address
+     * @param fullname recipient user name
+     * @param code code
+     */
+    async sendChangeInfo(to: string, fullname: string, changedData: string): Promise<boolean> {
+        return this.sendMail({
+            to,
+            from: this.options.fromEmail,
+            subject: 'Change Email - Complited',
+            html: changeInfoMessage({ fullname }, changedData),
+        })
     }
 }

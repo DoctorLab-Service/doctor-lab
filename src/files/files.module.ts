@@ -1,7 +1,7 @@
 import { LanguageModule } from 'src/language/language.module'
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
-import { JwtModule } from 'src/jwt/jwt.module'
+import { TokenModule } from 'src/token/token.module'
 import { FilesModuleCloudinatyConfig } from './files'
 import { FilesResolver } from './files.resolvers'
 import { FilesService } from './files.services'
@@ -20,7 +20,7 @@ export class FilesModule {
                 FilesService,
                 FilesResolver,
             ],
-            imports: [JwtModule, LanguageModule],
+            imports: [TokenModule, LanguageModule],
             exports: [FilesService],
         }
     }

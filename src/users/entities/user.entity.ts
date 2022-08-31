@@ -4,14 +4,14 @@ import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { ELanguage } from 'src/language/dtos/languages.dto'
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
-import { CoreEntity } from 'src/common/entities/core.entity'
 import { Exclude } from 'class-transformer'
-import { Role } from 'src/roles/entities/role.entity'
-import { EGender } from '../users.enum'
-import { UserRoles } from 'src/roles/entities/user_roles.entity'
+import { EGender, EResetKey } from '../config/users.enum'
+import { CoreEntity } from 'src/common/entities'
+import { UserRoles, Role } from 'src/roles/entities'
 
 registerEnumType(ELanguage, { name: 'ELanguage' })
 registerEnumType(EGender, { name: 'EGender' })
+registerEnumType(EResetKey, { name: 'EResetKey' })
 
 @InputType({ isAbstract: true })
 @ObjectType()
@@ -106,6 +106,9 @@ export class User extends CoreEntity {
     @Field(() => [UserRoles], { defaultValue: [] })
     setRoles: UserRoles[]
 
+    @Column({ type: 'enum', enum: EResetKey, nullable: true })
+    resetKey: EResetKey
+
     // @OneToMany(() => Role, roles => roles.user)
     // @Field(() => [Role])
     // createdRoles: Role[]
@@ -149,7 +152,7 @@ export class User extends CoreEntity {
         Check passwords
     */
     @BeforeInsert()
-    @BeforeUpdate()
+    // @BeforeUpdate()
     async hashPassword(): Promise<void> {
         if (this.password) {
             try {
@@ -163,7 +166,8 @@ export class User extends CoreEntity {
 
     async checkPassword(aPassword: string): Promise<boolean> {
         try {
-            return bcrypt.compare(aPassword, this.password)
+            const statusCompare: boolean = await bcrypt.compare(aPassword, this.password)
+            return statusCompare
         } catch (error) {
             console.log(error)
             throw new InternalServerErrorException()

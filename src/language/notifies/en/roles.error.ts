@@ -16,6 +16,7 @@ export const notifies: NotifyDto = {
             description: 'Role must be no longer than 255 characters',
         },
         isEmpty: {
+            fields: 'Fields missing',
             role: "Role can't be empty",
             all: 'Role update data missing',
         },

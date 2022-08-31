@@ -218,11 +218,9 @@ export class Cloudinary {
 
             // delete user
             await usersFolder.forEach(async folder => {
-                console.log('folder', folder)
                 await cloudinary.api.delete_folder(`${CLOUDINARY_PATH_USERS}/u${userId}/${folder.name}`)
             })
             usersFolder = await this.getUsersFolder(userId, false)
-            console.log('usersFolder', usersFolder)
             let deletedFolder
             if (!usersFolder.length) {
                 deletedFolder = await cloudinary.api.delete_folder(`${CLOUDINARY_PATH_USERS}/u${userId}`)

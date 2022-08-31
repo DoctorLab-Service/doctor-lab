@@ -5,10 +5,11 @@ export const notifies: NotifyDto = {
     language: 'EN',
     messages: {
         isNotVerify: {
+            email: 'Email not verified',
+            phone: 'Phone is not verified',
             noSendEmail: 'Unable to send you email',
             noSendSMS: 'Unable to send you SMS',
-            email: 'Not a valid verification link',
-            phone: 'Invalid code',
+            code: 'Invalid code',
         },
     },
 }

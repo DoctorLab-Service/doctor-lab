@@ -157,7 +157,7 @@ export class LanguageService {
         const service = services[services.length - 1]
 
         if (!service) {
-            throw new ValidationException({ service_name_error: 'Service is not exist' })
+            throw new ValidationException({ error: 'Service is not exist' })
         }
 
         return service

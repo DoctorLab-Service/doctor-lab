@@ -137,7 +137,7 @@ export class RolesService {
         const checkRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
         if (checkRole)
             throw new ValidationException({
-                role: await this.languageService.setError(['isExists', 'role']),
+                exists: await this.languageService.setError(['isExists', 'role']),
             })
 
         // Succes to create system role
@@ -148,7 +148,7 @@ export class RolesService {
 
             if (!existSystemRole.length) {
                 throw new ValidationException({
-                    role: await this.languageService.setError(['permission', 'createSystemRole']),
+                    permission: await this.languageService.setError(['permission', 'createSystemRole']),
                 })
             }
         }
@@ -167,7 +167,7 @@ export class RolesService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                role: await this.languageService.setError(['isNot', 'createRole']),
+                create: await this.languageService.setError(['isNot', 'createRole']),
             })
         }
     }
@@ -182,7 +182,7 @@ export class RolesService {
         const role = await this.roles.findOne({ where: { id: body.id } })
         if (!role) {
             throw new ValidationException({
-                role: await this.languageService.setError(['isNot', 'foundRole']),
+                not_found: await this.languageService.setError(['isNot', 'foundRole']),
             })
         }
 
@@ -194,7 +194,7 @@ export class RolesService {
         const ownerRole = currentUser.createdRoles.filter(cRole => cRole.id === body.id)
         if (!ownerRole.length && !existSystemRole.length) {
             throw new ValidationException({
-                role: await this.languageService.setError(['permission', 'updateSystemRole']),
+                permission: await this.languageService.setError(['permission', 'updateSystemRole']),
             })
         }
 
@@ -202,7 +202,7 @@ export class RolesService {
         if (role.type === ERolesType.system) {
             if (!existSystemRole.length) {
                 throw new ValidationException({
-                    role: await this.languageService.setError(['permission', 'updateSystemRole']),
+                    permission: await this.languageService.setError(['permission', 'updateSystemRole']),
                 })
             }
         }
@@ -213,7 +213,7 @@ export class RolesService {
                 const checkExistRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
                 if (checkExistRole) {
                     throw new ValidationException({
-                        role: await this.languageService.setError(['isExists', 'role']),
+                        exists: await this.languageService.setError(['isExists', 'role']),
                     })
                 }
             }
@@ -225,7 +225,7 @@ export class RolesService {
             if (body.type === ERolesType.system) {
                 if (!existSystemRole.length) {
                     throw new ValidationException({
-                        role: await this.languageService.setError(['permission', 'updateSystemRole']),
+                        permission: await this.languageService.setError(['permission', 'updateSystemRole']),
                     })
                 }
                 role.type = body.type || role.type
@@ -243,7 +243,7 @@ export class RolesService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                role: await this.languageService.setError(['isNot', 'updateRole']),
+                update: await this.languageService.setError(['isNot', 'updateRole']),
             })
         }
     }
@@ -265,7 +265,7 @@ export class RolesService {
         const ownerRole = currentUser.createdRoles.filter(cRole => cRole.id === id)
         if (!ownerRole.length && !existSystemRole.length) {
             throw new ValidationException({
-                role: await this.languageService.setError(['permission', 'updateSystemRole']),
+                permission: await this.languageService.setError(['permission', 'updateSystemRole']),
             })
         }
         // Succes to delete system role
@@ -273,7 +273,7 @@ export class RolesService {
             // Check to see if user has permission to delete role
             if (!existSystemRole.length) {
                 throw new ValidationException({
-                    role: await this.languageService.setError(['permission', 'deleteSystemRole']),
+                    permission: await this.languageService.setError(['permission', 'deleteSystemRole']),
                 })
             }
         }
@@ -284,7 +284,7 @@ export class RolesService {
             return { ok: Boolean(deletedRole.affected > 0) }
         } catch (error) {
             console.log(error)
-            throw new ValidationException({ role: await this.languageService.setError(['isNot', 'deleteRole']) })
+            throw new ValidationException({ delete: await this.languageService.setError(['isNot', 'deleteRole']) })
         }
     }
 
@@ -300,7 +300,7 @@ export class RolesService {
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
         if (!candidate)
             throw new ValidationException({
-                user: await this.languageService.setError(['isNotFound', 'foundUser']),
+                not_found: await this.languageService.setError(['isNotFound', 'foundUser']),
             })
 
         let userSetTheRole: User
@@ -319,7 +319,7 @@ export class RolesService {
         const role = await this.roles.findOne({ where: { roleKey } })
         if (!role)
             throw new ValidationException({
-                roles: await this.languageService.setError(['isNotExist', 'role']),
+                not_exists: await this.languageService.setError(['isNotExist', 'role']),
             })
 
         await this.userRoles.save(
@@ -345,11 +345,11 @@ export class RolesService {
     async deleteUserRole(body: DeleteUserRoleInput): Promise<DeleteUserRoleOutput> {
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
         if (!candidate) {
-            throw new ValidationException({ error: await this.languageService.setError(['isNot', 'foundUser']) })
+            throw new ValidationException({ not_found: await this.languageService.setError(['isNot', 'foundUser']) })
         }
 
         if (!candidate.roles.length) {
-            throw new ValidationException({ error: await this.languageService.setError(['isNot', 'foundRole']) })
+            throw new ValidationException({ not_found: await this.languageService.setError(['isNot', 'foundRole']) })
         }
 
         // TODO: Check to system or not, if role system user  cant't delete it.
@@ -372,7 +372,9 @@ export class RolesService {
                 return { ok: Boolean(deletedRole.affected > 0) }
             } catch (error) {
                 console.log(error)
-                throw new ValidationException({ error: await this.languageService.setError(['isNot', 'deleteRole']) })
+                throw new ValidationException({
+                    delete: await this.languageService.setError(['isNot', 'deleteRole']),
+                })
             }
         }
         try {
@@ -380,7 +382,7 @@ export class RolesService {
             return { ok: Boolean(deletedRole.affected > 0) }
         } catch (error) {
             console.log(error)
-            throw new ValidationException({ error: await this.languageService.setError(['isNot', 'deleteRole']) })
+            throw new ValidationException({ delete: await this.languageService.setError(['isNot', 'deleteRole']) })
         }
     }
 
@@ -400,7 +402,7 @@ export class RolesService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                roles: await this.languageService.setError(['isNotFound', 'foundRoles']),
+                not_found: await this.languageService.setError(['isNotFound', 'foundRoles']),
             })
         }
     }

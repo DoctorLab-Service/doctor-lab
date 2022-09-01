@@ -103,7 +103,7 @@ export class UsersService {
         const existPhone = await this.users.findOne({ where: { phone: body.phone } })
         if (existPhone && existPhone.verifiedPhone) {
             throw new ValidationException({
-                email: await this.languageService.setError(['isExists', 'phone']),
+                phone: await this.languageService.setError(['isExists', 'phone']),
             })
         }
 
@@ -120,7 +120,7 @@ export class UsersService {
         const user = await this.users.save(this.users.create({ ...body }))
         if (!user) {
             throw new ValidationException({
-                email: await this.languageService.setError(['isNot', 'createUser']),
+                create: await this.languageService.setError(['isNot', 'createUser']),
             })
         }
 
@@ -147,7 +147,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: await this.languageService.setError(['token', 'notCreated']),
+                create: await this.languageService.setError(['token', 'notCreated']),
             })
         }
     }
@@ -163,7 +163,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotFound', 'user']),
+                not_exists: await this.languageService.setError(['isNotFound', 'user']),
             })
         }
 
@@ -201,7 +201,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                error: await this.languageService.setError(['isNot', 'updateUser']),
+                update: await this.languageService.setError(['isNot', 'updateUser']),
             })
         }
     }
@@ -219,7 +219,7 @@ export class UsersService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                error: await this.languageService.setError(['isNot', 'deleteUser']),
+                delete: await this.languageService.setError(['isNot', 'deleteUser']),
             })
         }
     }
@@ -232,7 +232,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_found: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
         return { ok: Boolean(user), user }
@@ -245,7 +245,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { id }, ...relationsConfig.users })
         if (!user)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNot', 'foundUser']),
+                not_found: await this.languageService.setError(['isNot', 'foundUser']),
             })
 
         return { ok: Boolean(user), user }
@@ -258,7 +258,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { phone }, ...relationsConfig.users })
         if (!user)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotFound', 'user']),
+                not_found: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         return { ok: Boolean(user), user }
@@ -271,7 +271,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { email }, ...relationsConfig.users })
         if (!user)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotFound', 'user']),
+                not_found: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         return { ok: Boolean(user), user }
@@ -284,7 +284,7 @@ export class UsersService {
         const users = await this.users.find({ ...relationsConfig.users })
         if (!users.length)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotFound', 'user']),
+                not_found: await this.languageService.setError(['isNotFound', 'user']),
             })
 
         return { ok: Boolean(users.length), users }
@@ -299,7 +299,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.email } })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
 
@@ -310,7 +310,7 @@ export class UsersService {
             updatedUser = await this.users.save(user)
         } catch (error) {
             throw new ValidationException({
-                change_password: await this.languageService.setError(['isChange', 'email']),
+                change: await this.languageService.setError(['isChange', 'email']),
             })
         }
 
@@ -319,7 +319,7 @@ export class UsersService {
             await this.emailService.sendChangeInfo(user.email, user.fullname, user.email)
         } catch (error) {
             throw new ValidationException({
-                change_password: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
             })
         }
 
@@ -335,7 +335,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.phone } })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
 
@@ -345,7 +345,7 @@ export class UsersService {
             updatedUser = await this.users.save(user)
         } catch (error) {
             throw new ValidationException({
-                change_password: await this.languageService.setError(['isChange', 'email']),
+                change: await this.languageService.setError(['isChange', 'email']),
             })
         }
 
@@ -354,7 +354,7 @@ export class UsersService {
             await this.emailService.sendChangeInfo(user.email, user.fullname, body.password)
         } catch (error) {
             throw new ValidationException({
-                change_password: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
             })
         }
 
@@ -390,7 +390,7 @@ export class UsersService {
             updatedUser = await this.users.save(user)
         } catch (error) {
             throw new ValidationException({
-                change_password: await this.languageService.setError(['isChange', 'phone']),
+                change: await this.languageService.setError(['isChange', 'phone']),
             })
         }
 
@@ -403,7 +403,7 @@ export class UsersService {
             await this.emailService.sendChangeInfo(user.email, user.fullname, user.phone)
         } catch (error) {
             throw new ValidationException({
-                change_password: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
             })
         }
 

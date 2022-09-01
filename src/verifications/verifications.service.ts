@@ -57,7 +57,7 @@ export class VerificationsService {
             sendedCode = await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
         } else {
             throw new ValidationException({
-                invalid_sending_email: await this.languageService.setError(['isNotVerify', 'noSendEmail']),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail']),
             })
         }
 
@@ -88,7 +88,7 @@ export class VerificationsService {
             sendedCode = true
         } else {
             throw new ValidationException({
-                invalid_sending_phone: await this.languageService.setError(['isNotVerify', 'noSendSMS']),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendSMS']),
             })
         }
         return sendedCode
@@ -108,7 +108,7 @@ export class VerificationsService {
                 const user = await this.users.findOne({ where: { email: body.email } })
                 if (!user) {
                     throw new ValidationException({
-                        invalid_email: await this.languageService.setError(['isNotExist', 'email'], 'users'),
+                        email: await this.languageService.setError(['isNotExist', 'email'], 'users'),
                     })
                 }
 
@@ -127,10 +127,7 @@ export class VerificationsService {
                 )
                 if (!code) {
                     throw new ValidationException({
-                        invalid_sending_email: await this.languageService.setError(
-                            ['isNotVerify', 'noSendEmail'],
-                            'verify',
-                        ),
+                        no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
                     })
                 }
 
@@ -147,7 +144,7 @@ export class VerificationsService {
                 const user = await this.users.findOne({ where: { phone: body.phone } })
                 if (!user) {
                     throw new ValidationException({
-                        invalid_phone: await this.languageService.setError(['isNotExist', 'phone'], 'users'),
+                        phone: await this.languageService.setError(['isNotExist', 'phone'], 'users'),
                     })
                 }
 
@@ -166,10 +163,7 @@ export class VerificationsService {
                 )
                 if (!code) {
                     throw new ValidationException({
-                        invalid_sending_sms: await this.languageService.setError(
-                            ['isNotVerify', 'noSendSMS'],
-                            'verify',
-                        ),
+                        no_send: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
                     })
                 }
 
@@ -181,7 +175,7 @@ export class VerificationsService {
         }
 
         throw new ValidationException({
-            invalid_sending_sms: await this.languageService.setError(['isEmpty', 'fields'], 'verify'),
+            no_send: await this.languageService.setError(['isEmpty', 'fields'], 'verify'),
         })
     }
 
@@ -206,7 +200,7 @@ export class VerificationsService {
         )
         if (!code) {
             throw new ValidationException({
-                invalid_sending_phone: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
             })
         }
 
@@ -237,7 +231,7 @@ export class VerificationsService {
         )
         if (!code) {
             throw new ValidationException({
-                invalid_sending_email: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
             })
         }
 
@@ -267,7 +261,7 @@ export class VerificationsService {
         )
         if (!code) {
             throw new ValidationException({
-                invalid_sending_phone: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),
             })
         }
 
@@ -286,7 +280,7 @@ export class VerificationsService {
 
         if (!verification) {
             throw new ValidationException({
-                error: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
 
@@ -299,7 +293,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
     }
@@ -343,7 +337,7 @@ export class VerificationsService {
             user = await this.users.findOne({ where: { phone: existsCode.phone }, ...relationsConfig.users })
             if (!user) {
                 throw new ValidationException({
-                    error_phone: await this.languageService.setError(['isNotExist', 'phone'], 'user'),
+                    not_exists: await this.languageService.setError(['isNotExist', 'phone'], 'user'),
                 })
             }
             existsCode = await this.confirmPhone.findOne({
@@ -353,7 +347,7 @@ export class VerificationsService {
             user = await this.users.findOne({ where: { email: existsCode.email }, ...relationsConfig.users })
             if (!user) {
                 throw new ValidationException({
-                    error_email: await this.languageService.setError(['isNotExist', 'email'], 'user'),
+                    not_exists: await this.languageService.setError(['isNotExist', 'email'], 'user'),
                 })
             }
             existsCode = await this.confirmEmail.findOne({
@@ -363,7 +357,7 @@ export class VerificationsService {
         // Check existsCode
         if (!existsCode) {
             throw new ValidationException({
-                invalid_code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
 
@@ -378,7 +372,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
     }
@@ -393,7 +387,7 @@ export class VerificationsService {
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
 
@@ -404,7 +398,7 @@ export class VerificationsService {
         console.log(existsCode)
         if (!existsCode) {
             throw new ValidationException({
-                invalid_code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
 
@@ -419,7 +413,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
     }
@@ -434,7 +428,7 @@ export class VerificationsService {
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
 
@@ -444,7 +438,7 @@ export class VerificationsService {
         })
         if (!existsCode) {
             throw new ValidationException({
-                invalid_code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
 
@@ -458,7 +452,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
     }
@@ -473,7 +467,7 @@ export class VerificationsService {
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
 
@@ -483,7 +477,7 @@ export class VerificationsService {
         })
         if (!existsCode) {
             throw new ValidationException({
-                invalid_code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
 
@@ -497,7 +491,7 @@ export class VerificationsService {
         } catch (error) {
             console.log(error)
             throw new ValidationException({
-                email: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
+                code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
         }
     }

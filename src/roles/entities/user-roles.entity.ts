@@ -13,10 +13,7 @@ export class UserRoles extends CoreEntity {
     @Field(() => User)
     user: User
 
-    // @OneToOne(() => Role, role => role.roleKey, { onDelete: 'CASCADE', eager: true })
-    // @JoinColumn()
     @ManyToOne(() => Role, { onDelete: 'CASCADE', eager: true })
-    @JoinColumn()
     @Field(() => Role)
     role: Role
 

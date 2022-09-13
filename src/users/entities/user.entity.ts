@@ -3,11 +3,12 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { ELanguage } from 'src/language/dtos/languages.dto'
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { EGender, EResetKey } from '../config/users.enum'
 import { CoreEntity } from 'src/common/entities'
 import { UserRoles, Role } from 'src/roles/entities'
+import { HelpMessage } from 'src/help/entities'
 
 registerEnumType(ELanguage, { name: 'ELanguage' })
 registerEnumType(EGender, { name: 'EGender' })
@@ -105,6 +106,10 @@ export class User extends CoreEntity {
     @OneToMany(() => UserRoles, roles => roles.setTheRole)
     @Field(() => [UserRoles], { defaultValue: [] })
     setRoles: UserRoles[]
+
+    @OneToMany(() => HelpMessage, message => message.user)
+    @Field(() => [HelpMessage], { defaultValue: [] })
+    HelpMessage: HelpMessage[]
 
     @Column({ type: 'enum', enum: EResetKey, nullable: true })
     resetKey: EResetKey

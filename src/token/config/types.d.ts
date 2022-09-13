@@ -6,6 +6,7 @@ export interface TokenConfig {
 
 export interface TokenModuleOptions {
     accessSecret: string
+    recoverySecret: string
     refreshSecret: string
 }
 

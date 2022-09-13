@@ -61,14 +61,15 @@ export class AuthService {
 
         const passwordCorrect = await user.checkPassword(body.password)
 
-        if (!passwordCorrect)
+        if (!passwordCorrect) {
             throw new ValidationException({
                 password: await this.languageService.setError(['isValid', 'passwordEqual']),
             })
+        }
 
         // Generate and save token
         const tokens = await this.token.generateTokens({ id: user.id })
-        this.token.saveToken(user.id, tokens)
+        this.token.saveTokens(user.id, tokens)
 
         return { ok: Boolean(user), ...tokens, user }
     }
@@ -99,7 +100,7 @@ export class AuthService {
 
         // Check refresh token in db and validate it
         const userData = await this.token.validateRefreshToken(refreshToken)
-        const tokenFromDb = await this.token.findToken(refreshToken)
+        const tokenFromDb = await this.token.findRefreshToken(refreshToken)
         if (!userData || !tokenFromDb)
             throw new ForbiddenException({
                 auth: await this.languageService.setError(['isNotAuth', 'auth']),
@@ -108,7 +109,7 @@ export class AuthService {
         try {
             const user = await this.users.findOne({ where: { id: userData.id } })
             const tokens = this.token.generateTokens({ id: user.id })
-            await this.token.saveToken(user.id, tokens)
+            await this.token.saveTokens(user.id, tokens)
 
             return { ok: true, ...tokens, user }
         } catch (error) {

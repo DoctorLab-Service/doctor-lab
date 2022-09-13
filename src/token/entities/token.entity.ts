@@ -6,7 +6,7 @@ import { User } from 'src/users/entities'
 @ObjectType()
 @Entity('tokens')
 export class Token extends CoreEntity {
-    @OneToOne(() => User, { onDelete: 'CASCADE' })
+    @OneToOne(() => User, { onDelete: 'CASCADE', eager: true })
     @JoinColumn()
     user: User
 
@@ -16,6 +16,6 @@ export class Token extends CoreEntity {
     @Column({ nullable: true, unique: true })
     recoveryToken: string
 
-    @Column({ unique: true })
+    @Column({ nullable: true, unique: true })
     refreshToken: string
 }

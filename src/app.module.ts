@@ -20,6 +20,8 @@ import { Role, UserRoles } from './roles/entities'
 import { User } from './users/entities'
 import { ConfirmEmail, ConfirmPhone, VerificationEmail, VerificationPhone } from './verifications/entities'
 import { Token } from './token/entities'
+import { HelpModule } from './help/help.module'
+import { HelpAnswer, HelpMessage } from './help/entities'
 
 @Module({
     imports: [
@@ -40,10 +42,12 @@ import { Token } from './token/entities'
                 DB_NAME: Joi.string().required(),
 
                 TOKEN_ACCESS_SECRET: Joi.string().required(),
+                TOKEN_RECOVERY_SECRET: Joi.string().required(),
                 TOKEN_REFRESH_SECRET: Joi.string().required(),
 
                 SENDGRID_API_KEY: Joi.string().required(),
-                SENDGRID_EMAIL: Joi.string().required(),
+                SENDGRID_FROM_EMAIL: Joi.string().required(),
+                SENDGRID_SUPORT_EMAIL: Joi.string().required(),
 
                 CLOUDINARY_API_KEY: Joi.number().required(),
                 CLOUDINARY_API_SECRET: Joi.string().required(),
@@ -62,7 +66,18 @@ import { Token } from './token/entities'
             database: process.env.DB_NAME,
             synchronize: process.env.NODE_ENV !== 'production',
             logging: process.env.NODE_ENV !== 'production',
-            entities: [User, Token, VerificationEmail, VerificationPhone, Role, UserRoles, ConfirmEmail, ConfirmPhone],
+            entities: [
+                User,
+                Token,
+                VerificationEmail,
+                VerificationPhone,
+                Role,
+                UserRoles,
+                ConfirmEmail,
+                ConfirmPhone,
+                HelpMessage,
+                HelpAnswer,
+            ],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -79,11 +94,13 @@ import { Token } from './token/entities'
         }),
         TokenModule.forRoot({
             accessSecret: process.env.TOKEN_ACCESS_SECRET,
+            recoverySecret: process.env.TOKEN_RECOVERY_SECRET,
             refreshSecret: process.env.TOKEN_REFRESH_SECRET,
         }),
         EmailModule.forRoot({
             apiKey: process.env.SENDGRID_API_KEY,
-            fromEmail: process.env.SENDGRID_EMAIL,
+            fromEmail: process.env.SENDGRID_FROM_EMAIL,
+            suportEmail: process.env.SENDGRID_SUPORT_EMAIL,
         }),
         FilesModule.forRoot({
             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -98,6 +115,7 @@ import { Token } from './token/entities'
         PhoneModule,
         LanguageModule,
         RolesModule,
+        HelpModule,
     ],
 })
 export class AppModule {

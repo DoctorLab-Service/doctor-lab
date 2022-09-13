@@ -19,12 +19,14 @@ import {
 } from './dtos'
 import { VerificationEmail, VerificationPhone, ConfirmEmail, ConfirmPhone } from './entities'
 import { EConfirmCodeKey } from './verifications.enums'
+import { Token } from 'src/token/entities'
 
 @Injectable()
 export class VerificationsService {
     constructor(
         @Inject(CONTEXT) private readonly context,
         @InjectRepository(User) private readonly users: Repository<User>,
+        @InjectRepository(Token) private readonly tokens: Repository<Token>,
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verifyPhone: Repository<VerificationPhone>,
         @InjectRepository(ConfirmEmail) private readonly confirmEmail: Repository<ConfirmEmail>,
@@ -32,7 +34,7 @@ export class VerificationsService {
         private readonly languageService: LanguageService,
         private readonly phoneService: PhoneService,
         private readonly emailService: EmailService,
-        private readonly token: TokenService,
+        private readonly tokenService: TokenService,
     ) {}
 
     /**
@@ -54,7 +56,11 @@ export class VerificationsService {
 
         // Send verification on email and phone
         if (codeEmail) {
-            sendedCode = await this.emailService.sendVerificationEmail(user.email, user.fullname, codeEmail.code)
+            sendedCode = await this.emailService.sendVerificationEmail({
+                to: user.email,
+                fullname: user.fullname,
+                code: codeEmail.code,
+            })
         } else {
             throw new ValidationException({
                 no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail']),
@@ -132,7 +138,10 @@ export class VerificationsService {
                 }
 
                 // Send mail to body.email
-                const sendedEmail = await this.emailService.sendPasswordRecovery(user.email, code.code)
+                const sendedEmail = await this.emailService.sendPasswordRecovery({
+                    to: user.email,
+                    code: code.code,
+                })
                 return { ok: Boolean(sendedEmail) }
             }
 
@@ -183,7 +192,7 @@ export class VerificationsService {
      *  Send current user email with code for change password
      */
     async changePasswordCode(): Promise<ChangeOutputCode> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await this.tokenService.getContextUser(this.context)
 
         // Check to exits code
         // Delete if code is exists
@@ -214,7 +223,7 @@ export class VerificationsService {
      * Send code on current user email for change email
      */
     async changeEmailCode(): Promise<ChangeOutputCode> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await this.tokenService.getContextUser(this.context)
 
         // Check to exits code
         // Delete if code is exists
@@ -236,7 +245,11 @@ export class VerificationsService {
         }
 
         // Send mail to body.email
-        const sendedEmail = await this.emailService.sendChangeEmail(currentUser.email, currentUser.fullname, code.code)
+        const sendedEmail = await this.emailService.sendChangeEmail({
+            to: currentUser.email,
+            fullname: currentUser.fullname,
+            code: code.code,
+        })
         return { ok: Boolean(sendedEmail) }
     }
 
@@ -244,7 +257,7 @@ export class VerificationsService {
      * Send current user phone code for change phone
      */
     async changePhoneCode(): Promise<ChangeOutputCode> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await this.tokenService.getContextUser(this.context)
 
         // Check to exits code
         // Delete if code is exists
@@ -328,32 +341,14 @@ export class VerificationsService {
      * @param body code
      */
     async verificationPasswordRecovery({ code }: VerificationInput): Promise<VerificationOutput> {
-        // Check existing to code in database
-        let existsCode: any = {}
-        let user: User
+        // Max phone code length
+        const codeLengts = 6
 
-        // If phone code find on confirmPhone if not to confirmEmail
-        if (code.length <= 6) {
-            user = await this.users.findOne({ where: { phone: existsCode.phone }, ...relationsConfig.users })
-            if (!user) {
-                throw new ValidationException({
-                    not_exists: await this.languageService.setError(['isNotExist', 'phone'], 'user'),
-                })
-            }
-            existsCode = await this.confirmPhone.findOne({
-                where: { code, phone: user.phone, key: EConfirmCodeKey.recovery_password },
-            })
-        } else {
-            user = await this.users.findOne({ where: { email: existsCode.email }, ...relationsConfig.users })
-            if (!user) {
-                throw new ValidationException({
-                    not_exists: await this.languageService.setError(['isNotExist', 'email'], 'user'),
-                })
-            }
-            existsCode = await this.confirmEmail.findOne({
-                where: { code, email: user.email, key: EConfirmCodeKey.recovery_password },
-            })
-        }
+        // Check code in database
+        const existsCode = await this[code.length <= codeLengts ? 'confirmPhone' : 'confirmEmail'].findOne({
+            where: { code, key: EConfirmCodeKey.recovery_password },
+        })
+
         // Check existsCode
         if (!existsCode) {
             throw new ValidationException({
@@ -361,14 +356,45 @@ export class VerificationsService {
             })
         }
 
+        // Find user by  phone or email
+        const user = await this.users.findOne({
+            where: {
+                [code.length <= codeLengts ? 'phone' : 'email']:
+                    existsCode[code.length <= codeLengts ? 'phone' : 'email'],
+            },
+            ...relationsConfig.users,
+        })
+
+        if (!user) {
+            throw new ValidationException({
+                not_exists: await this.languageService.setError(
+                    ['isNotExist', code.length <= codeLengts ? 'phone' : 'email'],
+                    'users',
+                ),
+            })
+        }
+
         try {
             // Delete code
-            const deletedCode = await this.confirmPhone.delete({ code, key: EConfirmCodeKey.recovery_password })
+            const deletedCode = await this[code.length <= codeLengts ? 'confirmPhone' : 'confirmEmail'].delete({
+                code,
+                key: EConfirmCodeKey.recovery_password,
+            })
+
+            // Set reset key  for user
+            user.resetKey = EResetKey.password
+            await this.users.save(user)
 
             // Create token
-            const token = await this.token.generateTokens({ id: user.id }, true)
+            const token = await this.tokenService.generateTokens({ id: user.id }, true)
 
-            return { ok: Boolean(deletedCode.affected > 0), token: token.accessToken }
+            // Check to exists tokens for this user
+            await this.tokenService.removeTokenByUserId(user.id)
+            // Save token in database
+            await this.tokenService.saveTokens(user, { recoveryToken: token.recoveryToken })
+            // await this.tokens.save(this.tokens.create({ recoveryToken: token.recoveryToken, user }))
+
+            return { ok: Boolean(deletedCode.affected > 0), token: token.recoveryToken }
         } catch (error) {
             console.log(error)
             throw new ValidationException({
@@ -383,7 +409,7 @@ export class VerificationsService {
      */
     async verificationChangePassword({ code }: VerificationInput): Promise<VerificationOutput> {
         // Get user and check it
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await this.tokenService.getContextUser(this.context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
@@ -395,7 +421,7 @@ export class VerificationsService {
         const existsCode = await this.confirmPhone.findOne({
             where: { code, phone: user.phone, key: EConfirmCodeKey.change_password },
         })
-        console.log(existsCode)
+
         if (!existsCode) {
             throw new ValidationException({
                 code: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
@@ -424,7 +450,7 @@ export class VerificationsService {
      */
     async verificationChangeEmail({ code }: VerificationInput): Promise<VerificationOutput> {
         // Get user and check it
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await this.tokenService.getContextUser(this.context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
@@ -463,7 +489,7 @@ export class VerificationsService {
      */
     async verificationChangePhone({ code }: VerificationInput): Promise<VerificationOutput> {
         // Get user and check it
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await this.tokenService.getContextUser(this.context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({

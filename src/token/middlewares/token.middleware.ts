@@ -41,21 +41,19 @@ export class TokenMiddleware implements NestMiddleware {
             }
         }
         if (tokenKey.RECOVERY_JWT in req.headers) {
-            const accessToken = req.headers[tokenKey.RECOVERY_JWT]
+            const recoveryToken = req.headers[tokenKey.RECOVERY_JWT]
             try {
-                const decoded = await this.tokenService.validateAccessToken(accessToken.toString())
+                const decoded = await this.tokenService.validateRecoveryToken(recoveryToken.toString())
+
                 let user
-                if (typeof decoded === 'object' && decoded.hasOwnProperty('phone')) {
-                    user = await this.usersService.findByPhone({ phone: decoded.phone })
-                }
-                if (typeof decoded === 'object' && decoded.hasOwnProperty('email')) {
-                    user = await this.usersService.findByEmail({ email: decoded.email })
+                if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+                    user = await this.usersService.findById({ id: decoded.id })
                 }
                 req['recovery_user'] = user.user
             } catch (error) {
                 console.log(error.message)
                 if (error.message === 'jwt expired') {
-                    await this.tokenService.removeExpiredAccessToken(accessToken.toString())
+                    await this.tokenService.removeExpiredRecoveryToken(recoveryToken.toString())
                     next(
                         new ForbiddenException({
                             token_expired: await this.languageService.setError(['token', 'expired'], 'auth'),

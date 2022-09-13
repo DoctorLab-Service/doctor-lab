@@ -1,0 +1,6 @@
+export { CreateHelpMessageInput, CreateHelpMessageOutput } from './create-message.dto'
+export { DeleteHelpMessageInput, DeleteHelpMessageOutput } from './delete-message.dto'
+export { CloseHelpMessageInput, CloseHelpMessageOutput } from './close-message.dto'
+export { FindHelpMessageByIdInput, FindAllHelpMessagesOutput, FindHelpMessageByIdOutput } from './find-message.dto'
+export { ReadHelpMessageInput, ReadHelpMessageOutput } from './read-message.dto'
+export { AnswerToHelpMessageInput, AnswerToHelpMessageOutput } from './answer-message.dto'

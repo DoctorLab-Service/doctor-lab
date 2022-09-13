@@ -28,3 +28,8 @@ export const changeEmailInfoParams: DefaultMailParams = {
     content: 'Your email address has been changed to:',
     button: 'Change Email',
 }
+
+export const helpMessageEmailParams: DefaultMailParams = {
+    path: '',
+    title: 'Help Message',
+}

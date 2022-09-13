@@ -40,18 +40,21 @@ export class UsersMutations {
         return this.usersService.deleteAccount()
     }
 
+    @UseGuards(AuthGuard)
     @Mutation(() => ChangeOutput)
     @UsePipes(new ValidationPipe('users'))
     async changeEmail(@Args('input') body: ChangeEmailInput): Promise<ChangeOutput> {
         return this.usersService.changeEmail(body)
     }
 
+    // @UseGuards(AuthGuard)
     @Mutation(() => ChangeOutput)
     @UsePipes(new ValidationPipe('users'))
     async changePassword(@Args('input') body: ChangePasswordInput): Promise<ChangeOutput> {
         return this.usersService.changePassword(body)
     }
 
+    @UseGuards(AuthGuard)
     @Mutation(() => ChangeOutput)
     @UsePipes(new ValidationPipe('users'))
     async changePhone(@Args('input') body: ChangePhoneInput): Promise<ChangeOutput> {

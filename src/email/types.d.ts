@@ -1,6 +1,7 @@
 export interface MailModuleOptions {
     apiKey: string
     fromEmail: string
+    suportEmail?: string
 }
 
 export type MailMessage = {
@@ -21,4 +22,14 @@ export interface DefaultMailParams {
 
 export interface CustomMailParams {
     readonly [key: string]: string
+}
+
+export interface EmailParams {
+    to?: string
+    from?: string
+    fullname?: string
+    subject?: string
+    text?: string
+    changedData?: string
+    code?: string
 }

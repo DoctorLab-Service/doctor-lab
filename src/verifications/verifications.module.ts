@@ -8,10 +8,11 @@ import { User } from 'src/users/entities'
 import { ConfirmEmail, ConfirmPhone, VerificationEmail, VerificationPhone } from './entities'
 import { VerificationsResolver } from './verifications.resolver'
 import { VerificationsService } from './verifications.service'
+import { Token } from 'src/token/entities'
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, VerificationEmail, VerificationPhone, ConfirmEmail, ConfirmPhone]),
+        TypeOrmModule.forFeature([User, VerificationEmail, VerificationPhone, ConfirmEmail, ConfirmPhone, Token]),
         forwardRef(() => TokenModule),
         LanguageModule,
         EmailModule,

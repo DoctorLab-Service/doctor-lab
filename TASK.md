@@ -34,7 +34,7 @@
   
 ### Messages Service
 
-- [ ] - Messages Entity
+- [ ] - Message Entity
 - [ ] - Create Message
 - [ ] - Update Message
 - [ ] - Delete Message
@@ -43,12 +43,13 @@
 
 ### Help Service
 
-- [ ] - Help Entity
+- [ ] - Help Message Entity
 - [ ] - Create Help Message
-- [ ] - Update Help Message
 - [ ] - Delete Help Message
 - [ ] - Find All Help Messages
-- [ ] - Get Help Message By User Id
+- [ ] - Find Help Messages By Id
+- [ ] - Read Help Message
+- [ ] - Answer To Help Message
 
 ### Find Service
 

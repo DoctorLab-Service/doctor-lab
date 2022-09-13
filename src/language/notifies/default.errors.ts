@@ -52,6 +52,12 @@ export const defaultErrors: DeffaultMessages = {
         createRole: "Couldn't create role",
         updateRole: "Couldn't update role",
         deleteRole: "Couldn't delete role",
+        foundMessages: 'No messages found',
+        createMessage: 'Failed to send message',
+        deleteMessage: 'Unable to delete message',
+        closeMessage: 'Unable to close message',
+        readMessage: 'Unable to open message',
+        sendAnswerMessage: 'Failed to send message to user',
         upload: 'Failed to upload file(s)',
     },
     isEmpty: {

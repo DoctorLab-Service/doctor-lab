@@ -6,8 +6,9 @@ import {
     passwordRecoveryMessage,
     changeEmailMessage,
     changeInfoMessage,
+    helpEmailMessage,
 } from './emails/emails'
-import { MailMessage, MailModuleOptions } from './types'
+import { EmailParams, MailMessage, MailModuleOptions } from './types'
 
 @Injectable()
 export class EmailService {
@@ -35,7 +36,7 @@ export class EmailService {
      * @param fullname recipient user name
      * @param code code
      */
-    async sendVerificationEmail(to: string, fullname: string, code: string): Promise<boolean> {
+    async sendVerificationEmail({ to, fullname, code }: EmailParams): Promise<boolean> {
         const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/confirm?${code}`
         return this.sendMail({
             to,
@@ -51,7 +52,7 @@ export class EmailService {
      * @param fullname recipient user name
      * @param code code
      */
-    async sendPasswordRecovery(to: string, code: string): Promise<boolean> {
+    async sendPasswordRecovery({ to, code }: EmailParams): Promise<boolean> {
         const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/forgot-password?${code}`
         return this.sendMail({
             to,
@@ -67,7 +68,7 @@ export class EmailService {
      * @param fullname recipient user name
      * @param code code
      */
-    async sendChangeEmail(to: string, fullname: string, code: string): Promise<boolean> {
+    async sendChangeEmail({ to, fullname, code }: EmailParams): Promise<boolean> {
         const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/change-email?${code}`
         return this.sendMail({
             to,
@@ -83,12 +84,28 @@ export class EmailService {
      * @param fullname recipient user name
      * @param code code
      */
-    async sendChangeInfo(to: string, fullname: string, changedData: string): Promise<boolean> {
+    async sendChangeInfo({ to, fullname, changedData }: EmailParams): Promise<boolean> {
         return this.sendMail({
             to,
             from: this.options.fromEmail,
             subject: 'Change Email - Complited',
             html: changeInfoMessage({ fullname }, changedData),
+        })
+    }
+
+    /**
+     * Send forgot email, for reset password
+     * @param to recipient email address
+     * @param fullname recipient user name
+     * @param subject subject message
+     * @param text text message
+     */
+    async sendHelpMassageEmail({ to, fullname, subject, text }: EmailParams): Promise<boolean> {
+        return this.sendMail({
+            to: to ? to : this.options.suportEmail, //send to suport email,
+            from: this.options.fromEmail,
+            subject: `Help Message - ${subject}`,
+            html: helpEmailMessage({ fullname, subject, text }),
         })
     }
 }

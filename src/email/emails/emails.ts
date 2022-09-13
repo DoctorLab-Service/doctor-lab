@@ -2,10 +2,12 @@ import { CustomMailParams } from '../types'
 import {
     changeEmailInfoParams,
     changeEmailParams,
+    helpMessageEmailParams,
     passwordRecoveryParams,
     verificationEmailParams,
 } from './emails.config'
 import { defaultEmailMessage } from './messages/default-email'
+import { helpMessage } from './messages/help-message-email'
 import { infoEmailMessage } from './messages/info-email'
 
 /**
@@ -43,4 +45,19 @@ export const passwordRecoveryMessage = (params: CustomMailParams): string => {
  */
 export const changeEmailMessage = (params: CustomMailParams): string => {
     return defaultEmailMessage(changeEmailParams, params)
+}
+
+/**
+ * Email message to help
+ * @param params {
+ *      to: string
+ *      fullname: string
+ *      subject: string
+ *      text: string
+ *   }
+ * @returns string
+ */
+export const helpEmailMessage = (params: CustomMailParams): string => {
+    helpMessageEmailParams.emailTitle = params.subject
+    return helpMessage(helpMessageEmailParams, params)
 }

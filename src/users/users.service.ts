@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { TokenService } from 'src/token/token.service'
 import { Repository } from 'typeorm'
 import { CONTEXT } from '@nestjs/graphql'
-import { ForbiddenException, ValidationException } from 'src/exceptions'
+import { ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
 import { MyAccountOutput } from './dtos/my-account.dto'
 import { FilesService } from 'src/files/files.services'
@@ -33,6 +33,7 @@ import {
 } from './dtos'
 import { EResetKey } from './config/users.enum'
 import { EmailService } from 'src/email/email.service'
+import { Token } from 'src/token/entities'
 
 @Injectable()
 export class UsersService {
@@ -141,7 +142,7 @@ export class UsersService {
         try {
             // Create accessToken and refreshToken
             const tokens = await this.token.generateTokens({ id: user.id })
-            this.token.saveToken(user.id, tokens)
+            this.token.saveTokens(user.id, tokens)
 
             return { ok: Boolean(user), ...tokens, user }
         } catch (error) {
@@ -307,6 +308,7 @@ export class UsersService {
         try {
             user.email = body.email
             user.verifiedEmail = false
+            user.resetKey = null
             updatedUser = await this.users.save(user)
         } catch (error) {
             throw new ValidationException({
@@ -316,7 +318,11 @@ export class UsersService {
 
         try {
             // Send Changed info
-            await this.emailService.sendChangeInfo(user.email, user.fullname, user.email)
+            await this.emailService.sendChangeInfo({
+                to: user.email,
+                fullname: user.fullname,
+                changedData: user.email,
+            })
         } catch (error) {
             throw new ValidationException({
                 no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
@@ -332,7 +338,7 @@ export class UsersService {
      */
     async changePassword(body: ChangePasswordInput): Promise<ChangeOutput> {
         const currentUser: User = await this.token.getContextUser(this.context)
-        const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.phone } })
+        const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.password } })
         if (!user) {
             throw new ValidationException({
                 not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
@@ -342,6 +348,7 @@ export class UsersService {
         let updatedUser: User
         try {
             user.password = body.password
+            user.resetKey = null
             updatedUser = await this.users.save(user)
         } catch (error) {
             throw new ValidationException({
@@ -351,13 +358,18 @@ export class UsersService {
 
         try {
             // Send Changed info
-            await this.emailService.sendChangeInfo(user.email, user.fullname, body.password)
+            await this.emailService.sendChangeInfo({
+                to: user.email,
+                fullname: user.fullname,
+                changedData: body.password,
+            })
         } catch (error) {
             throw new ValidationException({
                 no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
             })
         }
 
+        await this.token.removeTokenByUserId(user.id)
         return { ok: Boolean(updatedUser.password === body.password) }
     }
 
@@ -387,6 +399,7 @@ export class UsersService {
         try {
             user.phone = body.phone
             user.verifiedPhone = false
+            user.resetKey = null
             updatedUser = await this.users.save(user)
         } catch (error) {
             throw new ValidationException({
@@ -400,7 +413,11 @@ export class UsersService {
             // await this.verificationService.verificationPhoneCode(user)
 
             // Send Changed info
-            await this.emailService.sendChangeInfo(user.email, user.fullname, user.phone)
+            await this.emailService.sendChangeInfo({
+                to: user.email,
+                fullname: user.fullname,
+                changedData: user.phone,
+            })
         } catch (error) {
             throw new ValidationException({
                 no_send: await this.languageService.setError(['isNotVerify', 'noSendSMS'], 'verify'),

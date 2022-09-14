@@ -15,19 +15,11 @@ import { IsNotEmpty, IsString } from 'class-validator'
 registerEnumType(EDefaultRoles, { name: 'EDefaultRoles' })
 
 @InputType()
-export class NoRequiredInput extends PartialType(PickType(User, ['gender', 'facebookId', 'googleId'])) {}
+export class NoRequiredInput extends PartialType(
+    PickType(User, ['gender', 'facebookId', 'googleId', 'language', 'country', 'state', 'address', 'experience']),
+) {}
 @InputType()
-export class RequiredInput extends PickType(User, [
-    'fullname',
-    'country',
-    'state',
-    'address',
-    'experience',
-    'phone',
-    'email',
-    'password',
-    'language',
-]) {}
+export class RequiredInput extends PickType(User, ['fullname', 'phone', 'email', 'password']) {}
 
 @InputType()
 export class CreateAccountInput extends IntersectionType(RequiredInput, NoRequiredInput) {

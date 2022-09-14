@@ -33,7 +33,6 @@ import {
 } from './dtos'
 import { EResetKey } from './config/users.enum'
 import { EmailService } from 'src/email/email.service'
-import { Token } from 'src/token/entities'
 
 @Injectable()
 export class UsersService {
@@ -124,7 +123,7 @@ export class UsersService {
                 create: await this.languageService.setError(['isNot', 'createUser']),
             })
         }
-
+        console.log('createUser', user)
         // Set role for user
         await this.roleService.setUserRole(
             {
@@ -137,7 +136,7 @@ export class UsersService {
         // Create and send verification code
         await this.verificationService.verificationEmailCode(user)
         // * SEND SMS
-        // await this.verificationService.verificationPhoneCode(user)
+        await this.verificationService.verificationPhoneCode(user)
 
         try {
             // Create accessToken and refreshToken
@@ -197,8 +196,9 @@ export class UsersService {
 
         // Update user data and return
         try {
-            const updatedUser = await this.users.save({ ...user })
-            return { ok: true, user: updatedUser }
+            const updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+
+            return { ok: Boolean(updatedUser), user: updatedUser }
         } catch (error) {
             console.log(error)
             throw new ValidationException({
@@ -297,7 +297,9 @@ export class UsersService {
      */
     async changeEmail(body: ChangeEmailInput): Promise<ChangeOutput> {
         const currentUser: User = await this.token.getContextUser(this.context)
-        const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.email } })
+        const user = await this.users.findOne({
+            where: { id: currentUser.id, resetKey: EResetKey.email },
+        })
         if (!user) {
             throw new ValidationException({
                 not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
@@ -309,7 +311,8 @@ export class UsersService {
             user.email = body.email
             user.verifiedEmail = false
             user.resetKey = null
-            updatedUser = await this.users.save(user)
+
+            updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
         } catch (error) {
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'email']),
@@ -318,7 +321,7 @@ export class UsersService {
 
         try {
             // Send Changed info
-            await this.emailService.sendChangeInfo({
+            await this.emailService.sendChangeInfo('email', {
                 to: user.email,
                 fullname: user.fullname,
                 changedData: user.email,
@@ -358,7 +361,7 @@ export class UsersService {
 
         try {
             // Send Changed info
-            await this.emailService.sendChangeInfo({
+            await this.emailService.sendChangeInfo('password', {
                 to: user.email,
                 fullname: user.fullname,
                 changedData: body.password,
@@ -369,8 +372,11 @@ export class UsersService {
             })
         }
 
+        // Remove token from database
+        // If it exists
         await this.token.removeTokenByUserId(user.id)
-        return { ok: Boolean(updatedUser.password === body.password) }
+
+        return { ok: Boolean(updatedUser) }
     }
 
     /**
@@ -400,7 +406,9 @@ export class UsersService {
             user.phone = body.phone
             user.verifiedPhone = false
             user.resetKey = null
-            updatedUser = await this.users.save(user)
+
+            // Create new user object without password
+            updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
         } catch (error) {
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'phone']),
@@ -410,10 +418,10 @@ export class UsersService {
         try {
             // * SEND SMS
             // Send verification code. Sms
-            // await this.verificationService.verificationPhoneCode(user)
+            await this.verificationService.verificationPhoneCode(user)
 
             // Send Changed info
-            await this.emailService.sendChangeInfo({
+            await this.emailService.sendChangeInfo('phone', {
                 to: user.email,
                 fullname: user.fullname,
                 changedData: user.phone,

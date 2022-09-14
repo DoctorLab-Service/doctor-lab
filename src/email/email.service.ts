@@ -80,15 +80,16 @@ export class EmailService {
 
     /**
      * Send forgot email, for reset password
+     * @param changeName name to change email | password | phone
      * @param to recipient email address
      * @param fullname recipient user name
      * @param code code
      */
-    async sendChangeInfo({ to, fullname, changedData }: EmailParams): Promise<boolean> {
+    async sendChangeInfo(changeName: string, { to, fullname, changedData }: EmailParams): Promise<boolean> {
         return this.sendMail({
             to,
             from: this.options.fromEmail,
-            subject: 'Change Email - Complited',
+            subject: `Change ${changeName} - Complited`,
             html: changeInfoMessage({ fullname }, changedData),
         })
     }

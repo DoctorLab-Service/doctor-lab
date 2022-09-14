@@ -9,7 +9,6 @@ import { tokenConfig } from './config/token.config'
 import { ForbiddenException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
 import { GenerateTokens, TokenModuleOptions } from './config/types'
-import { relationsConfig } from 'src/common/configs'
 import { tokenKey } from './config/token.enums'
 
 @Injectable()
@@ -45,8 +44,6 @@ export class TokenService {
      */
     async validateAccessToken(accessToken: string): Promise<User | null> {
         const token = await this.token.findOne({ where: { accessToken } })
-
-        console.log(token)
         if (!token) {
             throw new Error()
         }
@@ -109,14 +106,16 @@ export class TokenService {
      * Remove token by user id
      * @param userId number, user id
      */
-    async removeTokenByUserId(userId: number) {
+    async removeTokenByUserId(userId: number): Promise<void> {
         // Check to exists tokens for this user
         const tokens = await this.token.find({})
         const existsToken = tokens.filter(t => t.user.id === userId)
         // If token exists to delete
         if (existsToken.length) {
             await this.token.delete(existsToken[0].id)
+            return
         }
+        return
     }
 
     /**
@@ -160,6 +159,7 @@ export class TokenService {
      * @returns User object
      */
     async getContextUser(context: any): Promise<User | null> {
+        console.log('getContextUser', context)
         if (context) {
             let headers = context.headers
             if (headers === undefined) {
@@ -179,7 +179,7 @@ export class TokenService {
 
                 const decoded = await this.validateAccessToken(accessToken.toString())
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-                    user = await this.users.findOne({ where: { id: decoded.id }, ...relationsConfig.users })
+                    user = await this.users.findOne({ where: { id: decoded.id } })
                     return user
                 }
             }
@@ -195,7 +195,7 @@ export class TokenService {
 
                 const decoded = await this.validateRecoveryToken(recoveryToken.toString())
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-                    const user = await this.users.findOne({ where: { id: decoded.id }, ...relationsConfig.users })
+                    const user = await this.users.findOne({ where: { id: decoded.id } })
                     return user
                 }
             }

@@ -1,4 +1,4 @@
-import { Injectable, Inject, ForbiddenException } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { CONTEXT } from '@nestjs/graphql'
 import { InjectRepository } from '@nestjs/typeorm'
 import { relationsConfig } from 'src/common/configs'
@@ -19,14 +19,13 @@ import {
 } from './dtos'
 import { VerificationEmail, VerificationPhone, ConfirmEmail, ConfirmPhone } from './entities'
 import { EConfirmCodeKey } from './verifications.enums'
-import { Token } from 'src/token/entities'
+import { object } from 'src/common/helpers'
 
 @Injectable()
 export class VerificationsService {
     constructor(
         @Inject(CONTEXT) private readonly context,
         @InjectRepository(User) private readonly users: Repository<User>,
-        @InjectRepository(Token) private readonly tokens: Repository<Token>,
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verifyPhone: Repository<VerificationPhone>,
         @InjectRepository(ConfirmEmail) private readonly confirmEmail: Repository<ConfirmEmail>,
@@ -299,7 +298,11 @@ export class VerificationsService {
 
         try {
             verification.user.verifiedEmail = true
-            await this.users.save(verification.user)
+
+            // Create new user object without password
+            await this.users.save({ ...object.withoutProperties(verification.user, ['password']) })
+
+            // Delete verify code
             await this.verifyEmail.delete(verification.id)
 
             return { ok: true }
@@ -318,14 +321,23 @@ export class VerificationsService {
     async verificationPhone({ code }: VerificationInput): Promise<VerificationOutput> {
         const verification = await this.verifyPhone.findOne({ where: { code }, ...relationsConfig.verifications })
 
-        if (!verification)
+        if (!verification) {
             throw new ValidationException({
                 phone: await this.languageService.setError(['isNotVerify', 'code'], 'verify'),
             })
+        }
 
         try {
             verification.user.verifiedPhone = true
-            await this.users.save(verification.user)
+
+            // Create new user object without password
+            await this.users.save({ ...object.withoutProperties(verification.user, ['password']) })
+
+            // $2b$12$wfm7d0dLTUAArjLi2rceteh0.6ReZe5AhW3FZIGzoHPZ6VWspCw1K
+            // $2b$12$wfm7d0dLTUAArjLi2rceteh0.6ReZe5AhW3FZIGzoHPZ6VWspCw1K
+            // $2b$12$wfm7d0dLTUAArjLi2rceteh0.6ReZe5AhW3FZIGzoHPZ6VWspCw1K
+
+            // Delete verify code
             await this.verifyPhone.delete(verification.id)
             return { ok: true }
         } catch (error) {
@@ -383,7 +395,7 @@ export class VerificationsService {
 
             // Set reset key  for user
             user.resetKey = EResetKey.password
-            await this.users.save(user)
+            await this.users.save({ ...object.withoutProperties(user, ['password']) })
 
             // Create token
             const token = await this.tokenService.generateTokens({ id: user.id }, true)
@@ -430,12 +442,11 @@ export class VerificationsService {
 
         try {
             user.resetKey = EResetKey.password
-            await this.users.save(user)
+            await this.users.save({ ...object.withoutProperties(user, ['password']) })
 
             // Delete code
-            // const deletedCode = await this.confirmPhone.delete({ code, key: EConfirmCodeKey.change_password })
-            // return { ok: Boolean(deletedCode.affected > 0) }
-            return { ok: Boolean(true) }
+            const deletedCode = await this.confirmPhone.delete({ code, key: EConfirmCodeKey.change_password })
+            return { ok: Boolean(deletedCode.affected > 0) }
         } catch (error) {
             console.log(error)
             throw new ValidationException({
@@ -470,7 +481,7 @@ export class VerificationsService {
 
         try {
             user.resetKey = EResetKey.email
-            await this.users.save(user)
+            await this.users.save({ ...object.withoutProperties(user, ['password']) })
 
             // Delete code
             const deletedCode = await this.confirmEmail.delete({ code, key: EConfirmCodeKey.change_email })
@@ -509,7 +520,7 @@ export class VerificationsService {
 
         try {
             user.resetKey = EResetKey.phone
-            await this.users.save(user)
+            await this.users.save({ ...object.withoutProperties(user, ['password']) })
 
             // Delete code
             const deletedCode = await this.confirmPhone.delete({ code, key: EConfirmCodeKey.change_phone })

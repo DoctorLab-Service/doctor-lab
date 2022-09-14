@@ -20,11 +20,6 @@ export class HelpMessage extends CoreEntity {
     @Length(4, 64)
     email: string
 
-    // Nullable if user is not authorized
-    @ManyToOne(() => User, user => user.HelpMessage, { nullable: true, eager: true, onDelete: 'CASCADE' })
-    @Field(() => User, { nullable: true })
-    user: User
-
     @Column()
     @Field(() => String)
     @Length(3, 64)
@@ -43,8 +38,13 @@ export class HelpMessage extends CoreEntity {
     @Field(() => Boolean)
     closed: boolean
 
-    @OneToMany(() => HelpAnswer, answer => answer.message, { nullable: true, eager: true })
-    @Field(() => HelpAnswer, { defaultValue: [] })
+    // Nullable if user is not authorized
+    @ManyToOne(() => User, user => user.helpMessage, { nullable: true, onDelete: 'CASCADE' })
+    @Field(() => User, { nullable: true })
+    user: User
+
+    @OneToMany(() => HelpAnswer, answer => answer.message)
+    @Field(() => [HelpAnswer], { defaultValue: [] })
     answers: HelpAnswer[]
 
     // attachments: [{ type: Schema.Types.ObjectId, ref: "UploadFile" }],

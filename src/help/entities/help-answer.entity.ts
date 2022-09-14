@@ -13,7 +13,7 @@ export class HelpAnswer extends CoreEntity {
     @Field(() => User)
     message: HelpMessage
 
-    @ManyToOne(() => User, user => user.HelpMessage, { onDelete: 'CASCADE', eager: true })
+    @ManyToOne(() => User, user => user.helpMessage, { onDelete: 'CASCADE', eager: true })
     @Field(() => User, { nullable: true })
     user: User
 

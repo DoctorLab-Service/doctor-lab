@@ -3,7 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { ELanguage } from 'src/language/dtos/languages.dto'
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm'
+import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { EGender, EResetKey } from '../config/users.enum'
 import { CoreEntity } from 'src/common/entities'
@@ -58,7 +58,7 @@ export class User extends CoreEntity {
     @Length(4, 64)
     email: string
 
-    @Column()
+    @Column({ nullable: true })
     @Field(() => String)
     @Length(3, 32)
     experience: string
@@ -109,7 +109,7 @@ export class User extends CoreEntity {
 
     @OneToMany(() => HelpMessage, message => message.user)
     @Field(() => [HelpMessage], { defaultValue: [] })
-    HelpMessage: HelpMessage[]
+    helpMessage: HelpMessage[]
 
     @Column({ type: 'enum', enum: EResetKey, nullable: true })
     resetKey: EResetKey
@@ -157,8 +157,10 @@ export class User extends CoreEntity {
         Check passwords
     */
     @BeforeInsert()
-    // @BeforeUpdate()
-    async hashPassword(): Promise<void> {
+    @BeforeUpdate()
+    private async hashPassword(): Promise<void> {
+        console.log('hash_Password', this.password)
+
         if (this.password) {
             try {
                 this.password = await bcrypt.hash(this.password, 12)

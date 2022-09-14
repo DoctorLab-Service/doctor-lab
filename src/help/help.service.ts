@@ -23,6 +23,7 @@ import { ValidationException } from 'src/exceptions'
 import { CONTEXT } from '@nestjs/graphql'
 import { TokenService } from 'src/token/token.service'
 import { EmailService } from 'src/email/email.service'
+import { relationsConfig } from 'src/common/configs'
 
 @Injectable()
 export class HelpService {
@@ -103,7 +104,8 @@ export class HelpService {
      */
     async findAllHelpMessages(): Promise<FindAllHelpMessagesOutput> {
         try {
-            const messages = await this.helpMessages.find({})
+            const messages = await this.helpMessages.find({ ...relationsConfig.help })
+            console.log(messages)
             return { ok: Boolean(messages), messages }
         } catch (error) {
             console.log(error)

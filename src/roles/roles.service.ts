@@ -393,9 +393,6 @@ export class RolesService {
      * TODO USING PERMISSIONS
      */
     async findAllRoles(): Promise<FindAllRolesOutput> {
-        // ! TEST this test function
-        // this._deffaultRoles()
-        // ! TEST END this test function
         try {
             const roles = await this.roles.find({ ...relationsConfig.roles })
             return { ok: true, roles }

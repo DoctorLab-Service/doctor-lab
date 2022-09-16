@@ -76,6 +76,9 @@
     "typescript": "^4.7.4"
   },
   "jest": {
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",
@@ -90,6 +93,17 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "main.ts",
+      ".entity.ts",
+      ".constants.ts",
+      ".dto.ts",
+      ".module.ts",
+      ".middleware.ts",
+      ".decorator.ts",
+      ".guard.ts"
+    ]
   }
 }

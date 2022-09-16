@@ -1,20 +1,10 @@
-import { forwardRef } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm'
-import { EmailModule } from 'src/email/email.module'
+import { getRepositoryToken } from '@nestjs/typeorm'
 import { EmailService } from 'src/email/email.service'
-import { FilesModule } from 'src/files/files.module'
 import { FilesService } from 'src/files/files.services'
-import { LanguageModule } from 'src/language/language.module'
 import { LanguageService } from 'src/language/language.service'
-import { PhoneModule } from 'src/phone/phone.module'
-import { UserRoles } from 'src/roles/entities'
-import { RolesModule } from 'src/roles/roles.module'
 import { RolesService } from 'src/roles/roles.service'
-import { TokenModule } from 'src/token/token.module'
 import { TokenService } from 'src/token/token.service'
-import { VerificationEmail, VerificationPhone } from 'src/verifications/entities'
-import { VerificationsModule } from 'src/verifications/verifications.module'
 import { VerificationsService } from 'src/verifications/verifications.service'
 import { User } from '../entities'
 import { UsersService } from '../users.service'
@@ -32,70 +22,58 @@ import {
 describe.only('UsersService', () => {
     let service: UsersService
     let usersRepository: MockRepository<User>
-    // let verificationService: VerificationsService
-    // let emailService: EmailService
-    // let tokenService: TokenService
-    // let filesService: FilesService
-    // let roleService: RolesService
-    // let languageService: LanguageService
+    let verificationService: VerificationsService
+    let emailService: EmailService
+    let tokenService: TokenService
+    let filesService: FilesService
+    let roleService: RolesService
+    let languageService: LanguageService
 
     // Start before testing
     beforeEach(async () => {
         const module = await Test.createTestingModule({
-            imports: [
-                TypeOrmModule.forFeature([User, UserRoles, VerificationEmail, VerificationPhone]),
-                // forwardRef(() => TokenModule),
-                // forwardRef(() => RolesModule),
-                FilesModule,
-                EmailModule,
-                PhoneModule,
-                LanguageModule,
-                RolesModule,
-                VerificationsModule,
-            ],
             providers: [
                 UsersService,
                 {
                     provide: getRepositoryToken(User),
                     useValue: mockRepository(),
                 },
-                // {
-                //     provide: VerificationsService,
-                //     useValue: mockVerificationService(),
-                // },
-                // {
-                //     provide: EmailService,
-                //     useValue: mockEmailService(),
-                // },
-                // {
-                //     provide: TokenService,
-                //     useValue: mockTokenService(),
-                // },
-                // {
-                //     provide: FilesService,
-                //     useValue: mockFilesService(),
-                // },
-                // {
-                //     provide: RolesService,
-                //     useValue: mockRoleService(),
-                // },
-                // {
-                //     provide: LanguageService,
-                //     useValue: mockLanguageService(),
-                // },
+                {
+                    provide: VerificationsService,
+                    useValue: mockVerificationService(),
+                },
+                {
+                    provide: EmailService,
+                    useValue: mockEmailService(),
+                },
+                {
+                    provide: TokenService,
+                    useValue: mockTokenService(),
+                },
+                {
+                    provide: FilesService,
+                    useValue: mockFilesService(),
+                },
+                {
+                    provide: RolesService,
+                    useValue: mockRoleService(),
+                },
+                {
+                    provide: LanguageService,
+                    useValue: mockLanguageService(),
+                },
             ],
         }).compile()
 
-        console.log('Module', module)
 
         // Services
         service = module.get<UsersService>(UsersService)
-        // verificationService = module.get<VerificationsService>(VerificationsService)
-        // emailService = module.get<EmailService>(EmailService)
-        // tokenService = module.get<TokenService>(TokenService)
-        // filesService = module.get<FilesService>(FilesService)
-        // roleService = module.get<RolesService>(RolesService)
-        // languageService = module.get<LanguageService>(LanguageService)
+        verificationService = module.get<VerificationsService>(VerificationsService)
+        emailService = module.get<EmailService>(EmailService)
+        tokenService = module.get<TokenService>(TokenService)
+        filesService = module.get<FilesService>(FilesService)
+        roleService = module.get<RolesService>(RolesService)
+        languageService = module.get<LanguageService>(LanguageService)
 
         // Repositories
         usersRepository = module.get(getRepositoryToken(User))

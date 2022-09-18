@@ -38,41 +38,29 @@ export class TokenService {
     }
 
     /**
-     * Check to validation access token
-     * @param accessToken string
+     * Check to validation token
+     * @param key: 'recoveryToken' | 'accessToken' | 'refreshToken'
+     * @param token: string
      * @returns veridied token
      */
-    async validateAccessToken(accessToken: string): Promise<User | null> {
-        const token = await this.token.findOne({ where: { accessToken } })
-        if (!token) {
+    async validateToken(key: 'recoveryToken' | 'accessToken' | 'refreshToken', token: string): Promise<User | null> {
+        const candidate = await this.token.findOne({ where: { [key]: token } })
+        if (!candidate) {
             throw new Error()
         }
+        const secret =
+            key === 'accessToken' ? 'accessSecret' : key === 'recoveryToken' ? 'recoverySecret' : 'refreshSecret'
 
-        return jwt.verify(token.accessToken, this.secrets.accessSecret)
+        return jwt.verify(token, this.secrets[secret])
     }
 
     /**
-     * Check to validation recovery token
-     * @param recoveryToken string
-     * @returns verified token
+     * Find refresh token
+     * @param refreshToken string
+     * @returns founds tokens
      */
-    async validateRecoveryToken(recoveryToken: string): Promise<User | null> {
-        const token = await this.token.findOne({ where: { recoveryToken } })
-
-        if (!token) {
-            throw new Error()
-        }
-
-        return jwt.verify(token.recoveryToken, this.secrets.recoverySecret)
-    }
-
-    /**
-     * Check to validate refresh token
-     * @param token string
-     * @returns token
-     */
-    async validateRefreshToken(token: string): Promise<User | null> {
-        return jwt.verify(token, this.secrets.refreshSecret)
+    async findToken(key: 'recoveryToken' | 'accessToken' | 'refreshToken', token: string) {
+        return this.token.findOne({ where: { [key]: token } })
     }
 
     /**
@@ -103,6 +91,20 @@ export class TokenService {
     }
 
     /**
+     * Remove expired acces token
+     * @param key recoveryToken | accessToken | refreshToken
+     * @param token string
+     * @returns boolean
+     */
+    async removeExpiredToken(key: 'recoveryToken' | 'accessToken' | 'refreshToken', token: string): Promise<boolean> {
+        const candidate = await this.token.findOne({ where: { [key]: token } })
+        candidate[key] = null
+        const newToken = await this.token.save({ ...candidate })
+        if (newToken[key] !== null) return false
+        return true
+    }
+
+    /**
      * Remove token by user id
      * @param userId number, user id
      */
@@ -119,54 +121,17 @@ export class TokenService {
     }
 
     /**
-     * Remove expired acces token
-     * @param accessToken string
-     * @returns boolean
-     */
-    async removeExpiredAccessToken(accessToken: string): Promise<boolean> {
-        const token = await this.token.findOne({ where: { accessToken } })
-        token.accessToken = null
-        const newToken = await this.token.save({ ...token })
-        if (newToken.accessToken !== null) return false
-        return true
-    }
-
-    /**
-     * Remove expired acces token
-     * @param accessToken string
-     * @returns boolean
-     */
-    async removeExpiredRecoveryToken(recoveryToken: string): Promise<boolean> {
-        const token = await this.token.findOne({ where: { recoveryToken } })
-        token.accessToken = null
-        const newToken = await this.token.save({ ...token })
-        if (newToken.accessToken !== null) return false
-        return true
-    }
-
-    /**
-     * Find refresh token
-     * @param refreshToken string
-     * @returns founds tokens
-     */
-    async findRefreshToken(refreshToken: string) {
-        return this.token.findOne({ where: { refreshToken } })
-    }
-
-    /**
      * Get User from context headers
      * @param context any
      * @returns User object
      */
     async getContextUser(context: any): Promise<User | null> {
-        console.log('getContextUser', context)
         if (context) {
+            let user: User
             let headers = context.headers
             if (headers === undefined) {
                 headers = context.req.headers
             }
-
-            let user: User
 
             // JWT TOKEN
             if (tokenKey.JWT in headers) {
@@ -177,7 +142,7 @@ export class TokenService {
                     })
                 }
 
-                const decoded = await this.validateAccessToken(accessToken.toString())
+                const decoded = await this.validateToken('accessToken', accessToken.toString())
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
                     user = await this.users.findOne({ where: { id: decoded.id } })
                     return user
@@ -193,7 +158,7 @@ export class TokenService {
                     })
                 }
 
-                const decoded = await this.validateRecoveryToken(recoveryToken.toString())
+                const decoded = await this.validateToken('recoveryToken', recoveryToken.toString())
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
                     const user = await this.users.findOne({ where: { id: decoded.id } })
                     return user
@@ -205,6 +170,7 @@ export class TokenService {
                     auth: await this.languageService.setError(['isNotAuth', 'auth'], 'auth'),
                 })
             }
+            return user
         }
     }
 }

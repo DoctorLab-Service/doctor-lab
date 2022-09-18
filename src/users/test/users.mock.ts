@@ -31,15 +31,12 @@ export const mockEmailService = () => ({
 
 export const mockTokenService = () => ({
     generateTokens: jest.fn(() => 'signed-token-baby'),
-    validateAccessToken: jest.fn(),
-    validateRecoveryToken: jest.fn(),
-    validateRefreshToken: jest.fn(),
+    validateToken: jest.fn(),
+    findToken: jest.fn(),
     saveTokens: jest.fn(),
     removeToken: jest.fn(),
     removeTokenByUserId: jest.fn(),
-    removeExpiredAccessToken: jest.fn(),
-    removeExpiredRecoveryToken: jest.fn(),
-    findRefreshToken: jest.fn(),
+    removeExpiredToken: jest.fn(),
     getContextUser: jest.fn(),
 })
 

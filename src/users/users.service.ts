@@ -2,7 +2,7 @@ import { EDefaultRoles, ESystemsRoles } from 'src/roles/roles.enums'
 import { FileUpload } from 'graphql-upload'
 import { relationsConfig } from 'src/common/configs/relations.config'
 import { User } from 'src/users/entities'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Optional } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { TokenService } from 'src/token/token.service'
 import { Repository } from 'typeorm'
@@ -122,7 +122,6 @@ export class UsersService {
                 create: await this.languageService.setError(['isNot', 'createUser']),
             })
         }
-        console.log('createUser', user)
         // Set role for user
         await this.roleService.setUserRole(
             {

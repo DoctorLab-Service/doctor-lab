@@ -18,15 +18,15 @@ export class TokenMiddleware implements NestMiddleware {
         if (tokenKey.JWT in req.headers) {
             const accessToken = req.headers[tokenKey.JWT]
             try {
-                const decoded = await this.tokenService.validateAccessToken(accessToken.toString())
+                const decoded = await this.tokenService.validateToken('accessToken', accessToken.toString())
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
                     const user = await this.usersService.findById({ id: decoded.id })
                     req['user'] = user.user
                 }
             } catch (error) {
-                console.log(error.message)
+                console.log('EEEEEERRRRROOOORR', error.message)
                 if (error.message === 'jwt expired') {
-                    await this.tokenService.removeExpiredAccessToken(accessToken.toString())
+                    await this.tokenService.removeExpiredToken('accessToken', accessToken.toString())
                     next(
                         new ForbiddenException({
                             token_expired: await this.languageService.setError(['token', 'expired'], 'auth'),
@@ -43,7 +43,7 @@ export class TokenMiddleware implements NestMiddleware {
         if (tokenKey.RECOVERY_JWT in req.headers) {
             const recoveryToken = req.headers[tokenKey.RECOVERY_JWT]
             try {
-                const decoded = await this.tokenService.validateRecoveryToken(recoveryToken.toString())
+                const decoded = await this.tokenService.validateToken('recoveryToken', recoveryToken.toString())
 
                 let user
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
@@ -53,7 +53,7 @@ export class TokenMiddleware implements NestMiddleware {
             } catch (error) {
                 console.log(error.message)
                 if (error.message === 'jwt expired') {
-                    await this.tokenService.removeExpiredRecoveryToken(recoveryToken.toString())
+                    await this.tokenService.removeExpiredToken('recoveryToken', recoveryToken.toString())
                     next(
                         new ForbiddenException({
                             token_expired: await this.languageService.setError(['token', 'expired'], 'auth'),

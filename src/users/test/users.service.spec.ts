@@ -9,6 +9,7 @@ import { VerificationsService } from 'src/verifications/verifications.service'
 import { User } from '../entities'
 import { UsersService } from '../users.service'
 import { MockRepository } from './types'
+import { CONTEXT } from '@nestjs/graphql'
 import {
     mockRepository,
     mockVerificationService,
@@ -18,6 +19,8 @@ import {
     mockRoleService,
     mockLanguageService,
 } from './users.mock'
+import { ESystemsRoles, EDefaultRoles } from 'src/roles/roles.enums'
+import { systemUserParams } from '../config/users.config'
 
 describe.only('UsersService', () => {
     let service: UsersService
@@ -28,12 +31,17 @@ describe.only('UsersService', () => {
     let filesService: FilesService
     let roleService: RolesService
     let languageService: LanguageService
+    let context: 'REQUEST'
 
     // Start before testing
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
                 UsersService,
+                {
+                    provide: CONTEXT,
+                    useValue: {},
+                },
                 {
                     provide: getRepositoryToken(User),
                     useValue: mockRepository(),
@@ -65,7 +73,6 @@ describe.only('UsersService', () => {
             ],
         }).compile()
 
-
         // Services
         service = module.get<UsersService>(UsersService)
         verificationService = module.get<VerificationsService>(VerificationsService)
@@ -74,6 +81,9 @@ describe.only('UsersService', () => {
         filesService = module.get<FilesService>(FilesService)
         roleService = module.get<RolesService>(RolesService)
         languageService = module.get<LanguageService>(LanguageService)
+
+        // Context
+        context = module.get(CONTEXT)
 
         // Repositories
         usersRepository = module.get(getRepositoryToken(User))
@@ -99,14 +109,7 @@ describe.only('UsersService', () => {
 
     // Test group to create system user
     describe('_createSystemUser', () => {
-        const createSystemUserArgs = {
-            email: 'dl.service@email.com',
-            phone: '+380979995500',
-            fullname: 'dl.user_name',
-            password: 'dl.password',
-            verifiedEmail: true,
-            verifiedPhone: true,
-        }
+        const createSystemUserArgs = systemUserParams
 
         // Test exist to system user
         it('should if exist system user', async () => {
@@ -117,45 +120,71 @@ describe.only('UsersService', () => {
             })
 
             const result = await service._createSystemUser()
-            // expect(result).toBe(true)
+            expect(result).toBe(true)
         })
 
-        // // Test to create system user
-        // it('should create system user if it not exists', async () => {
-        //     usersRepository.findOne.mockResolvedValue(undefined)
+        // Test to create system user
+        it('should create system user if it not exists', async () => {
+            usersRepository.findOne.mockResolvedValue(undefined)
 
-        //     // Create System User
-        //     usersRepository.create.mockReturnValue(createSystemUserArgs)
-        //     usersRepository.save.mockResolvedValue(createSystemUserArgs)
+            // Create System User
+            usersRepository.create.mockReturnValue(createSystemUserArgs)
+            usersRepository.save.mockResolvedValue(createSystemUserArgs)
 
-        //     const result = await service._createSystemUser()
+            const result = await service._createSystemUser()
 
-        //     expect(usersRepository.create).toHaveBeenCalledTimes(1)
-        //     expect(usersRepository.create).toHaveBeenCalledWith(createSystemUserArgs)
+            expect(usersRepository.create).toHaveBeenCalledTimes(1)
+            expect(usersRepository.create).toHaveBeenCalledWith(createSystemUserArgs)
 
-        //     expect(usersRepository.save).toHaveBeenCalledTimes(1)
-        //     expect(usersRepository.save).toHaveBeenCalledWith(createSystemUserArgs)
+            expect(usersRepository.save).toHaveBeenCalledTimes(1)
+            expect(usersRepository.save).toHaveBeenCalledWith(createSystemUserArgs)
 
-        //     expect(result).toBe(true)
-        // })
+            expect(result).toBe(true)
+        })
 
-        // it('set system user roles', async () => {
-        //     // Add system role for created user
-        //     await roleService.setUserRole(
-        //         {
-        //             role: ESystemsRoles.super_admin,
-        //             userId: 1,
-        //         },
-        //         true,
-        //     )
-        //     await roleService.setUserRole(
-        //         {
-        //             role: EDefaultRoles.admin,
-        //             userId: 1,
-        //         },
-        //         true,
-        //     )
-        // })
+        // Test to if not created system user
+        it('should be fail if not created system user', async () => {
+            usersRepository.findOne.mockResolvedValue(undefined)
+
+            // Create System User
+            usersRepository.create.mockReturnValue(createSystemUserArgs)
+            usersRepository.save.mockResolvedValue(createSystemUserArgs)
+
+            const result = await service._createSystemUser()
+
+            expect(usersRepository.create).toHaveBeenCalledTimes(1)
+            expect(usersRepository.create).toHaveBeenCalledWith(createSystemUserArgs)
+
+            expect(usersRepository.save).toHaveBeenCalledTimes(1)
+            expect(usersRepository.save).toHaveBeenCalledWith(createSystemUserArgs)
+
+            expect(!result).toBe(false)
+        })
+
+        // Set role to existing sistem role
+        it('should set system user roles', async () => {
+            usersRepository.findOne.mockResolvedValue({
+                id: 1,
+                email: 'dl.service@email.com',
+                phone: '+380979995500',
+            })
+
+            // Add system role for created user
+            await roleService.setUserRole(
+                {
+                    role: ESystemsRoles.super_admin,
+                    userId: 1,
+                },
+                true,
+            )
+            await roleService.setUserRole(
+                {
+                    role: EDefaultRoles.admin,
+                    userId: 1,
+                },
+                true,
+            )
+        })
     })
 
     // describe('createAccount', () => {

@@ -118,6 +118,28 @@
 - [ ] - SetPermission
 - [ ] - RemovePermission
 
+### Token Servic
+- [x] - Entity Token
+
+- [x] - Generate Tokens
+- [x] - Validate Token
+- [x] - Find Token
+- [x] - Save Tokens
+- [x] - Remove Token
+- [x] - Remove Expired Token
+- [x] - Remove Token By User Id
+- [x] - Get Context User
+  
+- [ ] - Test Generate Tokens
+- [ ] - Test Validate Token
+- [ ] - Test Find Token
+- [ ] - Test Save Tokens
+- [ ] - Test Remove Token
+- [ ] - Test Remove Expired Token
+- [ ] - Test Remove Token By User Id
+- [ ] - Test Get Context User
+
+
 ### Language Service
 
 - [x] - Error

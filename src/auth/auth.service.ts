@@ -99,8 +99,8 @@ export class AuthService {
         }
 
         // Check refresh token in db and validate it
-        const userData = await this.token.validateRefreshToken(refreshToken)
-        const tokenFromDb = await this.token.findRefreshToken(refreshToken)
+        const userData = await this.token.validateToken('refreshToken', refreshToken)
+        const tokenFromDb = await this.token.findToken('refreshToken', refreshToken)
         if (!userData || !tokenFromDb)
             throw new ForbiddenException({
                 auth: await this.languageService.setError(['isNotAuth', 'auth']),

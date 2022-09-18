@@ -1,9 +1,9 @@
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, CONTEXT, Mutation, Resolver } from '@nestjs/graphql'
 import { UpdateAccountInput, UpdateAccountOutput } from '../dtos/update-account.dto'
 import { DeleteAccountOutput } from '../dtos/delete-account.dto'
 import { CreateAccountInput, CreateAccountOutput } from '../dtos/create-account.dto'
-import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common'
+import { Inject, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { ValidationPipe } from 'src/common/pipes/validation.pipe'
 import { AccessTokenCookieInterceptor, ClearTokenCookieInterceptor } from 'src/token/interceptors'
@@ -14,7 +14,7 @@ import { ChangeOutput, ChangeEmailInput, ChangePasswordInput, ChangePhoneInput }
 @Resolver()
 @UseInterceptors(new LenguageInterceptor())
 export class UsersMutations {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(@Inject(CONTEXT) private readonly context, private readonly usersService: UsersService) {}
 
     @Mutation(() => CreateAccountOutput)
     @UseInterceptors(new AccessTokenCookieInterceptor())

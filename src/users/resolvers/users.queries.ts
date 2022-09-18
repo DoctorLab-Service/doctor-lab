@@ -1,12 +1,13 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Query, Resolver } from '@nestjs/graphql'
 import { FindAllUsersOutput, FindByEmailInput, FindByIdInput, FindByOutput, FindByPhoneInput } from '../dtos/find.dto'
 import { AuthGuard } from 'src/auth/auth.guard'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, UseInterceptors } from '@nestjs/common'
 import { UsersService } from '../users.service'
 import { MyAccountOutput } from '../dtos/my-account.dto'
 import { RolesGuard } from 'src/roles/roles.guard'
 import { EDefaultRoles } from 'src/roles/roles.enums'
 import { Roles } from 'src/roles/roles.decorator'
+import { CurrentUserInterceptor } from '../interceptors/current-user.interceptor'
 
 @UseGuards(AuthGuard, RolesGuard)
 @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist)

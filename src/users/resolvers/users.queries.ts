@@ -7,7 +7,6 @@ import { MyAccountOutput } from '../dtos/my-account.dto'
 import { RolesGuard } from 'src/roles/roles.guard'
 import { EDefaultRoles } from 'src/roles/roles.enums'
 import { Roles } from 'src/roles/roles.decorator'
-import { CurrentUserInterceptor } from '../interceptors/current-user.interceptor'
 
 @UseGuards(AuthGuard, RolesGuard)
 @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist)

@@ -21,6 +21,7 @@ import {
 } from './users.mock'
 import { ESystemsRoles, EDefaultRoles } from 'src/roles/roles.enums'
 import { systemUserParams } from '../config/users.config'
+import { ValidationException } from 'src/exceptions'
 
 describe.only('UsersService', () => {
     let service: UsersService
@@ -94,8 +95,6 @@ describe.only('UsersService', () => {
         expect(service).toBeDefined()
     })
 
-    // Set todo for testing users.service
-    it.todo('_createSystemUser')
     it.todo('createAccount')
     it.todo('deleteAccount')
     it.todo('myAccount')
@@ -107,18 +106,13 @@ describe.only('UsersService', () => {
     it.todo('changePassword')
     it.todo('changePhone')
 
-    // Test group to create system user
+    // Test Module to create system user
     describe('_createSystemUser', () => {
-        const createSystemUserArgs = systemUserParams
+        const mockUser = systemUserParams
 
         // Test exist to system user
-        it('should if exist system user', async () => {
-            usersRepository.findOne.mockResolvedValue({
-                id: 1,
-                email: 'dl.service@email.com',
-                phone: '+380979995500',
-            })
-
+        it('should return true if system user exists', async () => {
+            usersRepository.findOne.mockResolvedValue(mockUser)
             const result = await service._createSystemUser()
             expect(result).toBe(true)
         })
@@ -128,16 +122,16 @@ describe.only('UsersService', () => {
             usersRepository.findOne.mockResolvedValue(undefined)
 
             // Create System User
-            usersRepository.create.mockReturnValue(createSystemUserArgs)
-            usersRepository.save.mockResolvedValue(createSystemUserArgs)
+            usersRepository.create.mockReturnValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
 
             const result = await service._createSystemUser()
 
             expect(usersRepository.create).toHaveBeenCalledTimes(1)
-            expect(usersRepository.create).toHaveBeenCalledWith(createSystemUserArgs)
+            expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
 
             expect(usersRepository.save).toHaveBeenCalledTimes(1)
-            expect(usersRepository.save).toHaveBeenCalledWith(createSystemUserArgs)
+            expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
 
             expect(result).toBe(true)
         })
@@ -147,16 +141,16 @@ describe.only('UsersService', () => {
             usersRepository.findOne.mockResolvedValue(undefined)
 
             // Create System User
-            usersRepository.create.mockReturnValue(createSystemUserArgs)
-            usersRepository.save.mockResolvedValue(createSystemUserArgs)
+            usersRepository.create.mockReturnValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
 
             const result = await service._createSystemUser()
 
             expect(usersRepository.create).toHaveBeenCalledTimes(1)
-            expect(usersRepository.create).toHaveBeenCalledWith(createSystemUserArgs)
+            expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
 
             expect(usersRepository.save).toHaveBeenCalledTimes(1)
-            expect(usersRepository.save).toHaveBeenCalledWith(createSystemUserArgs)
+            expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
 
             expect(!result).toBe(false)
         })
@@ -187,23 +181,55 @@ describe.only('UsersService', () => {
         })
     })
 
-    // describe('createAccount', () => {
-    //     const createAccountArgs = {
-    //         fullname: 'dl_user',
-    //         phone: '+380979995500',
-    //         email: 'dl.service@email.com',
-    //         password: 'dl.password',
-    //         rePassword: 'dl.password',
-    //         role: EDefaultRoles.admin,
-    //     }
+    // Test Module to create account
+    describe('createAccount', () => {
+        const mockUser = {
+            fullname: 'dl_user',
+            phone: '+380979995500',
+            email: 'dl.service@email.com',
+            password: 'dl.password',
+            rePassword: 'dl.password',
+            verifiedPhone: false,
+            role: EDefaultRoles.admin,
+        }
 
-    //     it('should fail if user exists', async () => {
-    //         usersRepository.findOne.mockResolvedValue({
-    //             id: 1,
-    //             phone: '+380979995500',
-    //             email: 'dl.service@email.com',
-    //         })
-    //         const result = await service.createAccount(createAccountArgs)
-    //     })
-    // })
+        it('should create new account', async () => {
+            usersRepository.create.mockReturnValue(mockUser)
+            usersRepository.save.mockReturnValue(mockUser)
+            const result = await service.createAccount(mockUser)
+
+            expect(result.user).toEqual(mockUser)
+
+            expect(usersRepository.create).toHaveBeenCalledTimes(1)
+            expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
+
+            expect(usersRepository.save).toHaveBeenCalledTimes(1)
+            expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
+        })
+        it('should fail if user email is existing and verifiedPhone', async () => {
+            // usersRepository.findOne.mockReturnValue(mockUser)
+            // usersRepository.create.mockReturnValue(mockUser)
+            // usersRepository.save.mockResolvedValue(mockUser)
+
+            // expect(usersRepository.findOne({ where: { email: mockUser.email } })).toEqual(mockUser)
+
+            // await expect(service.createAccount(mockUser)).rejects.toThrow()
+            // expect(usersRepository.create).toHaveBeenCalledTimes(1)
+            // expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
+
+            // expect(usersRepository.save).toHaveBeenCalledTimes(1)
+            // expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
+        })
+        it.todo('should fail if user phone is existing and verifiedPhone')
+        it.todo('should delete by id if user email and not verifiedPhone ')
+        it.todo('should delete by id if user phone and not verifiedPhone ')
+        it.todo('should crate if not verifiedPhone')
+        it.todo('should fail if created account is fail')
+        it.todo('should set role to created account is fail')
+        it.todo('should send verify email')
+        it.todo('should send verify phone')
+        it.todo('should generate tokens')
+        it.todo('should save tokens in database')
+        it.todo('should fail to generate tokens is fail')
+    })
 })

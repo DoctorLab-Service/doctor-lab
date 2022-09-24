@@ -1,0 +1,2 @@
+export const accessTokenStub =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTI1LCJpYXQiOjE2NTg3NDkyMjIsImV4cCI6MTY1ODc5MjQyMn0.CU8edkh645uiAeZFBjCfTJzQ5JfWvO-jlygiCEVR5Fc'

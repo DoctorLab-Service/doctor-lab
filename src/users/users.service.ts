@@ -290,50 +290,6 @@ export class UsersService {
     }
 
     /**
-     * Change email current user
-     * @param body email | reEmail
-     */
-    async changeEmail(body: ChangeEmailInput): Promise<ChangeOutput> {
-        const currentUser: User = await this.token.getContextUser(this.context)
-        const user = await this.users.findOne({
-            where: { id: currentUser.id, resetKey: EResetKey.email },
-        })
-        if (!user) {
-            throw new ValidationException({
-                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
-            })
-        }
-
-        let updatedUser: User
-        try {
-            user.email = body.email
-            user.verifiedEmail = false
-            user.resetKey = null
-
-            updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
-        } catch (error) {
-            throw new ValidationException({
-                change: await this.languageService.setError(['isChange', 'email']),
-            })
-        }
-
-        try {
-            // Send Changed info
-            await this.emailService.sendChangeInfo('email', {
-                to: user.email,
-                fullname: user.fullname,
-                changedData: user.email,
-            })
-        } catch (error) {
-            throw new ValidationException({
-                no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
-            })
-        }
-
-        return { ok: Boolean(updatedUser.email === body.email) }
-    }
-
-    /**
      * Change Password current user
      * @param body password | rePasword
      */
@@ -375,6 +331,50 @@ export class UsersService {
         await this.token.removeTokenByUserId(user.id)
 
         return { ok: Boolean(updatedUser) }
+    }
+
+    /**
+     * Change email current user
+     * @param body email | reEmail
+     */
+    async changeEmail(body: ChangeEmailInput): Promise<ChangeOutput> {
+        const currentUser: User = await this.token.getContextUser(this.context)
+        const user = await this.users.findOne({
+            where: { id: currentUser.id, resetKey: EResetKey.email },
+        })
+        if (!user) {
+            throw new ValidationException({
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+            })
+        }
+
+        let updatedUser: User
+        try {
+            user.email = body.email
+            user.verifiedEmail = false
+            user.resetKey = null
+
+            updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+        } catch (error) {
+            throw new ValidationException({
+                change: await this.languageService.setError(['isChange', 'email']),
+            })
+        }
+
+        try {
+            // Send Changed info
+            await this.emailService.sendChangeInfo('email', {
+                to: user.email,
+                fullname: user.fullname,
+                changedData: user.email,
+            })
+        } catch (error) {
+            throw new ValidationException({
+                no_send: await this.languageService.setError(['isNotVerify', 'noSendEmail'], 'verify'),
+            })
+        }
+
+        return { ok: Boolean(updatedUser.email === body.email) }
     }
 
     /**

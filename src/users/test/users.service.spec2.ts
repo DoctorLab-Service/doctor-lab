@@ -1,29 +1,21 @@
-import { Test } from '@nestjs/testing'
-import { getRepositoryToken } from '@nestjs/typeorm'
-import { EmailService } from 'src/email/email.service'
-import { FilesService } from 'src/files/files.services'
-import { LanguageService } from 'src/language/language.service'
-import { RolesService } from 'src/roles/roles.service'
-import { TokenService } from 'src/token/token.service'
-import { VerificationsService } from 'src/verifications/verifications.service'
-import { User } from '../entities'
-import { UsersService } from '../users.service'
-import { MockRepository } from './types'
-import { CONTEXT } from '@nestjs/graphql'
-import {
-    mockRepository,
-    mockVerificationService,
-    mockEmailService,
-    mockTokenService,
-    mockFilesService,
-    mockRoleService,
-    mockLanguageService,
-} from './users.mock'
-import { ESystemsRoles, EDefaultRoles } from 'src/roles/roles.enums'
-import { systemUserParams } from '../config/users.config'
-import { ValidationException } from 'src/exceptions'
+import { CONTEXT } from "@nestjs/graphql"
+import { Test } from "@nestjs/testing"
+import { getRepositoryToken } from "@nestjs/typeorm"
+import { EmailService } from "src/email/email.service"
+import { FilesService } from "src/files/files.services"
+import { LanguageService } from "src/language/language.service"
+import { ESystemsRoles, EDefaultRoles } from "src/roles/roles.enums"
+import { RolesService } from "src/roles/roles.service"
+import { TokenService } from "src/token/token.service"
+import { VerificationsService } from "src/verifications/verifications.service"
+import { systemUserParams } from "../config/users.config"
+import { User } from "../entities"
+import { UsersService } from "../users.service"
+import { mockRepository } from "../__mocks__/users.repository"
+import { MockRepository } from "./types"
+import { mockVerificationService, mockEmailService, mockTokenService, mockFilesService, mockRoleService, mockLanguageService } from "./users.mock"
 
-describe.only('UsersService', () => {
+describe('UsersService', () => {
     let service: UsersService
     let usersRepository: MockRepository<User>
     let verificationService: VerificationsService
@@ -113,8 +105,8 @@ describe.only('UsersService', () => {
         // Test exist to system user
         it('should return true if system user exists', async () => {
             usersRepository.findOne.mockResolvedValue(mockUser)
-            const result = await service._createSystemUser()
-            expect(result).toBe(true)
+            const output = await service._createSystemUser()
+            expect(output).toBe(true)
         })
 
         // Test to create system user
@@ -125,7 +117,7 @@ describe.only('UsersService', () => {
             usersRepository.create.mockReturnValue(mockUser)
             usersRepository.save.mockResolvedValue(mockUser)
 
-            const result = await service._createSystemUser()
+            const output = await service._createSystemUser()
 
             expect(usersRepository.create).toHaveBeenCalledTimes(1)
             expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
@@ -133,7 +125,7 @@ describe.only('UsersService', () => {
             expect(usersRepository.save).toHaveBeenCalledTimes(1)
             expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
 
-            expect(result).toBe(true)
+            expect(output).toBe(true)
         })
 
         // Test to if not created system user
@@ -144,7 +136,7 @@ describe.only('UsersService', () => {
             usersRepository.create.mockReturnValue(mockUser)
             usersRepository.save.mockResolvedValue(mockUser)
 
-            const result = await service._createSystemUser()
+            const output = await service._createSystemUser()
 
             expect(usersRepository.create).toHaveBeenCalledTimes(1)
             expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
@@ -152,7 +144,7 @@ describe.only('UsersService', () => {
             expect(usersRepository.save).toHaveBeenCalledTimes(1)
             expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
 
-            expect(!result).toBe(false)
+            expect(!output).toBe(false)
         })
 
         // Set role to existing sistem role
@@ -196,9 +188,9 @@ describe.only('UsersService', () => {
         it('should create new account', async () => {
             usersRepository.create.mockReturnValue(mockUser)
             usersRepository.save.mockReturnValue(mockUser)
-            const result = await service.createAccount(mockUser)
+            const output = await service.createAccount(mockUser)
 
-            expect(result.user).toEqual(mockUser)
+            expect(output.user).toEqual(mockUser)
 
             expect(usersRepository.create).toHaveBeenCalledTimes(1)
             expect(usersRepository.create).toHaveBeenCalledWith(mockUser)

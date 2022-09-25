@@ -12,7 +12,6 @@ describe('UserQueries', () => {
 
     beforeEach(async () => {
         const _module = await Test.createTestingModule({
-            imports: [],
             providers: [UsersService, UsersQueries],
         }).compile()
 

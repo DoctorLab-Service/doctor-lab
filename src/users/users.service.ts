@@ -55,6 +55,7 @@ export class UsersService {
         try {
             // Check system user
             const user = await this.users.findOne({ where: { email: systemUserParams.email } })
+            console.log(user)
             if (!user) {
                 // Create System user
                 const systemUser = await this.users.save(this.users.create(systemUserParams))

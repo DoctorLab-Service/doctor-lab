@@ -1,6 +1,8 @@
 import { userMock } from '../test/__stubs/output.stub'
 
 export const UsersService = jest.fn().mockReturnValue({
+    _createSystemUser: jest.fn().mockResolvedValue(true),
+
     // Queries methods
     myAccount: jest.fn().mockResolvedValue(userMock('user')),
     findAllUsers: jest.fn().mockResolvedValue(userMock('all')),

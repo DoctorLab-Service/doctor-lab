@@ -5,8 +5,6 @@ export const systemUserParams: SystemUserParams = {
     email: 'doctorlab.service@gmail.com',
     phone: '+380970005433',
     fullname: 'Dmitriy Marynenko',
-    // address: 'Some kiev address',
-    // experience: '1 Years',
     password: '123456',
     verifiedEmail: true,
     verifiedPhone: true,

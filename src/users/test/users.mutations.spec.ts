@@ -31,7 +31,6 @@ describe('UserMutations', () => {
 
     beforeEach(async () => {
         const _module = await Test.createTestingModule({
-            imports: [],
             providers: [UsersService, UsersMutations],
         }).compile()
 
@@ -40,13 +39,6 @@ describe('UserMutations', () => {
 
         jest.clearAllMocks()
     })
-
-    it.todo('createAccount')
-    it.todo('updateAccount')
-    it.todo('deleteAccount')
-    it.todo('changePassword')
-    it.todo('changeEmail')
-    it.todo('changePhone')
 
     describe('createAccount', () => {
         describe('when createAccount is called', () => {

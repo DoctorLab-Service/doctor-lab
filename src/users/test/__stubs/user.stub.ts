@@ -1,6 +1,11 @@
 import { ELanguage } from 'src/language/dtos/languages.dto'
+import { systemUserParams } from 'src/users/config/users.config'
 import { EGender } from 'src/users/config/users.enum'
 import { UserStub } from '../types'
+
+export const systemUserStub = (): UserStub => {
+    return systemUserParams
+}
 
 export const userStub = (): UserStub => {
     return {

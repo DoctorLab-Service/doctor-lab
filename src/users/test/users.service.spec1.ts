@@ -1,19 +1,26 @@
-import { CONTEXT } from "@nestjs/graphql"
-import { Test } from "@nestjs/testing"
-import { getRepositoryToken } from "@nestjs/typeorm"
-import { EmailService } from "src/email/email.service"
-import { FilesService } from "src/files/files.services"
-import { LanguageService } from "src/language/language.service"
-import { ESystemsRoles, EDefaultRoles } from "src/roles/roles.enums"
-import { RolesService } from "src/roles/roles.service"
-import { TokenService } from "src/token/token.service"
-import { VerificationsService } from "src/verifications/verifications.service"
-import { systemUserParams } from "../config/users.config"
-import { User } from "../entities"
-import { UsersService } from "../users.service"
-import { mockRepository } from "../__mocks__/users.repository"
-import { MockRepository } from "./types"
-import { mockVerificationService, mockEmailService, mockTokenService, mockFilesService, mockRoleService, mockLanguageService } from "./users.mock"
+import { CONTEXT } from '@nestjs/graphql'
+import { Test } from '@nestjs/testing'
+import { getRepositoryToken } from '@nestjs/typeorm'
+import { EmailService } from 'src/email/email.service'
+import { FilesService } from 'src/files/files.services'
+import { LanguageService } from 'src/language/language.service'
+import { ESystemsRoles, EDefaultRoles } from 'src/roles/roles.enums'
+import { RolesService } from 'src/roles/roles.service'
+import { TokenService } from 'src/token/token.service'
+import { VerificationsService } from 'src/verifications/verifications.service'
+import { systemUserParams } from '../config/users.config'
+import { User } from '../entities'
+import { UsersService } from '../users.service'
+import { mockRepository } from '../__mocks__/users.repository'
+import { MockRepository } from './types'
+import {
+    mockVerificationService,
+    mockEmailService,
+    mockTokenService,
+    mockFilesService,
+    mockRoleService,
+    mockLanguageService,
+} from './users.mock'
 
 describe('UsersService', () => {
     let service: UsersService
@@ -202,13 +209,10 @@ describe('UsersService', () => {
             // usersRepository.findOne.mockReturnValue(mockUser)
             // usersRepository.create.mockReturnValue(mockUser)
             // usersRepository.save.mockResolvedValue(mockUser)
-
             // expect(usersRepository.findOne({ where: { email: mockUser.email } })).toEqual(mockUser)
-
             // await expect(service.createAccount(mockUser)).rejects.toThrow()
             // expect(usersRepository.create).toHaveBeenCalledTimes(1)
             // expect(usersRepository.create).toHaveBeenCalledWith(mockUser)
-
             // expect(usersRepository.save).toHaveBeenCalledTimes(1)
             // expect(usersRepository.save).toHaveBeenCalledWith(mockUser)
         })

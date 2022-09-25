@@ -90,7 +90,7 @@ describe('UsersService', () => {
         // Repositories
         usersRepository = _module.get(getRepositoryToken(User))
 
-        jest.clearAllMocks()
+        // jest.clearAllMocks()
     })
 
     // Test to defined UsersService -- service
@@ -110,54 +110,75 @@ describe('UsersService', () => {
     it.todo('changePhone')
 
     describe('_createSystemUser', () => {
-        // describe('when _createSystemUser is called', async () => {
-        // let output: boolean
-        const mockSystemUser: UserStub = {
-            email: systemUserStub().email,
-            phone: systemUserStub().phone,
-            fullname: systemUserStub().fullname,
-            password: systemUserStub().password,
-            verifiedEmail: systemUserStub().verifiedEmail,
-            verifiedPhone: systemUserStub().verifiedPhone,
-            language: systemUserStub().language,
-        }
-        // beforeEach(async () => {
-        //     mockSystemUser = {
-        //         email: systemUserStub().email,
-        //         phone: systemUserStub().phone,
-        //         fullname: systemUserStub().fullname,
-        //         password: systemUserStub().password,
-        //         verifiedEmail: systemUserStub().verifiedEmail,
-        //         verifiedPhone: systemUserStub().verifiedPhone,
-        //         language: systemUserStub().language,
-        //     }
-        // })
+        describe('when _createSystemUser is called', () => {
+            // let output: boolean
+            const mockSystemUser: UserStub = {
+                email: systemUserStub().email,
+                phone: systemUserStub().phone,
+                fullname: systemUserStub().fullname,
+                password: systemUserStub().password,
+                verifiedEmail: systemUserStub().verifiedEmail,
+                verifiedPhone: systemUserStub().verifiedPhone,
+                language: systemUserStub().language,
+            }
 
-        test('then return true if exist user by email', async () => {
-            usersRepository.findOne.mockReturnValue(mockSystemUser)
-            expect(usersRepository.findOne({ where: { email: mockSystemUser.email } })).toEqual(mockSystemUser)
-            const output = await service._createSystemUser()
-            expect(output).toEqual(true)
+            // beforeEach(async () => {
+            //     mockSystemUser = {
+            //         email: systemUserStub().email,
+            //         phone: systemUserStub().phone,
+            //         fullname: systemUserStub().fullname,
+            //         password: systemUserStub().password,
+            //         verifiedEmail: systemUserStub().verifiedEmail,
+            //         verifiedPhone: systemUserStub().verifiedPhone,
+            //         language: systemUserStub().language,
+            //     }
+            //     output = await service._createSystemUser()
+            // })
+
+            test('then return true if exist user by email', async () => {
+                usersRepository.findOne.mockReturnValue(mockSystemUser)
+                expect(usersRepository.findOne({ where: { email: mockSystemUser.email } })).toEqual(mockSystemUser)
+                const output = await service._createSystemUser()
+                expect(output).toEqual(true)
+            })
+
+            test('then create system user if it not exists', async () => {
+                usersRepository.findOne.mockResolvedValue(undefined)
+                usersRepository.create.mockReturnValue(mockSystemUser)
+                usersRepository.save.mockResolvedValue(mockSystemUser)
+
+                const output = await service._createSystemUser()
+
+                await expect(usersRepository.findOne({ where: { email: mockSystemUser.email } })).resolves.toEqual(
+                    undefined,
+                )
+                expect(usersRepository.create).toHaveBeenCalled()
+                expect(usersRepository.create).toHaveBeenCalledWith(mockSystemUser)
+
+                expect(usersRepository.save).toHaveBeenCalled()
+                expect(usersRepository.save).toHaveBeenCalledWith(mockSystemUser)
+
+                expect(output).toEqual(true)
+            })
+
+            // test('then create system user if it not exists', async () => {
+            //     usersRepository.findOne.mockReturnValue(undefined)
+            //     usersRepository.create.mockReturnValue(mockSystemUser)
+            //     usersRepository.save.mockResolvedValue(mockSystemUser)
+
+            //     expect(usersRepository.findOne({ where: { email: mockSystemUser.email } })).toEqual(undefined)
+
+            //     // await service._createSystemUser()
+
+            //     expect(usersRepository.create).toHaveBeenCalled()
+            //     expect(usersRepository.create).toHaveBeenCalledWith(mockSystemUser)
+
+            //     expect(usersRepository.save).toHaveBeenCalled()
+            //     expect(usersRepository.save).toHaveBeenCalledWith(mockSystemUser)
+            // })
+
+            test.todo('then return error if syste user is not created')
+            test.todo('then set roles to system user')
         })
-
-        test('then create system user if it not exists', async () => {
-            usersRepository.findOne.mockReturnValue(undefined)
-            usersRepository.create.mockReturnValue(mockSystemUser)
-            usersRepository.save.mockResolvedValue(mockSystemUser)
-
-            await service._createSystemUser()
-
-            expect(usersRepository.findOne({ where: { email: mockSystemUser.email } })).toEqual(undefined)
-
-            expect(usersRepository.create).toHaveBeenCalled()
-            expect(usersRepository.create).toHaveBeenCalledWith(mockSystemUser)
-
-            expect(usersRepository.save).toHaveBeenCalled()
-            expect(usersRepository.save).toHaveBeenCalledWith(mockSystemUser)
-        })
-
-        test.todo('then return error if syste user is not created')
-        test.todo('then set roles to system user')
-        // })
     })
 })

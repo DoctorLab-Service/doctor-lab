@@ -22,7 +22,7 @@ import {
 import { systemUserStub } from './__stubs/user.stub'
 import { ValidationException } from 'src/exceptions'
 
-jest.mock('../users.service')
+// jest.mock('../users.service')
 
 describe('UsersService', () => {
     let service: UsersService

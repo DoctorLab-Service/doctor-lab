@@ -24,7 +24,7 @@ export class TokenMiddleware implements NestMiddleware {
                     req['user'] = user.user
                 }
             } catch (error) {
-                console.log('EEEEEERRRRROOOORR', error.message)
+                console.log(error.message)
                 if (error.message === 'jwt expired') {
                     await this.tokenService.removeExpiredToken('accessToken', accessToken.toString())
                     next(

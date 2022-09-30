@@ -80,7 +80,6 @@ export class UsersService {
 
             return true
         } catch (error) {
-            console.log(error)
             throw new Error(await this.languageService.setError(['isNot', 'createSystemUser'], 'users'))
         }
     }

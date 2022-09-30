@@ -13,6 +13,15 @@ export const mockVerificationService = () => ({
     verificationChangePhone: jest.fn(),
 })
 
+export const mockRoleService = () => ({
+    _deffaultRoles: jest.fn(),
+    createRole: jest.fn(),
+    updateRole: jest.fn(),
+    deleteRole: jest.fn(),
+    setUserRole: jest.fn(),
+    deleteUserRole: jest.fn(),
+    findAllRoles: jest.fn(),
+})
 export const mockEmailService = () => ({
     sendVerificationEmail: jest.fn(),
     sendPasswordRecovery: jest.fn(),
@@ -35,15 +44,6 @@ export const mockTokenService = () => ({
 export const mockFilesService = () => ({
     uploadFiles: jest.fn(),
     deleteFiles: jest.fn(),
-})
-
-export const mockRoleService = () => ({
-    createRole: jest.fn(),
-    updateRole: jest.fn(),
-    deleteRole: jest.fn(),
-    setUserRole: jest.fn(),
-    deleteUserRole: jest.fn(),
-    findAllRoles: jest.fn(),
 })
 
 export const mockLanguageService = () => ({

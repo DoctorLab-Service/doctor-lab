@@ -9,7 +9,7 @@ export const systemUserStub = (): UserStub => {
 
 export const userStub = (): UserStub => {
     return {
-        id: 0,
+        id: 1,
         fullname: 'dl_user',
         phone: '+380979995500',
         email: 'dl.service@email.com',
@@ -42,6 +42,6 @@ export const userUpdateStub = (): UserStub => {
         address: 'Ternopil',
         experience: '1 years',
         language: ELanguage.EN,
-        gender: EGender.Female,
     }
+    test.todo('sh')
 }

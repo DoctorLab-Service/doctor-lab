@@ -163,7 +163,7 @@ export class RolesService {
         // Create role
         try {
             const role = await this.roles.save(this.roles.create({ ...body, user }))
-            return { ok: true, role }
+            return { ok: Boolean(role), role }
         } catch (error) {
             console.log(error)
             throw new ValidationException({
@@ -239,7 +239,7 @@ export class RolesService {
         // Update role
         try {
             const uRole = await this.roles.save(this.roles.create({ ...role }))
-            return { ok: true, role: uRole }
+            return { ok: Boolean(uRole), role: uRole }
         } catch (error) {
             console.log(error)
             throw new ValidationException({
@@ -322,7 +322,7 @@ export class RolesService {
                 not_exists: await this.languageService.setError(['isNotExist', 'role']),
             })
 
-        await this.userRoles.save(
+        const userRole = await this.userRoles.save(
             this.userRoles.create({
                 role,
                 user: candidate,
@@ -332,7 +332,7 @@ export class RolesService {
         )
 
         const user = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
-        return { ok: true, role, user }
+        return { ok: Boolean(userRole.user.id === body.userId), role, user }
     }
 
     /**

@@ -105,7 +105,6 @@ export class HelpService {
     async findAllHelpMessages(): Promise<FindAllHelpMessagesOutput> {
         try {
             const messages = await this.helpMessages.find({ ...relationsConfig.help })
-            console.log(messages)
             return { ok: Boolean(messages), messages }
         } catch (error) {
             console.log(error)

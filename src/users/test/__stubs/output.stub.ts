@@ -1,6 +1,7 @@
+import { systemRolesStub } from 'src/roles/test/__stubs/roles.stub'
 import { userStub } from './user.stub'
 
-export const userMock = (key?: 'create' | 'user' | 'all') => {
+export const userOutputStub = (key?: 'create' | 'user' | 'all') => {
     const response = {
         ok: true,
     }
@@ -15,6 +16,7 @@ export const userMock = (key?: 'create' | 'user' | 'all') => {
     if (key === 'create') {
         response['accessToken'] =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTI1LCJpYXQiOjE2NTg3NDkyMjIsImV4cCI6MTY1ODc5MjQyMn0.CU8edkh645uiAeZFBjCfTJzQ5JfWvO-jlygiCEVR5Fc'
+        userStub().roles = [systemRolesStub()[1]]
         response['user'] = userStub()
     }
     return response

@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common'
-import { Resolver, Mutation, Args } from '@nestjs/graphql'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { ValidationPipe } from 'src/common/pipes/validation.pipe'
 import { LenguageInterceptor } from 'src/language/language.interceptor'
@@ -7,11 +7,11 @@ import { Roles } from 'src/roles/roles.decorator'
 import { EDefaultRoles } from 'src/roles/roles.enums'
 import { RolesGuard } from 'src/roles/roles.guard'
 import {
-    RecoveryOutput,
-    PasswordRecoveryCodeInput,
     ChangeOutputCode,
-    VerificationOutput,
+    PasswordRecoveryCodeInput,
+    RecoveryOutput,
     VerificationInput,
+    VerificationOutput,
 } from './dtos'
 import { VerificationsService } from './verifications.service'
 
@@ -29,22 +29,22 @@ export class VerificationsResolver {
     @Mutation(() => ChangeOutputCode)
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
-    async changePasswordCode(): Promise<ChangeOutputCode> {
-        return this.verificationsService.changePasswordCode()
+    async changePasswordCode(@Context() context: any): Promise<ChangeOutputCode> {
+        return this.verificationsService.changePasswordCode(context)
     }
 
     @Mutation(() => ChangeOutputCode)
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
-    async changeEmailCode(): Promise<ChangeOutputCode> {
-        return this.verificationsService.changeEmailCode()
+    async changeEmailCode(@Context() context: any): Promise<ChangeOutputCode> {
+        return this.verificationsService.changeEmailCode(context)
     }
 
     @Mutation(() => ChangeOutputCode)
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
-    async changePhoneCode(): Promise<ChangeOutputCode> {
-        return this.verificationsService.changePhoneCode()
+    async changePhoneCode(@Context() context: any): Promise<ChangeOutputCode> {
+        return this.verificationsService.changePhoneCode(context)
     }
 
     @Mutation(() => VerificationOutput)
@@ -69,23 +69,32 @@ export class VerificationsResolver {
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
     @UseInterceptors(new LenguageInterceptor())
-    async verificationChangePassword(@Args('input') code: VerificationInput): Promise<VerificationOutput> {
-        return await this.verificationsService.verificationChangePassword(code)
+    async verificationChangePassword(
+        @Args('input') code: VerificationInput,
+        @Context() context: any,
+    ): Promise<VerificationOutput> {
+        return await this.verificationsService.verificationChangePassword(code, context)
     }
 
     @Mutation(() => VerificationOutput)
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
     @UseInterceptors(new LenguageInterceptor())
-    async verificationChangeEmail(@Args('input') code: VerificationInput): Promise<VerificationOutput> {
-        return await this.verificationsService.verificationChangeEmail(code)
+    async verificationChangeEmail(
+        @Args('input') code: VerificationInput,
+        @Context() context: any,
+    ): Promise<VerificationOutput> {
+        return await this.verificationsService.verificationChangeEmail(code, context)
     }
 
     @Mutation(() => VerificationOutput)
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
     @UseInterceptors(new LenguageInterceptor())
-    async verificationChangePhone(@Args('input') code: VerificationInput): Promise<VerificationOutput> {
-        return await this.verificationsService.verificationChangePhone(code)
+    async verificationChangePhone(
+        @Args('input') code: VerificationInput,
+        @Context() context: any,
+    ): Promise<VerificationOutput> {
+        return await this.verificationsService.verificationChangePhone(code, context)
     }
 }

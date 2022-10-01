@@ -1,5 +1,5 @@
-import { Inject, UseInterceptors } from '@nestjs/common'
-import { Args, CONTEXT, Mutation, Resolver } from '@nestjs/graphql'
+import { UseInterceptors } from '@nestjs/common'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { LenguageInterceptor } from 'src/language/language.interceptor'
 import { AccessTokenCookieInterceptor, ClearTokenCookieInterceptor } from 'src/token/interceptors'
 import { AuthService } from './auth.service'
@@ -9,7 +9,7 @@ import { RefreshTokenOutput } from './dtos/refresh-token.dto'
 
 @Resolver()
 export class AuthResolver {
-    constructor(@Inject(CONTEXT) private context, private readonly authService: AuthService) {}
+    constructor(private readonly authService: AuthService) {}
 
     @Mutation(() => LoginOutput)
     @UseInterceptors(new LenguageInterceptor(), new AccessTokenCookieInterceptor())
@@ -19,15 +19,15 @@ export class AuthResolver {
 
     @Mutation(() => LogoutOutput)
     @UseInterceptors(new ClearTokenCookieInterceptor())
-    async logout(): Promise<LogoutOutput> {
-        const { cookies } = this.context.req
+    async logout(@Context() context: any): Promise<LogoutOutput> {
+        const { cookies } = context.req
         return this.authService.logout(cookies)
     }
 
     @Mutation(() => RefreshTokenOutput)
     @UseInterceptors(new AccessTokenCookieInterceptor())
-    async refreshToken(): Promise<RefreshTokenOutput> {
-        const { cookies } = this.context.req
+    async refreshToken(@Context() context: any): Promise<RefreshTokenOutput> {
+        const { cookies } = context.req
         return this.authService.refreshToken(cookies)
     }
 }

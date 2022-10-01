@@ -1,43 +1,42 @@
-import { EDefaultRoles, ESystemsRoles } from 'src/roles/roles.enums'
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { FileUpload } from 'graphql-upload'
 import { relationsConfig } from 'src/common/configs/relations.config'
-import { User } from 'src/users/entities'
-import { Inject, Injectable, Optional } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { TokenService } from 'src/token/token.service'
-import { Repository } from 'typeorm'
-import { CONTEXT } from '@nestjs/graphql'
-import { ValidationException } from 'src/exceptions'
-import { LanguageService } from 'src/language/language.service'
-import { MyAccountOutput } from './dtos/my-account.dto'
-import { FilesService } from 'src/files/files.services'
 import { object } from 'src/common/helpers'
+import { EmailService } from 'src/email/email.service'
+import { ValidationException } from 'src/exceptions'
+import { FilesService } from 'src/files/files.services'
+import { LanguageService } from 'src/language/language.service'
+import { EDefaultRoles, ESystemsRoles } from 'src/roles/roles.enums'
 import { RolesService } from 'src/roles/roles.service'
-import { systemUserParams } from './config/users.config'
+import { TokenService } from 'src/token/token.service'
+import { User } from 'src/users/entities'
 import { VerificationsService } from 'src/verifications/verifications.service'
+import { Repository } from 'typeorm'
+import { systemUserParams } from './config/users.config'
+import { EResetKey } from './config/users.enum'
 import {
-    CreateAccountInput,
-    CreateAccountOutput,
-    UpdateAccountInput,
-    UpdateAccountOutput,
-    DeleteAccountOutput,
-    FindByIdInput,
-    FindByOutput,
-    FindByPhoneInput,
-    FindByEmailInput,
-    FindAllUsersOutput,
     ChangeEmailInput,
     ChangeOutput,
     ChangePasswordInput,
     ChangePhoneInput,
+    CreateAccountInput,
+    CreateAccountOutput,
+    DeleteAccountOutput,
+    FindAllUsersOutput,
+    FindByEmailInput,
+    FindByIdInput,
+    FindByOutput,
+    FindByPhoneInput,
+    UpdateAccountInput,
+    UpdateAccountOutput,
 } from './dtos'
-import { EResetKey } from './config/users.enum'
-import { EmailService } from 'src/email/email.service'
+import { MyAccountOutput } from './dtos/my-account.dto'
+import { getCurrentUser } from './helpers/get-current-user.helper'
 
 @Injectable()
 export class UsersService {
     constructor(
-        @Inject(CONTEXT) private readonly context,
         @InjectRepository(User) private readonly users: Repository<User>,
         private readonly verificationService: VerificationsService,
         private readonly emailService: EmailService,
@@ -154,9 +153,9 @@ export class UsersService {
      * @param body users object data from update  form
      * @param file { file: FileUpload } file object
      */
-    async updateAccount(body: UpdateAccountInput, file: FileUpload | null): Promise<UpdateAccountOutput> {
+    async updateAccount(body: UpdateAccountInput, file: FileUpload | null, context): Promise<UpdateAccountOutput> {
         // Find user in DB
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
@@ -208,9 +207,9 @@ export class UsersService {
      * Delete current user
      * @returns object, ok: true, false,
      */
-    async deleteAccount(): Promise<DeleteAccountOutput> {
+    async deleteAccount(context): Promise<DeleteAccountOutput> {
         try {
-            const currentUser: User = await this.token.getContextUser(this.context)
+            const currentUser: User = getCurrentUser(context)
             await this.files.deleteFiles(currentUser.id)
             const deletedUser = await this.users.delete(currentUser.id)
             return { ok: Boolean(deletedUser.affected > 0) }
@@ -225,8 +224,8 @@ export class UsersService {
     /**
      * Get data current user
      */
-    async myAccount(): Promise<MyAccountOutput> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+    async myAccount(context): Promise<MyAccountOutput> {
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
@@ -292,8 +291,8 @@ export class UsersService {
      * Change Password current user
      * @param body password | rePasword
      */
-    async changePassword(body: ChangePasswordInput): Promise<ChangeOutput> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+    async changePassword(body: ChangePasswordInput, context): Promise<ChangeOutput> {
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.password } })
         if (!user) {
             throw new ValidationException({
@@ -336,8 +335,8 @@ export class UsersService {
      * Change email current user
      * @param body email | reEmail
      */
-    async changeEmail(body: ChangeEmailInput): Promise<ChangeOutput> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+    async changeEmail(body: ChangeEmailInput, context): Promise<ChangeOutput> {
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({
             where: { id: currentUser.id, resetKey: EResetKey.email },
         })
@@ -380,8 +379,8 @@ export class UsersService {
      * Change Phone current user
      * @param body phone
      */
-    async changePhone(body: ChangePhoneInput): Promise<ChangeOutput> {
-        const currentUser: User = await this.token.getContextUser(this.context)
+    async changePhone(body: ChangePhoneInput, context): Promise<ChangeOutput> {
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({
             where: { id: currentUser.id, resetKey: EResetKey.phone },
         })

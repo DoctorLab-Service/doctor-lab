@@ -1,5 +1,5 @@
 import { LenguageInterceptor } from 'src/language/language.interceptor'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common'
 import { ValidationPipe } from 'src/common/pipes/validation.pipe'
@@ -22,25 +22,25 @@ export class RolesMutations {
     @Mutation(() => CreateRoleOutput)
     @UseInterceptors(new LenguageInterceptor())
     @UsePipes(new ValidationPipe('roles'))
-    async createRole(@Args('input') body: CreateRoleInput): Promise<CreateRoleOutput> {
-        return this.rolesService.createRole(body)
+    async createRole(@Args('input') body: CreateRoleInput, @Context() context: any): Promise<CreateRoleOutput> {
+        return this.rolesService.createRole(body, context)
     }
 
     @Mutation(() => UpdateRoleOutput)
     @UseInterceptors(new LenguageInterceptor())
     @UsePipes(new ValidationPipe('roles'))
-    async updateRole(@Args('input') body: UpdateRoleInput): Promise<UpdateRoleOutput> {
-        return this.rolesService.updateRole(body)
+    async updateRole(@Args('input') body: UpdateRoleInput, @Context() context: any): Promise<UpdateRoleOutput> {
+        return this.rolesService.updateRole(body, context)
     }
 
     @Mutation(() => DeleteRoleOutput)
-    async deleteRole(@Args('input') body: DeleteRoleInput): Promise<DeleteRoleOutput> {
-        return this.rolesService.deleteRole(body)
+    async deleteRole(@Args('input') body: DeleteRoleInput, @Context() context: any): Promise<DeleteRoleOutput> {
+        return this.rolesService.deleteRole(body, context)
     }
 
     @Mutation(() => SetUserRoleOutput)
-    async setUserRole(@Args('input') body: SetUserRoleInput): Promise<SetUserRoleOutput> {
-        return this.rolesService.setUserRole(body)
+    async setUserRole(@Args('input') body: SetUserRoleInput, @Context() context: any): Promise<SetUserRoleOutput> {
+        return this.rolesService.setUserRole(body, context)
     }
     @Mutation(() => DeleteUserRoleOutput)
     async deleteUserRole(@Args('input') body: DeleteUserRoleInput): Promise<DeleteUserRoleOutput> {

@@ -38,7 +38,6 @@ export const mockTokenService = () => ({
     removeToken: jest.fn(),
     removeTokenByUserId: jest.fn(),
     removeExpiredToken: jest.fn(),
-    getContextUser: jest.fn(),
 })
 
 export const mockFilesService = () => ({

@@ -1,7 +1,7 @@
 import { Args, Context, Query, Resolver } from '@nestjs/graphql'
 import { FindAllUsersOutput, FindByEmailInput, FindByIdInput, FindByOutput, FindByPhoneInput } from '../dtos/find.dto'
 import { AuthGuard } from 'src/auth/auth.guard'
-import { UseGuards, UseInterceptors } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { UsersService } from '../users.service'
 import { MyAccountOutput } from '../dtos/my-account.dto'
 import { RolesGuard } from 'src/roles/roles.guard'
@@ -15,8 +15,8 @@ export class UsersQueries {
     constructor(private readonly usersService: UsersService) {}
 
     @Query(() => MyAccountOutput)
-    async myAccount(): Promise<MyAccountOutput> {
-        return this.usersService.myAccount()
+    async myAccount(@Context() context: any): Promise<MyAccountOutput> {
+        return this.usersService.myAccount(context)
     }
     @Query(() => FindAllUsersOutput)
     async findAllUsers(): Promise<FindAllUsersOutput> {

@@ -2,8 +2,7 @@ import { object } from 'src/common/helpers'
 import { EDefaultRoles } from 'src/roles/roles.enums'
 import { ERolesType, ESystemsRoles } from './roles.enums'
 import { SetUserRoleInput, SetUserRoleOutput } from './dtos/set-user-role.dto'
-import { Inject, Injectable } from '@nestjs/common'
-import { CONTEXT } from '@nestjs/graphql'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ValidationException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
@@ -18,11 +17,11 @@ import { relationsConfig } from 'src/common/configs'
 import { TokenService } from 'src/token/token.service'
 import { User } from 'src/users/entities'
 import { UserRoles, Role } from './entities'
+import { getCurrentUser } from 'src/users/helpers'
 
 @Injectable()
 export class RolesService {
     constructor(
-        @Inject(CONTEXT) private readonly context,
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(UserRoles) private readonly userRoles: Repository<UserRoles>,
         @InjectRepository(Role) private readonly roles: Repository<Role>,
@@ -133,7 +132,7 @@ export class RolesService {
      * @param body roles data
      * @returns created role
      */
-    async createRole(body: CreateRoleInput): Promise<CreateRoleOutput> {
+    async createRole(body: CreateRoleInput, context): Promise<CreateRoleOutput> {
         const checkRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
         if (checkRole)
             throw new ValidationException({
@@ -143,7 +142,7 @@ export class RolesService {
         // Succes to create system role
         if (body.type === ERolesType.system) {
             // Check current user role by existing systems roles
-            const currentUser: User = await this.token.getContextUser(this.context)
+            const currentUser: User = getCurrentUser(context)
             const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
 
             if (!existSystemRole.length) {
@@ -152,7 +151,7 @@ export class RolesService {
                 })
             }
         }
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id } })
         if (!user) {
             throw new ValidationException({
@@ -177,7 +176,7 @@ export class RolesService {
      * @param body roles data, and id
      * @returns updated role
      */
-    async updateRole(body: UpdateRoleInput): Promise<UpdateRoleOutput> {
+    async updateRole(body: UpdateRoleInput, context): Promise<UpdateRoleOutput> {
         // Find role by id
         const role = await this.roles.findOne({ where: { id: body.id } })
         if (!role) {
@@ -187,7 +186,7 @@ export class RolesService {
         }
 
         // Check current user role by existing systems roles
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = await getCurrentUser(context)
         const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
 
         // Check user, if he owner role or have permisiion to updatind role
@@ -253,12 +252,12 @@ export class RolesService {
      * @param body role's id
      * @returns boolean
      */
-    async deleteRole({ id }: DeleteRoleInput): Promise<DeleteRoleOutput> {
+    async deleteRole({ id }: DeleteRoleInput, context): Promise<DeleteRoleOutput> {
         const dRole = await this.roles.findOne({ where: { id } })
         if (!dRole) throw new ValidationException({ role: await this.languageService.setError(['isNot', 'foundRole']) })
 
         // Check current user role by existing systems roles
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
 
         // Check user, if he owner role or have permisiion to updatind role
@@ -291,11 +290,12 @@ export class RolesService {
     /**
      * Set user role by user id and role
      * @param body user id, and role
+     * @param context for getting currentUser
      * @returns role, user
      * ! NO ALL ALL USERS WITH ADMIN OR DOCTOR CAN SET ROLE
      * TODO USING PERMISSIONS
      */
-    async setUserRole(body: SetUserRoleInput, system = false): Promise<SetUserRoleOutput> {
+    async setUserRole(body: SetUserRoleInput, system = false, context?: any): Promise<SetUserRoleOutput> {
         // Check candidat for role
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
         if (!candidate)
@@ -304,8 +304,8 @@ export class RolesService {
             })
 
         let userSetTheRole: User
-        if (!system) {
-            const currentUser: User = await this.token.getContextUser(this.context)
+        if (!system && context) {
+            const currentUser: User = getCurrentUser(context)
             userSetTheRole = await this.users.findOne({ where: { id: currentUser.id } })
             if (!userSetTheRole) {
                 throw new ValidationException({

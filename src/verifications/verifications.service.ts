@@ -1,5 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { CONTEXT } from '@nestjs/graphql'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { relationsConfig } from 'src/common/configs'
 import { EmailService } from 'src/email/email.service'
@@ -20,11 +19,11 @@ import {
 import { VerificationEmail, VerificationPhone, ConfirmEmail, ConfirmPhone } from './entities'
 import { EConfirmCodeKey } from './verifications.enums'
 import { object } from 'src/common/helpers'
+import { getCurrentUser } from 'src/users/helpers'
 
 @Injectable()
 export class VerificationsService {
     constructor(
-        @Inject(CONTEXT) private readonly context,
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(VerificationEmail) private readonly verifyEmail: Repository<VerificationEmail>,
         @InjectRepository(VerificationPhone) private readonly verifyPhone: Repository<VerificationPhone>,
@@ -190,8 +189,8 @@ export class VerificationsService {
     /**
      *  Send current user email with code for change password
      */
-    async changePasswordCode(): Promise<ChangeOutputCode> {
-        const currentUser: User = await this.tokenService.getContextUser(this.context)
+    async changePasswordCode(context): Promise<ChangeOutputCode> {
+        const currentUser: User = getCurrentUser(context)
 
         // Check to exits code
         // Delete if code is exists
@@ -221,8 +220,8 @@ export class VerificationsService {
     /**
      * Send code on current user email for change email
      */
-    async changeEmailCode(): Promise<ChangeOutputCode> {
-        const currentUser: User = await this.tokenService.getContextUser(this.context)
+    async changeEmailCode(context): Promise<ChangeOutputCode> {
+        const currentUser: User = getCurrentUser(context)
 
         // Check to exits code
         // Delete if code is exists
@@ -255,8 +254,8 @@ export class VerificationsService {
     /**
      * Send current user phone code for change phone
      */
-    async changePhoneCode(): Promise<ChangeOutputCode> {
-        const currentUser: User = await this.tokenService.getContextUser(this.context)
+    async changePhoneCode(context): Promise<ChangeOutputCode> {
+        const currentUser: User = getCurrentUser(context)
 
         // Check to exits code
         // Delete if code is exists
@@ -419,9 +418,9 @@ export class VerificationsService {
      * Verification change password by code
      * @param body code
      */
-    async verificationChangePassword({ code }: VerificationInput): Promise<VerificationOutput> {
+    async verificationChangePassword({ code }: VerificationInput, context): Promise<VerificationOutput> {
         // Get user and check it
-        const currentUser: User = await this.tokenService.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
@@ -459,9 +458,9 @@ export class VerificationsService {
      * Verification change email by code
      * @param body code
      */
-    async verificationChangeEmail({ code }: VerificationInput): Promise<VerificationOutput> {
+    async verificationChangeEmail({ code }: VerificationInput, context): Promise<VerificationOutput> {
         // Get user and check it
-        const currentUser: User = await this.tokenService.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
@@ -498,9 +497,9 @@ export class VerificationsService {
      * Verification change phone by code
      * @param body code
      */
-    async verificationChangePhone({ code }: VerificationInput): Promise<VerificationOutput> {
+    async verificationChangePhone({ code }: VerificationInput, context): Promise<VerificationOutput> {
         // Get user and check it
-        const currentUser: User = await this.tokenService.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({

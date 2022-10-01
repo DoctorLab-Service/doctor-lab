@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { Roles } from 'src/roles/roles.decorator'
 import { EDefaultRoles } from 'src/roles/roles.enums'
@@ -44,8 +44,11 @@ export class HelpMutations {
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(EDefaultRoles.admin, EDefaultRoles.doctor, EDefaultRoles.dentist, EDefaultRoles.patient)
     @Mutation(() => AnswerToHelpMessageOutput)
-    async answerToHelpMessage(@Args('input') body: AnswerToHelpMessageInput): Promise<AnswerToHelpMessageOutput> {
-        return this.helpService.answerToHelpMessage(body)
+    async answerToHelpMessage(
+        @Args('input') body: AnswerToHelpMessageInput,
+        @Context() context: any,
+    ): Promise<AnswerToHelpMessageOutput> {
+        return this.helpService.answerToHelpMessage(body, context)
     }
 
     @UseGuards(AuthGuard, RolesGuard)

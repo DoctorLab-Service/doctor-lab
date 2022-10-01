@@ -7,6 +7,7 @@ import { userStub } from './__stubs/user.stub'
 jest.mock('../users.service')
 
 describe('UserQueries', () => {
+    const context: any = {}
     let usersService: UsersService
     let usersQueries: UsersQueries
 
@@ -25,7 +26,7 @@ describe('UserQueries', () => {
         describe('when myAccount is called', () => {
             let output: FindByOutput
             beforeEach(async () => {
-                output = await usersQueries.myAccount()
+                output = await usersQueries.myAccount(context)
             })
 
             test('then it should call userService', () => {

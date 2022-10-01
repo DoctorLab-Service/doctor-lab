@@ -26,6 +26,7 @@ import {
 jest.mock('../users.service')
 
 describe('UserMutations', () => {
+    const context: any = {}
     let usersService: UsersService
     let usersMutations: UsersMutations
 
@@ -93,12 +94,12 @@ describe('UserMutations', () => {
                     gender: userUpdateStub().gender,
                 }
 
-                output = await usersMutations.updateAccount(input, file)
+                output = await usersMutations.updateAccount(input, file, context)
             })
 
             test('then it should call userService', () => {
                 expect(usersService.updateAccount).toBeCalledTimes(1)
-                expect(usersService.updateAccount).toBeCalledWith(input, file)
+                expect(usersService.updateAccount).toBeCalledWith(input, file, context)
             })
 
             test('then it should return user', () => {
@@ -115,7 +116,7 @@ describe('UserMutations', () => {
             let output: DeleteAccountOutput
 
             beforeEach(async () => {
-                output = await usersMutations.deleteAccount()
+                output = await usersMutations.deleteAccount(context)
             })
 
             test('then it should return true', () => {
@@ -135,7 +136,7 @@ describe('UserMutations', () => {
                     rePassword: changePasswordStub.rePassword,
                 }
 
-                output = await usersMutations.changePassword(input)
+                output = await usersMutations.changePassword(input, context)
             })
 
             test('then it should return true', () => {
@@ -155,7 +156,7 @@ describe('UserMutations', () => {
                     reEmail: changeEmailStub.reEmail,
                 }
 
-                output = await usersMutations.changeEmail(input)
+                output = await usersMutations.changeEmail(input, context)
             })
 
             test('then it should return true', () => {
@@ -174,7 +175,7 @@ describe('UserMutations', () => {
                     phone: changePhoneStub.phone,
                 }
 
-                output = await usersMutations.changePhone(input)
+                output = await usersMutations.changePhone(input, context)
             })
 
             test('then it should return true', () => {

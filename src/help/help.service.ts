@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { HelpAnswer, HelpMessage } from './entities'
@@ -20,21 +20,18 @@ import {
 import { User } from 'src/users/entities'
 import { LanguageService } from 'src/language/language.service'
 import { ValidationException } from 'src/exceptions'
-import { CONTEXT } from '@nestjs/graphql'
-import { TokenService } from 'src/token/token.service'
 import { EmailService } from 'src/email/email.service'
 import { relationsConfig } from 'src/common/configs'
+import { getCurrentUser } from 'src/users/helpers'
 
 @Injectable()
 export class HelpService {
     constructor(
-        @Inject(CONTEXT) private readonly context,
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(HelpMessage) private readonly helpMessages: Repository<HelpMessage>,
         @InjectRepository(HelpAnswer) private readonly helpAnswer: Repository<HelpAnswer>,
         private readonly languageService: LanguageService,
         private readonly emailService: EmailService,
-        private readonly token: TokenService,
     ) {}
     /**
      * Create help message
@@ -161,7 +158,7 @@ export class HelpService {
      * @param body { id: number, title: string, text: string }
      * @returns message answer
      */
-    async answerToHelpMessage(body: AnswerToHelpMessageInput): Promise<AnswerToHelpMessageOutput> {
+    async answerToHelpMessage(body: AnswerToHelpMessageInput, context): Promise<AnswerToHelpMessageOutput> {
         // Get message by id
         const message = await this.helpMessages.findOne({ where: { id: body.id } })
         if (!message) {
@@ -171,7 +168,7 @@ export class HelpService {
         }
 
         // Create answer for the message
-        const currentUser: User = await this.token.getContextUser(this.context)
+        const currentUser: User = getCurrentUser(context)
         const answer = await this.helpAnswer.save(
             this.helpAnswer.create({
                 title: body.title,

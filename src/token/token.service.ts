@@ -1,15 +1,13 @@
-import * as jwt from 'jsonwebtoken'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Token } from './entities'
-import { DeleteResult, Repository } from 'typeorm'
-import { User } from 'src/users/entities'
+import * as jwt from 'jsonwebtoken'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
-import { tokenConfig } from './config/token.config'
-import { ForbiddenException } from 'src/exceptions'
 import { LanguageService } from 'src/language/language.service'
+import { User } from 'src/users/entities'
+import { DeleteResult, Repository } from 'typeorm'
+import { tokenConfig } from './config/token.config'
 import { GenerateTokens, TokenModuleOptions } from './config/types'
-import { tokenKey } from './config/token.enums'
+import { Token } from './entities'
 
 @Injectable()
 export class TokenService {
@@ -118,59 +116,5 @@ export class TokenService {
             return
         }
         return
-    }
-
-    /**
-     * Get User from context headers
-     * @param context any
-     * @returns User object
-     */
-    async getContextUser(context: any): Promise<User | null> {
-        if (context) {
-            let user: User
-            let headers = context.headers
-            if (headers === undefined) {
-                headers = context.req.headers
-            }
-
-            // JWT TOKEN
-            if (tokenKey.JWT in headers) {
-                const accessToken = headers[tokenKey.JWT]
-                if (!accessToken) {
-                    throw new ForbiddenException({
-                        auth: await this.languageService.setError(['isNotAuth', 'auth'], 'auth'),
-                    })
-                }
-
-                const decoded = await this.validateToken('accessToken', accessToken.toString())
-                if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-                    user = await this.users.findOne({ where: { id: decoded.id } })
-                    return user
-                }
-            }
-
-            // JWT RECOVERY TOTEN
-            if (tokenKey.RECOVERY_JWT in headers) {
-                const recoveryToken = headers[tokenKey.RECOVERY_JWT]
-                if (!recoveryToken) {
-                    throw new ForbiddenException({
-                        auth: await this.languageService.setError(['isNotAuth', 'auth'], 'auth'),
-                    })
-                }
-
-                const decoded = await this.validateToken('recoveryToken', recoveryToken.toString())
-                if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-                    const user = await this.users.findOne({ where: { id: decoded.id } })
-                    return user
-                }
-            }
-
-            if (!user) {
-                throw new ForbiddenException({
-                    auth: await this.languageService.setError(['isNotAuth', 'auth'], 'auth'),
-                })
-            }
-            return user
-        }
     }
 }

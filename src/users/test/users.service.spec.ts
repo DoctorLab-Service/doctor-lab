@@ -1,4 +1,3 @@
-import { CONTEXT } from '@nestjs/graphql'
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { EmailService } from 'src/email/email.service'
@@ -16,9 +15,9 @@ import { mockVerificationService, mockEmailService, mockTokenService, mockFilesS
 import { systemUserStub, userStub } from './__stubs/user.stub'
 import { CreateAccountInput } from './../dtos/create-account.dto'
 import { ValidationException } from 'src/exceptions'
-import { Console } from 'console'
 
 describe('UsersService', () => {
+    const context: any = {}
     let service: UsersService
     let usersRepository: MockRepository<User>
     let verificationService: VerificationsService
@@ -27,21 +26,12 @@ describe('UsersService', () => {
     let filesService: FilesService
     let roleService: RolesService
     let languageService: LanguageService
-    let context: 'REQUEST'
 
     // Start before testing
     beforeEach(async () => {
         const _module = await Test.createTestingModule({
             providers: [
                 UsersService,
-                {
-                    provide: CONTEXT,
-                    useValue: {
-                        headers: {
-                            language: 'EN',
-                        },
-                    },
-                },
                 {
                     provide: getRepositoryToken(User),
                     useValue: mockRepository(),
@@ -81,9 +71,6 @@ describe('UsersService', () => {
         filesService = _module.get<FilesService>(FilesService)
         roleService = _module.get<RolesService>(RolesService)
         languageService = _module.get<LanguageService>(LanguageService)
-
-        // Context
-        context = _module.get(CONTEXT)
 
         // Repositories
         usersRepository = _module.get(getRepositoryToken(User))
@@ -174,8 +161,7 @@ describe('UsersService', () => {
                 await service._createSystemUser()
             } catch (error) {
                 expect(error).toBeInstanceOf(Error)
-                // expect(error.message).toBe("Couldn't create system account")
-                expect(error.message).toBe(await languageService.setError(['isNot', 'createSystemUser'], 'users'))
+                expect(error.message).toBe("Couldn't create system account")
             }
         })
     })
@@ -193,7 +179,22 @@ describe('UsersService', () => {
             role: EDefaultRoles.admin,
         }
 
-        test.todo('sould fail if email is exist and verified phone')
+        test('sould fail if email is exist and verified phone', async () => {
+            usersRepository.findOne.mockReturnValue(mockUser)
+            expect(usersRepository.findOne({ where: { email: mockUser.email } })).toEqual(mockUser)
+
+            expect.assertions(2)
+            try {
+                const user = usersRepository.findOne({ where: { email: mockUser.email } })
+                expect(!user.verifiedPhone).toEqual(true)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                console.log(error)
+                expect(error).toHaveProperty('messages', { email: 'There is user with that email already1' }) // have to  have
+                // expect(error.messages).toHaveProperty({ create: "Couldn't create system account" }) // have
+                // expect(error.message).toBe('There is user with that email already')
+            }
+        })
         test.todo('sould fail if phone is exist and verified phone')
         test.todo('sould delete account if email is exist and not verified phone')
         test.todo('sould delete account if phone is exist and not verified phone')

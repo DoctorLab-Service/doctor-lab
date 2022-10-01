@@ -187,6 +187,7 @@ describe('UsersService', () => {
             try {
                 const user = usersRepository.findOne({ where: { email: mockUser.email } })
                 expect(!user.verifiedPhone).toEqual(true)
+                await service.createAccount(mockUser)
             } catch (error) {
                 expect(error).toBeInstanceOf(ValidationException)
                 console.log(error)

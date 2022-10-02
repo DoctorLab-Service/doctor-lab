@@ -14,14 +14,7 @@ import {
 } from '../dtos'
 import { UsersMutations } from '../resolvers/users.mutations'
 import { UsersService } from '../users.service'
-import {
-    userStub,
-    accessTokenStub,
-    userUpdateStub,
-    changePasswordStub,
-    changeEmailStub,
-    changePhoneStub,
-} from './__stubs'
+import { userStub, userUpdateStub, changePasswordStub, changeEmailStub, changePhoneStub, tokensStub } from './__stubs'
 
 jest.mock('../users.service')
 
@@ -67,7 +60,7 @@ describe('UserMutations', () => {
             })
 
             test('then it should return token', () => {
-                expect(output.accessToken).toEqual(accessTokenStub)
+                expect(output.accessToken).toEqual(tokensStub().accessToken)
             })
 
             test('then it should return true', () => {

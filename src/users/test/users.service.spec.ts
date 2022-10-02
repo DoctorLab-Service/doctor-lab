@@ -9,12 +9,12 @@ import { TokenService } from 'src/token/token.service'
 import { VerificationsService } from 'src/verifications/verifications.service'
 import { User } from '../entities'
 import { UsersService } from '../users.service'
-import { mockLanguageService, mockRepository, mockRolesService } from '../__mocks__'
+import { mockLanguageService, mockRepository, mockRolesService, mockTokenService } from '../__mocks__'
 import { MockRepository, UserStub } from './types'
-import { mockVerificationService, mockEmailService, mockTokenService, mockFilesService } from './users.mock'
+import { mockVerificationService, mockEmailService, mockFilesService } from './users.mock'
 import { systemUserStub, userStub } from './__stubs/user.stub'
 import { CreateAccountInput } from './../dtos/create-account.dto'
-import { ValidationException } from 'src/exceptions'
+import { ValidationException } from './../../exceptions/validation.exception'
 
 describe('UsersService', () => {
     const context: any = {}
@@ -25,7 +25,7 @@ describe('UsersService', () => {
     let tokenService: TokenService
     let filesService: FilesService
     let roleService: RolesService
-    let languageService: LanguageService
+    let languageService: jest.Mocked<LanguageService>
 
     // Start before testing
     beforeEach(async () => {
@@ -70,7 +70,7 @@ describe('UsersService', () => {
         tokenService = _module.get<TokenService>(TokenService)
         filesService = _module.get<FilesService>(FilesService)
         roleService = _module.get<RolesService>(RolesService)
-        languageService = _module.get<LanguageService>(LanguageService)
+        languageService = _module.get(LanguageService)
 
         // Repositories
         usersRepository = _module.get(getRepositoryToken(User))
@@ -129,20 +129,14 @@ describe('UsersService', () => {
         })
 
         test('sould set roles to system user', async () => {
-            usersRepository.findOne.mockReturnValue(mockSystemUser)
-            expect(usersRepository.findOne({ where: { email: mockSystemUser.email } })).toEqual(mockSystemUser)
-            const output = await service._createSystemUser()
-
-            // Add system role for created user
-            const superAdminRole = await roleService.setUserRole(
+            await roleService.setUserRole(
                 {
                     role: ESystemsRoles.super_admin,
                     userId: 1,
                 },
                 true,
             )
-
-            const adminRole = await roleService.setUserRole(
+            await roleService.setUserRole(
                 {
                     role: EDefaultRoles.admin,
                     userId: 1,
@@ -150,26 +144,42 @@ describe('UsersService', () => {
                 true,
             )
 
-            expect(superAdminRole.role.roleKey).toEqual(ESystemsRoles.super_admin)
-            expect(adminRole.role.roleKey).toEqual(EDefaultRoles.admin)
-            expect(output).toEqual(true)
+            expect(roleService.setUserRole).toBeCalledTimes(2)
+            expect(roleService.setUserRole).toBeCalledWith(
+                {
+                    role: ESystemsRoles.super_admin,
+                    userId: 1,
+                },
+                true,
+            )
+            expect(roleService.setUserRole).toBeCalledWith(
+                {
+                    role: EDefaultRoles.admin,
+                    userId: 1,
+                },
+                true,
+            )
         })
 
         test('sould return error if system user is not created', async () => {
+            const errorMessage = "Couldn't create system account"
+
+            languageService.setError.mockResolvedValue(errorMessage)
+
             expect.assertions(2)
             try {
                 await service._createSystemUser()
             } catch (error) {
                 expect(error).toBeInstanceOf(Error)
-                expect(error.message).toBe("Couldn't create system account")
+                expect(error.message).toEqual(errorMessage)
             }
         })
     })
 
     describe('createAccount', () => {
         const mockUser: CreateAccountInput = {
-            email: userStub().email,
             phone: userStub().phone,
+            email: userStub().email,
             fullname: userStub().fullname,
             verifiedEmail: userStub().verifiedEmail,
             verifiedPhone: userStub().verifiedPhone,
@@ -180,26 +190,64 @@ describe('UsersService', () => {
         }
 
         test('sould fail if email is exist and verified phone', async () => {
-            usersRepository.findOne.mockReturnValue(mockUser)
-            expect(usersRepository.findOne({ where: { email: mockUser.email } })).toEqual(mockUser)
+            const errorMessage = 'There is user with that email already'
+
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValueOnce({ ...mockUser, verifiedPhone: true })
 
             expect.assertions(2)
             try {
-                const user = usersRepository.findOne({ where: { email: mockUser.email } })
-                expect(!user.verifiedPhone).toEqual(true)
                 await service.createAccount(mockUser)
             } catch (error) {
                 expect(error).toBeInstanceOf(ValidationException)
-                console.log(error)
-                expect(error).toHaveProperty('messages', { email: 'There is user with that email already1' }) // have to  have
-                // expect(error.messages).toHaveProperty({ create: "Couldn't create system account" }) // have
-                // expect(error.message).toBe('There is user with that email already')
+                expect(error.messages).toEqual({ email: errorMessage })
             }
         })
-        test.todo('sould fail if phone is exist and verified phone')
-        test.todo('sould delete account if email is exist and not verified phone')
-        test.todo('sould delete account if phone is exist and not verified phone')
-        test.todo('sould create user')
+
+        test('sould fail if phone is exist and verified phone', async () => {
+            const errorMessage = 'There is user with that phone already'
+
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValueOnce(undefined)
+            usersRepository.findOne.mockResolvedValueOnce({ ...mockUser, verifiedPhone: true })
+
+            expect.assertions(2)
+            try {
+                await service.createAccount(mockUser)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ phone: errorMessage })
+            }
+        })
+
+        test('sould delete account if phone or email is exist and not verified phone', async () => {
+            usersRepository.findOne.mockResolvedValue({ ...mockUser })
+
+            expect.assertions(2)
+            try {
+                await service.createAccount(mockUser)
+            } catch (error) {
+                expect(usersRepository.delete).toBeCalledTimes(1)
+                expect(usersRepository.delete).toBeCalledWith(mockUser.id)
+            }
+        })
+
+        test('sould create user', async () => {
+            usersRepository.create.mockReturnValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            const result = await service.createAccount(mockUser)
+            console.log(result)
+
+            expect(usersRepository.create).toBeCalledTimes(1)
+            expect(usersRepository.create).toBeCalledWith(mockUser)
+
+            expect(usersRepository.save).toBeCalledTimes(1)
+            expect(usersRepository.save).toBeCalledWith(mockUser)
+
+            expect(result.user).toBe(mockUser)
+        })
+
         test.todo('sould fail if user is not created')
         test.todo('sould set default role')
         test.todo('sould send verification email link')

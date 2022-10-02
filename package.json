@@ -39,6 +39,7 @@
     "fs-capacitor": "^8.0.0",
     "graphql": "^16.5.0",
     "graphql-upload": "13.0.0",
+    "i18next": "^21.9.2",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.5-lts.1",
@@ -76,30 +77,39 @@
     "typescript": "^4.7.4"
   },
   "jest": {
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
     "verbose": true,
     "collectCoverage": false,
     "moduleNameMapper": {
-        "^src/(.*)$": "<rootDir>/$1"
+      "^src/(.*)$": "<rootDir>/$1"
     },
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-        "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": ["**/*.(t|j)s"],
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
-        "node_modules",
-        "main.ts",
-        ".guard.ts",
-        ".entity.ts",
-        ".constants.ts",
-        ".dto.ts",
-        ".module.ts",
-        ".middleware.ts",
-        ".decorator.ts"
+      "node_modules",
+      "main.ts",
+      ".guard.ts",
+      ".entity.ts",
+      ".constants.ts",
+      ".dto.ts",
+      ".module.ts",
+      ".middleware.ts",
+      ".decorator.ts"
     ]
   }
 }

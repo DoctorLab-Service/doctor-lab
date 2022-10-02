@@ -11,8 +11,8 @@ export const userStub = (): UserStub => {
     return {
         id: 1,
         fullname: 'dl_user',
-        phone: '+380979995500',
         email: 'dl.service@email.com',
+        phone: '+380979995500',
         password: 'dl.password',
         verifiedPhone: false,
         verifiedEmail: false,
@@ -43,5 +43,4 @@ export const userUpdateStub = (): UserStub => {
         experience: '1 years',
         language: ELanguage.EN,
     }
-    test.todo('sh')
 }

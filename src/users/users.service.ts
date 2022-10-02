@@ -92,7 +92,7 @@ export class UsersService {
         const existEmail = await this.users.findOne({ where: { email: body.email } })
         if (existEmail && existEmail.verifiedPhone) {
             throw new ValidationException({
-                email: await this.languageService.setError(['isExists', 'email']),
+                email: await this.languageService.setError(['isExists', 'email'], 'users'),
             })
         }
 
@@ -106,11 +106,8 @@ export class UsersService {
 
         // If user exist by email or phone  and phone is not verify
         // Delete this user
-        if (existEmail && !existEmail.verifiedPhone) {
+        if ((existEmail || existPhone) && !existEmail.verifiedPhone) {
             await this.users.delete(existEmail.id)
-        }
-        if (existPhone && !existPhone.verifiedPhone) {
-            await this.users.delete(existPhone.id)
         }
 
         // Create user if email and phone is not exist
@@ -137,6 +134,7 @@ export class UsersService {
         try {
             // Create accessToken and refreshToken
             const tokens = await this.token.generateTokens({ id: user.id })
+            console.log(tokens)
             this.token.saveTokens(user.id, tokens)
 
             return { ok: Boolean(user), ...tokens, user }

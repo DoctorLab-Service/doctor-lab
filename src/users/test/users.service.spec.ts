@@ -9,22 +9,48 @@ import { TokenService } from 'src/token/token.service'
 import { VerificationsService } from 'src/verifications/verifications.service'
 import { User } from '../entities'
 import { UsersService } from '../users.service'
-import { mockLanguageService, mockRepository, mockRolesService, mockTokenService } from '../__mocks__'
+import {
+    mockLanguageService,
+    mockRepository,
+    mockRolesService,
+    mockFilesService,
+    mockTokenService,
+    mockVerificationService,
+    mockEmailService,
+} from '../__mocks__'
 import { MockRepository, UserStub } from './types'
-import { mockVerificationService, mockEmailService, mockFilesService } from './users.mock'
-import { systemUserStub, userStub } from './__stubs/user.stub'
+import { systemUserStub, userStub, userUpdateStub } from './__stubs/user.stub'
 import { CreateAccountInput } from './../dtos/create-account.dto'
 import { ValidationException } from './../../exceptions/validation.exception'
+import { changeEmailStub, changePasswordStub, tokensStub, changePhoneStub } from './__stubs'
+import { object } from 'src/common/helpers'
+import { getCurrentUser } from '../helpers'
+import { UpdateAccountInput } from './../dtos/update-account.dto'
+import { createReadStream } from 'fs'
+import { FileUpload } from 'graphql-upload'
+import { GenerateTokens } from 'src/token/config/types'
+import {
+    ChangeEmailInput,
+    ChangePasswordInput,
+    FindByEmailInput,
+    FindByIdInput,
+    FindByPhoneInput,
+    ChangePhoneInput,
+} from '../dtos'
 
 describe('UsersService', () => {
-    const context: any = {}
+    const context: any = {
+        req: {
+            user: { ...userStub() },
+        },
+    }
     let service: UsersService
     let usersRepository: MockRepository<User>
-    let verificationService: VerificationsService
-    let emailService: EmailService
     let tokenService: TokenService
-    let filesService: FilesService
     let roleService: RolesService
+    let emailService: jest.Mocked<EmailService>
+    let filesService: jest.Mocked<FilesService>
+    let verificationService: jest.Mocked<VerificationsService>
     let languageService: jest.Mocked<LanguageService>
 
     // Start before testing
@@ -65,16 +91,18 @@ describe('UsersService', () => {
 
         // Services
         service = _module.get<UsersService>(UsersService)
-        verificationService = _module.get<VerificationsService>(VerificationsService)
-        emailService = _module.get<EmailService>(EmailService)
         tokenService = _module.get<TokenService>(TokenService)
-        filesService = _module.get<FilesService>(FilesService)
         roleService = _module.get<RolesService>(RolesService)
+        emailService = _module.get(EmailService)
+        filesService = _module.get(FilesService)
+        verificationService = _module.get(VerificationsService)
         languageService = _module.get(LanguageService)
 
         // Repositories
         usersRepository = _module.get(getRepositoryToken(User))
+    })
 
+    afterEach(async () => {
         jest.clearAllMocks()
     })
 
@@ -82,17 +110,6 @@ describe('UsersService', () => {
     test('should be defined', () => {
         expect(service).toBeDefined()
     })
-
-    it.todo('updateAccount')
-    it.todo('deleteAccount')
-    it.todo('myAccount')
-    it.todo('findById')
-    it.todo('findByPhone')
-    it.todo('findByEmail')
-    it.todo('findAllUsers')
-    it.todo('changeEmail')
-    it.todo('changePassword')
-    it.todo('changePhone')
 
     describe('_createSystemUser', () => {
         const mockSystemUser: UserStub = {
@@ -177,27 +194,39 @@ describe('UsersService', () => {
     })
 
     describe('createAccount', () => {
-        const mockUser: CreateAccountInput = {
-            phone: userStub().phone,
-            email: userStub().email,
-            fullname: userStub().fullname,
-            verifiedEmail: userStub().verifiedEmail,
-            verifiedPhone: userStub().verifiedPhone,
-            language: userStub().language,
-            password: userStub().password,
-            rePassword: 'dl.password',
-            role: EDefaultRoles.admin,
-        }
+        let mockUser: User
+        let mockCreateUser: CreateAccountInput
+        let mockTokens: GenerateTokens
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockCreateUser = {
+                phone: userStub().phone,
+                email: userStub().email,
+                fullname: userStub().fullname,
+                verifiedEmail: userStub().verifiedEmail,
+                verifiedPhone: userStub().verifiedPhone,
+                language: userStub().language,
+                password: userStub().password,
+                rePassword: 'dl.password',
+                role: EDefaultRoles.admin,
+            }
+            mockTokens = { ...tokensStub() }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
 
         test('sould fail if email is exist and verified phone', async () => {
             const errorMessage = 'There is user with that email already'
 
             languageService.setError.mockResolvedValue(errorMessage)
-            usersRepository.findOne.mockResolvedValueOnce({ ...mockUser, verifiedPhone: true })
+            usersRepository.findOne.mockResolvedValueOnce({ ...mockCreateUser, verifiedPhone: true })
 
             expect.assertions(2)
             try {
-                await service.createAccount(mockUser)
+                await service.createAccount(mockCreateUser)
             } catch (error) {
                 expect(error).toBeInstanceOf(ValidationException)
                 expect(error.messages).toEqual({ email: errorMessage })
@@ -206,14 +235,14 @@ describe('UsersService', () => {
 
         test('sould fail if phone is exist and verified phone', async () => {
             const errorMessage = 'There is user with that phone already'
-
             languageService.setError.mockResolvedValue(errorMessage)
+
             usersRepository.findOne.mockResolvedValueOnce(undefined)
-            usersRepository.findOne.mockResolvedValueOnce({ ...mockUser, verifiedPhone: true })
+            usersRepository.findOne.mockResolvedValueOnce({ ...mockCreateUser, verifiedPhone: true })
 
             expect.assertions(2)
             try {
-                await service.createAccount(mockUser)
+                await service.createAccount(mockCreateUser)
             } catch (error) {
                 expect(error).toBeInstanceOf(ValidationException)
                 expect(error.messages).toEqual({ phone: errorMessage })
@@ -221,38 +250,816 @@ describe('UsersService', () => {
         })
 
         test('sould delete account if phone or email is exist and not verified phone', async () => {
-            usersRepository.findOne.mockResolvedValue({ ...mockUser })
+            usersRepository.findOne.mockResolvedValue({ ...mockCreateUser })
 
             expect.assertions(2)
             try {
-                await service.createAccount(mockUser)
+                await service.createAccount(mockCreateUser)
             } catch (error) {
                 expect(usersRepository.delete).toBeCalledTimes(1)
-                expect(usersRepository.delete).toBeCalledWith(mockUser.id)
+                expect(usersRepository.delete).toBeCalledWith(mockCreateUser.id)
             }
         })
 
-        test('sould create user', async () => {
-            usersRepository.create.mockReturnValue(mockUser)
+        test('sould create account and return output object', async () => {
+            usersRepository.create.mockReturnValue(mockCreateUser)
             usersRepository.save.mockResolvedValue(mockUser)
 
-            const result = await service.createAccount(mockUser)
-            console.log(result)
+            const result = await service.createAccount(mockCreateUser)
 
             expect(usersRepository.create).toBeCalledTimes(1)
-            expect(usersRepository.create).toBeCalledWith(mockUser)
+            expect(usersRepository.create).toBeCalledWith({
+                ...object.withoutProperties(mockCreateUser, ['rePassword', 'role']),
+            })
 
             expect(usersRepository.save).toBeCalledTimes(1)
-            expect(usersRepository.save).toBeCalledWith(mockUser)
+            expect(usersRepository.save).toBeCalledWith(mockCreateUser)
 
-            expect(result.user).toBe(mockUser)
+            expect(result).toMatchObject({
+                ok: true,
+                ...mockTokens,
+                user: {
+                    ...mockUser,
+                },
+            })
         })
 
-        test.todo('sould fail if user is not created')
-        test.todo('sould set default role')
-        test.todo('sould send verification email link')
-        test.todo('sould send verification phone code')
-        test.todo('sould generate tokens')
-        test.todo('sould create user and return user and token')
+        test('sould fail if account is not created', async () => {
+            const errorMessage = "Couldn't create account"
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.createAccount(mockCreateUser)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ create: errorMessage })
+            }
+        })
+
+        test('sould set default role', async () => {
+            await roleService.setUserRole(
+                {
+                    role: EDefaultRoles.admin,
+                    userId: 1,
+                },
+                true,
+            )
+
+            expect(roleService.setUserRole).toBeCalledTimes(1)
+            expect(roleService.setUserRole).toBeCalledWith(
+                {
+                    role: EDefaultRoles.admin,
+                    userId: 1,
+                },
+                true,
+            )
+        })
+
+        test('sould send verification email link', async () => {
+            verificationService.verificationEmailCode(mockUser)
+
+            expect(verificationService.verificationEmailCode).toBeCalledTimes(1)
+            expect(verificationService.verificationEmailCode).toBeCalledWith(mockUser)
+        })
+
+        test('sould send verification phone code', async () => {
+            verificationService.verificationPhoneCode(mockUser)
+
+            expect(verificationService.verificationPhoneCode).toBeCalledTimes(1)
+            expect(verificationService.verificationPhoneCode).toBeCalledWith(mockUser)
+        })
+
+        test('sould generate tokens and return their', async () => {
+            const tokens = tokenService.generateTokens({ id: mockUser.id })
+
+            expect(tokenService.generateTokens).toBeCalledTimes(1)
+            expect(tokenService.generateTokens).toBeCalledWith({ id: mockUser.id })
+
+            expect(tokens).toEqual(mockTokens)
+        })
+
+        test('sould save tokens', async () => {
+            tokenService.saveTokens(mockUser.id, mockTokens)
+
+            expect(tokenService.saveTokens).toBeCalledTimes(1)
+            expect(tokenService.saveTokens).toBeCalledWith(mockUser.id, mockTokens)
+        })
+
+        test('sould fail if tokens is not saved', async () => {
+            const errorMessage = "Couldn't create token, try to login1"
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.createAccount(mockCreateUser)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ create: errorMessage })
+            }
+        })
+    })
+
+    describe('updateAccount', () => {
+        let mockUser: User
+        let mockUpdateUser: UpdateAccountInput
+        let mockFile: FileUpload | null
+
+        beforeEach(async () => {
+            mockFile = null
+            mockUser = { ...userStub() }
+            mockUpdateUser = {
+                ...object.withoutProperties(userStub(), ['password']),
+                fullname: userUpdateStub().fullname,
+                birthdate: userUpdateStub().birthdate,
+                country: userUpdateStub().country,
+                state: userUpdateStub().state,
+                address: userUpdateStub().address,
+                experience: userUpdateStub().experience,
+                language: userUpdateStub().language,
+            }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should get current user from context', async () => {
+            const currentUser = getCurrentUser(context)
+            expect(currentUser).toEqual(mockUser)
+        })
+
+        test('should fail if user is not exist', async () => {
+            const errorMessage = "Couldn't update account"
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(null)
+
+            expect.assertions(2)
+            try {
+                await service.updateAccount(mockUpdateUser, mockFile, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_exists: errorMessage })
+            }
+        })
+
+        test('should upload avatat if file exist', async () => {
+            mockFile = {
+                filename: 'some_picture.png',
+                mimetype: 'image/png',
+                encoding: '7bit',
+                createReadStream: createReadStream,
+            }
+            filesService.uploadFiles.mockResolvedValue({ paths: ['some image link from cloudinary'] })
+
+            await filesService.uploadFiles(mockFile, {
+                userId: mockUser.id,
+                key: 'avatar',
+            })
+
+            expect(filesService.uploadFiles).toBeCalledTimes(1)
+            expect(filesService.uploadFiles).toBeCalledWith(mockFile, {
+                userId: mockUser.id,
+                key: 'avatar',
+            })
+        })
+
+        test('should fail if avatart is not uploaded', async () => {
+            const errorMessage = 'Failed to upload file(s)'
+            mockFile = {
+                filename: 'some_picture.png',
+                mimetype: 'image/png',
+                encoding: '7bit',
+                createReadStream: createReadStream,
+            }
+            languageService.setError.mockResolvedValue(errorMessage)
+            filesService.uploadFiles.mockResolvedValue({ paths: [] })
+
+            try {
+                await service.updateAccount(mockUpdateUser, mockFile, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_exists: errorMessage })
+            }
+        })
+
+        test('should update account', async () => {
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            const updatedUser = await service.updateAccount(mockUpdateUser, mockFile, context)
+
+            expect(usersRepository.save).toBeCalledTimes(1)
+            expect(usersRepository.save).toBeCalledWith(mockUpdateUser)
+
+            expect(updatedUser).toMatchObject({
+                ok: true,
+                user: {
+                    ...mockUser,
+                },
+            })
+        })
+
+        test('should fail if not updated account', async () => {
+            const errorMessage = "Couldn't update account"
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            try {
+                await service.updateAccount(mockUpdateUser, mockFile, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_exists: errorMessage })
+            }
+        })
+    })
+
+    describe('deleteAccount', () => {
+        let mockCurrentUser: User
+        beforeEach(async () => {
+            mockCurrentUser = { ...userStub() }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should get current user from context', async () => {
+            const currentUser = getCurrentUser(context)
+            expect(currentUser).toEqual(mockCurrentUser)
+        })
+
+        test("should delete user's files", async () => {
+            await service.deleteAccount(context)
+
+            expect(filesService.deleteFiles).toBeCalledTimes(1)
+            expect(filesService.deleteFiles).toBeCalledWith(mockCurrentUser.id)
+        })
+
+        test('should delete account', async () => {
+            await service.deleteAccount(context)
+
+            expect(usersRepository.delete).toBeCalledTimes(1)
+            expect(usersRepository.delete).toBeCalledWith(mockCurrentUser.id)
+        })
+
+        test('should fail if not delete account', async () => {
+            const errorMessage = "Couldn't deleted account"
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            try {
+                await service.deleteAccount(context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ delete: errorMessage })
+            }
+        })
+    })
+
+    describe('myAccount', () => {
+        let mockCurrentUser: User
+        beforeEach(async () => {
+            mockCurrentUser = { ...userStub() }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should get current user from context', async () => {
+            const currentUser = getCurrentUser(context)
+            expect(currentUser).toEqual(mockCurrentUser)
+        })
+
+        test('should return user', async () => {
+            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+            const user = await service.myAccount(context)
+            expect(user).toMatchObject({
+                ok: true,
+                user: mockCurrentUser,
+            })
+        })
+        test('should fail if user is not found', async () => {
+            const errorMessage = 'User is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.myAccount(context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_found: errorMessage })
+            }
+        })
+    })
+
+    describe('findById', () => {
+        let mockUser: User
+        let mockFindUser: FindByIdInput
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockFindUser = { id: mockUser.id }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should return user by id', async () => {
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            const user = await service.findById(mockFindUser)
+            expect(user).toMatchObject({
+                ok: true,
+                user: mockUser,
+            })
+        })
+
+        test('should fail if not found user', async () => {
+            const errorMessage = 'The user is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.findById(mockFindUser)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_found: errorMessage })
+            }
+        })
+    })
+
+    describe('findByPhone', () => {
+        let mockUser: User
+        let mockFindUser: FindByPhoneInput
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockFindUser = { phone: mockUser.phone }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should return user by phone', async () => {
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            const user = await service.findByPhone(mockFindUser)
+            expect(user).toMatchObject({
+                ok: true,
+                user: mockUser,
+            })
+        })
+
+        test('should fail if not found user', async () => {
+            const errorMessage = 'The user is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.findByPhone(mockFindUser)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_found: errorMessage })
+            }
+        })
+    })
+
+    describe('findByEmail', () => {
+        let mockUser: User
+        let mockFindUser: FindByEmailInput
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockFindUser = { email: mockUser.email }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should return user by email', async () => {
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            const user = await service.findByEmail(mockFindUser)
+            expect(user).toMatchObject({
+                ok: true,
+                user: mockUser,
+            })
+        })
+
+        test('should fail if not found user', async () => {
+            const errorMessage = 'The user is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.findByEmail(mockFindUser)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_found: errorMessage })
+            }
+        })
+    })
+
+    describe('findAllUsers', () => {
+        let mockUser: User
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should return all users', async () => {
+            usersRepository.find.mockResolvedValue([mockUser])
+            const users = await service.findAllUsers()
+            expect(users).toMatchObject({
+                ok: true,
+                users: [mockUser],
+            })
+        })
+
+        test('should fail if not found user', async () => {
+            const errorMessage = 'The user is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.find.mockResolvedValue([])
+
+            try {
+                await service.findAllUsers()
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_found: errorMessage })
+            }
+        })
+    })
+
+    describe('changePassword', () => {
+        let mockCurrentUser: User
+        let mockChangePassword: ChangePasswordInput
+        let mockUser: User
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockCurrentUser = { ...userStub() }
+            mockChangePassword = { ...changePasswordStub }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should get current user from context', async () => {
+            const currentUser = getCurrentUser(context)
+            expect(currentUser).toEqual(mockCurrentUser)
+        })
+
+        test('should exist user', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+
+            await service.changePassword(mockChangePassword, context)
+        })
+
+        test('should fail if user is not exist', async () => {
+            const errorMessage = 'User is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.changePassword(mockChangePassword, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_exists: errorMessage })
+            }
+        })
+
+        test('should update user', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+
+            const updatedUser = await service.changePassword(mockChangePassword, context)
+
+            expect(usersRepository.save).toBeCalledTimes(1)
+            expect(usersRepository.save).toBeCalledWith({ ...mockUser, password: mockChangePassword.password })
+
+            expect(updatedUser).toMatchObject({
+                ok: true,
+            })
+        })
+
+        test('should fail if not updated user', async () => {
+            const errorMessage = 'Unable to change password'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            usersRepository.save.mockResolvedValue(undefined)
+
+            try {
+                await service.changePassword(mockChangePassword, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ change: errorMessage })
+            }
+        })
+
+        test('should send email info', async () => {
+            emailService.sendChangeInfo.mockResolvedValue(true)
+
+            emailService.sendChangeInfo('password', {
+                to: mockUser.email,
+                fullname: mockUser.fullname,
+                changedData: mockChangePassword.password,
+            })
+
+            expect(emailService.sendChangeInfo).toBeCalledTimes(1)
+            expect(emailService.sendChangeInfo).toBeCalledWith('password', {
+                to: mockUser.email,
+                fullname: mockUser.fullname,
+                changedData: mockChangePassword.password,
+            })
+        })
+
+        test('should fail if not send email', async () => {
+            const errorMessage = 'Unable to send you email'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            try {
+                await service.changePassword(mockChangePassword, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ no_send: errorMessage })
+            }
+        })
+
+        test('should remove token', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+
+            await service.changePassword(mockChangePassword, context)
+
+            expect(tokenService.removeTokenByUserId).toBeCalledTimes(1)
+            expect(tokenService.removeTokenByUserId).toBeCalledWith(mockUser.id)
+        })
+
+        test('should change password', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+
+            const changePassword = await service.changePassword(mockChangePassword, context)
+
+            expect(changePassword).toMatchObject({ ok: true })
+        })
+    })
+
+    describe('changeEmail', () => {
+        let mockCurrentUser: User
+        let mockChangeEmail: ChangeEmailInput
+        let mockUser: User
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockCurrentUser = { ...userStub() }
+            mockChangeEmail = { ...changeEmailStub }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should get current user from context', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            const currentUser = getCurrentUser(context)
+            expect(currentUser).toEqual(mockCurrentUser)
+        })
+
+        test('should exist user', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            await service.changeEmail(mockChangeEmail, context)
+        })
+
+        test('should fail if user is not exist', async () => {
+            const errorMessage = 'User is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.changeEmail(mockChangeEmail, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_exists: errorMessage })
+            }
+        })
+
+        test('should update user', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
+
+            const updatedUser = await service.changeEmail(mockChangeEmail, context)
+
+            expect(usersRepository.save).toBeCalledTimes(1)
+            expect(usersRepository.save).toBeCalledWith({
+                ...object.withoutProperties(mockUser, ['password']),
+                email: mockChangeEmail.email,
+            })
+
+            expect(updatedUser).toMatchObject({
+                ok: true,
+            })
+        })
+
+        test('should fail if not updated user', async () => {
+            const errorMessage = 'Unable to change password'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            usersRepository.save.mockResolvedValue(undefined)
+
+            try {
+                await service.changeEmail(mockChangeEmail, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ change: errorMessage })
+            }
+        })
+
+        test('should send email info', async () => {
+            emailService.sendChangeInfo.mockResolvedValue(true)
+
+            emailService.sendChangeInfo('password', {
+                to: mockUser.email,
+                fullname: mockUser.fullname,
+                changedData: mockChangeEmail.email,
+            })
+
+            expect(emailService.sendChangeInfo).toBeCalledTimes(1)
+            expect(emailService.sendChangeInfo).toBeCalledWith('password', {
+                to: mockUser.email,
+                fullname: mockUser.fullname,
+                changedData: mockChangeEmail.email,
+            })
+        })
+
+        test('should fail if not send email', async () => {
+            const errorMessage = 'Unable to send you email'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            try {
+                await service.changeEmail(mockChangeEmail, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ no_send: errorMessage })
+            }
+        })
+
+        test('should change email', async () => {
+            usersRepository.findOne.mockResolvedValue(mockUser)
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            const changePassword = await service.changeEmail(mockChangeEmail, context)
+
+            expect(changePassword).toMatchObject({ ok: true })
+        })
+    })
+
+    describe('changePhone', () => {
+        let mockCurrentUser: User
+        let mockChangePhone: ChangePhoneInput
+        let mockUser: User
+
+        beforeEach(async () => {
+            mockUser = { ...userStub() }
+            mockCurrentUser = { ...userStub() }
+            mockChangePhone = { ...changePhoneStub }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('should get current user from context', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            const currentUser = getCurrentUser(context)
+            expect(currentUser).toEqual(mockCurrentUser)
+        })
+
+        test('should exist user', async () => {
+            usersRepository.save.mockResolvedValue(mockUser)
+            usersRepository.findOne.mockResolvedValue({ ...mockUser, verifiedEmail: true })
+            await service.changePhone(mockChangePhone, context)
+        })
+
+        test('should fail if user is not exist', async () => {
+            const errorMessage = 'User is not found'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(null)
+
+            try {
+                await service.changePhone(mockChangePhone, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ not_exists: errorMessage })
+            }
+        })
+
+        test('shoud fail if not verified email', async () => {
+            const errorMessage = 'Email is not verified'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue(mockUser)
+
+            try {
+                await service.changePhone(mockChangePhone, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ verify: errorMessage })
+            }
+        })
+
+        test('should update user', async () => {
+            usersRepository.findOne.mockResolvedValue({ ...mockUser, verifiedEmail: true })
+            usersRepository.save.mockResolvedValue({ ...mockUser, ...mockChangePhone })
+
+            const updatedUser = await service.changePhone(mockChangePhone, context)
+            console.log('mockUser', mockUser.phone)
+            console.log('mockChangePhone', mockChangePhone.phone)
+
+            expect(usersRepository.save).toBeCalledTimes(1)
+            expect(usersRepository.save).toBeCalledWith({
+                ...object.withoutProperties({ ...mockUser, verifiedEmail: true }, ['password']),
+                phone: mockChangePhone.phone,
+            })
+
+            expect(updatedUser).toMatchObject({
+                ok: true,
+            })
+        })
+
+        test('should fail if not updated user', async () => {
+            const errorMessage = 'Unable to change password'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue({ ...mockUser, verifiedEmail: true })
+            usersRepository.save.mockResolvedValue(undefined)
+
+            try {
+                await service.changePhone(mockChangePhone, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ change: errorMessage })
+            }
+        })
+
+        test('should send email info', async () => {
+            emailService.sendChangeInfo.mockResolvedValue(true)
+
+            emailService.sendChangeInfo('password', {
+                to: mockUser.email,
+                fullname: mockUser.fullname,
+                changedData: mockChangePhone.phone,
+            })
+
+            expect(emailService.sendChangeInfo).toBeCalledTimes(1)
+            expect(emailService.sendChangeInfo).toBeCalledWith('password', {
+                to: mockUser.email,
+                fullname: mockUser.fullname,
+                changedData: mockChangePhone.phone,
+            })
+        })
+
+        test('should fail if not send email', async () => {
+            const errorMessage = 'Unable to send you email'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            usersRepository.findOne.mockResolvedValue({ ...mockUser, verifiedEmail: true })
+            usersRepository.save.mockResolvedValue(mockUser)
+
+            try {
+                await service.changePhone(mockChangePhone, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ no_send: errorMessage })
+            }
+        })
+
+        test('should change email', async () => {
+            usersRepository.save.mockResolvedValue({ ...mockUser, ...mockChangePhone })
+            usersRepository.findOne.mockResolvedValue({ ...mockUser, verifiedEmail: true })
+
+            const changePassword = await service.changePhone(mockChangePhone, context)
+
+            expect(changePassword).toMatchObject({ ok: true })
+        })
     })
 })

@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { FindAllUsersOutput, FindByOutput } from '../dtos'
+import { User } from '../entities'
 import { UsersQueries } from '../resolvers/users.queries'
 import { UsersService } from '../users.service'
 import { userStub } from './__stubs/user.stub'
@@ -10,119 +11,113 @@ describe('UserQueries', () => {
     const context: any = {}
     let usersService: UsersService
     let usersQueries: UsersQueries
+    let mockUser: User
 
     beforeEach(async () => {
+        mockUser = { ...userStub() }
+
         const _module = await Test.createTestingModule({
             providers: [UsersService, UsersQueries],
         }).compile()
 
         usersService = _module.get<UsersService>(UsersService)
         usersQueries = _module.get<UsersQueries>(UsersQueries)
-
+    })
+    afterEach(async () => {
         jest.clearAllMocks()
     })
 
     describe('myAccount', () => {
-        describe('when myAccount is called', () => {
-            let output: FindByOutput
-            beforeEach(async () => {
-                output = await usersQueries.myAccount(context)
-            })
+        let output: FindByOutput
 
-            test('then it should call userService', () => {
-                expect(usersService.myAccount).toBeCalled()
-            })
+        beforeEach(async () => {
+            output = await usersQueries.myAccount(context)
+        })
 
-            test('then is sould return a user', () => {
-                expect(output.user).toEqual(userStub())
-            })
+        test('should call userService', () => {
+            expect(usersService.myAccount).toBeCalled()
+        })
 
-            test('then it should return true', () => {
-                expect(output.ok).toEqual(true)
+        test('sould return a user', () => {
+            expect(output).toMatchObject({
+                ok: true,
+                user: mockUser,
             })
         })
     })
 
     describe('findAllUsers', () => {
-        describe('when findAllUsers is called', () => {
-            let output: FindAllUsersOutput
-            beforeEach(async () => {
-                output = await usersQueries.findAllUsers()
-            })
+        let output: FindAllUsersOutput
 
-            test('then it should call userService', () => {
-                expect(usersService.findAllUsers).toBeCalled()
-            })
+        beforeEach(async () => {
+            output = await usersQueries.findAllUsers()
+        })
 
-            test('then is sould return a users', () => {
-                expect(output.users).toEqual([userStub()])
-            })
+        test('should call userService', () => {
+            expect(usersService.findAllUsers).toBeCalled()
+        })
 
-            test('then it should return true', () => {
-                expect(output.ok).toEqual(true)
+        test('sould return a users', () => {
+            expect(output).toMatchObject({
+                ok: true,
+                users: [mockUser],
             })
         })
     })
 
     describe('findById', () => {
-        describe('when findById is called', () => {
-            let output: FindByOutput
-            beforeEach(async () => {
-                output = await usersQueries.findById({ id: userStub().id })
-            })
+        let output: FindByOutput
 
-            test('then it should call userService', () => {
-                expect(usersService.findById).toBeCalledWith({ id: userStub().id })
-            })
+        beforeEach(async () => {
+            output = await usersQueries.findById({ id: mockUser.id })
+        })
 
-            test('then is sould return a user', () => {
-                expect(output.user).toEqual(userStub())
-            })
+        test('then it should call userService', () => {
+            expect(usersService.findById).toBeCalledWith({ id: mockUser.id })
+        })
 
-            test('then it should return true', () => {
-                expect(output.ok).toEqual(true)
+        test('then it should return a user', () => {
+            expect(output).toMatchObject({
+                ok: true,
+                user: mockUser,
             })
         })
     })
 
     describe('findByPhone', () => {
-        describe('when findByPhone is called', () => {
-            let output: FindByOutput
-            beforeEach(async () => {
-                output = await usersQueries.findByPhone({ phone: userStub().phone })
-            })
+        let output: FindByOutput
 
-            test('then it should call userService', () => {
-                expect(usersService.findByPhone).toBeCalledWith({ phone: userStub().phone })
-            })
+        beforeEach(async () => {
+            output = await usersQueries.findByPhone({ phone: mockUser.phone })
+        })
 
-            test('then is sould return a user', () => {
-                expect(output.user).toEqual(userStub())
-            })
+        test('should call userService', () => {
+            expect(usersService.findByPhone).toBeCalledWith({ phone: mockUser.phone })
+        })
 
-            test('then it should return true', () => {
-                expect(output.ok).toEqual(true)
+        test('should return a user', () => {
+            expect(output).toMatchObject({
+                ok: true,
+                user: mockUser,
             })
         })
     })
 
     describe('findByEmail', () => {
-        describe('when findByEmail is called', () => {
-            let output: FindByOutput
-            beforeEach(async () => {
-                output = await usersQueries.findByEmail({ email: userStub().email })
-            })
+        let output: FindByOutput
 
-            test('then it should call userService', () => {
-                expect(usersService.findByEmail).toBeCalledWith({ email: userStub().email })
-            })
+        beforeEach(async () => {
+            output = await usersQueries.findByEmail({ email: mockUser.email })
+        })
 
-            test('then is sould return a user', () => {
-                expect(output.user).toEqual(userStub())
-            })
+        test('should call userService', () => {
+            expect(usersService.findByEmail).toBeCalledWith({ email: mockUser.email })
+        })
 
-            test('then it should return true', () => {
-                expect(output.ok).toEqual(true)
+        test('should return a user', () => {
+            expect(output).toMatchObject({
+                ok: true,
+                user: mockUser,
             })
         })
     })

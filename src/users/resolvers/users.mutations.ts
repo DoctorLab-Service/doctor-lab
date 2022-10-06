@@ -25,12 +25,13 @@ export class UsersMutations {
 
     @UseGuards(AuthGuard)
     @Mutation(() => UpdateAccountOutput)
-    @UsePipes(new ValidationPipe('users'))
+    // @UsePipes(new ValidationPipe('users'))
     async updateAccount(
         @Args('input') body: UpdateAccountInput,
         @Args({ name: 'file', nullable: true, type: () => GraphQLUpload }) file: FileUpload | null,
         @Context() context: any,
     ): Promise<UpdateAccountOutput> {
+        console.log(file)
         return this.usersService.updateAccount(body, file, context)
     }
 

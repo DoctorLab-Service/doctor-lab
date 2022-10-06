@@ -32,7 +32,7 @@ import {
     UpdateAccountOutput,
 } from './dtos'
 import { MyAccountOutput } from './dtos/my-account.dto'
-import { getCurrentUser } from './helpers/get-current-user.helper'
+import { getCurrentUser } from './helpers'
 
 @Injectable()
 export class UsersService {
@@ -111,7 +111,9 @@ export class UsersService {
         }
 
         // Create user if email and phone is not exist
-        const user = await this.users.save(this.users.create({ ...body }))
+        const user = await this.users.save(
+            this.users.create({ ...object.withoutProperties(body, ['rePassword', 'role']) }),
+        )
         if (!user) {
             throw new ValidationException({
                 create: await this.languageService.setError(['isNot', 'createUser']),
@@ -134,8 +136,7 @@ export class UsersService {
         try {
             // Create accessToken and refreshToken
             const tokens = await this.token.generateTokens({ id: user.id })
-            console.log(tokens)
-            this.token.saveTokens(user.id, tokens)
+            await this.token.saveTokens(user.id, tokens)
 
             return { ok: Boolean(user), ...tokens, user }
         } catch (error) {
@@ -157,7 +158,7 @@ export class UsersService {
         const user = await this.users.findOne({ where: { id: currentUser.id }, ...relationsConfig.users })
         if (!user) {
             throw new ValidationException({
-                not_exists: await this.languageService.setError(['isNotFound', 'user']),
+                not_exists: await this.languageService.setError(['isNot', 'foundUser'], 'users'),
             })
         }
 
@@ -190,9 +191,9 @@ export class UsersService {
 
         // Update user data and return
         try {
-            const updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+            const updatedAccount = await this.users.save({ ...object.withoutProperties(user, ['password']) })
 
-            return { ok: Boolean(updatedUser), user: updatedUser }
+            return { ok: Boolean(updatedAccount), user: updatedAccount }
         } catch (error) {
             console.log(error)
             throw new ValidationException({
@@ -298,14 +299,15 @@ export class UsersService {
             })
         }
 
-        let updatedUser: User
-        try {
+        let updatedAccount: User
             user.password = body.password
             user.resetKey = null
-            updatedUser = await this.users.save(user)
-        } catch (error) {
+
+            updatedAccount = await this.users.save(user)
+
+         if (!updatedAccount){
             throw new ValidationException({
-                change: await this.languageService.setError(['isChange', 'email']),
+                change: await this.languageService.setError(['isChange', 'password']),
             })
         }
 
@@ -326,7 +328,7 @@ export class UsersService {
         // If it exists
         await this.token.removeTokenByUserId(user.id)
 
-        return { ok: Boolean(updatedUser) }
+        return { ok: Boolean(updatedAccount) }
     }
 
     /**
@@ -344,14 +346,13 @@ export class UsersService {
             })
         }
 
-        let updatedUser: User
-        try {
+        let updatedAccount: User
             user.email = body.email
             user.verifiedEmail = false
             user.resetKey = null
-
-            updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
-        } catch (error) {
+            
+            updatedAccount = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+        if (!updatedAccount){
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'email']),
             })
@@ -370,7 +371,7 @@ export class UsersService {
             })
         }
 
-        return { ok: Boolean(updatedUser.email === body.email) }
+        return { ok: Boolean(updatedAccount.email === body.email) }
     }
 
     /**
@@ -384,7 +385,7 @@ export class UsersService {
         })
         if (!user) {
             throw new ValidationException({
-                not_exist: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
             })
         }
 
@@ -395,15 +396,15 @@ export class UsersService {
             })
         }
 
-        let updatedUser: User
-        try {
+        let updatedAccount: User
             user.phone = body.phone
             user.verifiedPhone = false
             user.resetKey = null
 
             // Create new user object without password
-            updatedUser = await this.users.save({ ...object.withoutProperties(user, ['password']) })
-        } catch (error) {
+            updatedAccount = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+        
+        if (!updatedAccount){
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'phone']),
             })
@@ -426,6 +427,6 @@ export class UsersService {
             })
         }
 
-        return { ok: Boolean(updatedUser.phone === body.phone) }
+        return { ok: Boolean(updatedAccount.phone === body.phone) }
     }
 }

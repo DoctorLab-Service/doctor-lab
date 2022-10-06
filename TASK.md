@@ -41,21 +41,23 @@
 
 - [x] - Entity
 
-- [x] - CreateAccount
-- [x] - UpdateAccount
+- [x] - Create System User
+- [x] - Create Account
+- [x] - Update Account
 - [x] - Set Avatar
 - [x] - DeleteAccount
 - [x] - Change Password
 - [x] - Change Email
 - [x] - Change Phone
 
-- [ ] - Test CreateAccount
-- [ ] - Test UpdateAccount
-- [ ] - Test Set Avatar
-- [ ] - Test DeleteAccount
-- [ ] - Test Change Password
-- [ ] - Test Change Email
-- [ ] - Test Change Phone
+- [x] - Test Create System User
+- [x] - Test Create Account
+- [x] - Test Update Account
+- [x] - Test Set Avatar
+- [x] - Test DeleteAccount
+- [x] - Test Change Password
+- [x] - Test Change Email
+- [x] - Test Change Phone
   
 
 ### Help Service
@@ -85,10 +87,10 @@
 - [x] - FindByPhone
 - [x] - FindByEmail
 
-- [ ] - Test FindAll
-- [ ] - Test FindById
-- [ ] - Test FindByPhone
-- [ ] - Test FindByEmail
+- [x] - Test FindAll
+- [x] - Test FindById
+- [x] - Test FindByPhone
+- [x] - Test FindByEmail
 
 ### Roles Service
 

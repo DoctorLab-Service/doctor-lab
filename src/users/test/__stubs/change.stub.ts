@@ -4,8 +4,8 @@ export const changePasswordStub = {
 }
 
 export const changeEmailStub = {
-    email: 'dl_chan',
-    reEmail: 'dl.password_change',
+    email: 'dl_chan@mail.com',
+    reEmail: 'dl_chan@mail.com',
 }
 
 export const changePhoneStub = {

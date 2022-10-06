@@ -31,6 +31,9 @@ export const userStub = (): UserStub => {
         setRoles: [],
         helpMessage: [],
         resetKey: null,
+        createdAt: undefined,
+        updatedAt: undefined,
+        _v: 0,
     }
 }
 export const userUpdateStub = (): UserStub => {

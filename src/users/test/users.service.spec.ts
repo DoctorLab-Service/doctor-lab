@@ -9,15 +9,6 @@ import { TokenService } from 'src/token/token.service'
 import { VerificationsService } from 'src/verifications/verifications.service'
 import { User } from '../entities'
 import { UsersService } from '../users.service'
-import {
-    mockLanguageService,
-    mockRepository,
-    mockRolesService,
-    mockFilesService,
-    mockTokenService,
-    mockVerificationService,
-    mockEmailService,
-} from '../__mocks__'
 import { MockRepository, UserStub } from './types'
 import { systemUserStub, userStub, userUpdateStub } from './__stubs/user.stub'
 import { CreateAccountInput } from './../dtos/create-account.dto'
@@ -37,13 +28,18 @@ import {
     FindByPhoneInput,
     ChangePhoneInput,
 } from '../dtos'
+import { mockEmailService } from '../__mocks__/email.mock'
+import { mockFilesService } from '../__mocks__/files.mock'
+import { mockLanguageService } from '../__mocks__/languages.mock'
+import { mockRolesService } from '../__mocks__/roles.mock'
+import { mockTokenService } from '../__mocks__/token.mock'
+import { mockRepository } from '../__mocks__/users.repository'
+import { mockVerificationService } from '../__mocks__/verification.mock'
 
 describe('UsersService', () => {
-    const context: any = {
-        req: {
-            user: { ...userStub() },
-        },
-    }
+    let context: any
+    let mockUser: User
+
     let service: UsersService
     let usersRepository: MockRepository<User>
     let tokenService: TokenService
@@ -100,6 +96,14 @@ describe('UsersService', () => {
 
         // Repositories
         usersRepository = _module.get(getRepositoryToken(User))
+
+        // Globals mocked
+        mockUser = { ...userStub() }
+        context = {
+            req: {
+                user: { ...userStub() },
+            },
+        }
     })
 
     afterEach(async () => {
@@ -194,12 +198,10 @@ describe('UsersService', () => {
     })
 
     describe('createAccount', () => {
-        let mockUser: User
         let mockCreateUser: CreateAccountInput
         let mockTokens: GenerateTokens
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
             mockCreateUser = {
                 phone: userStub().phone,
                 email: userStub().email,
@@ -212,10 +214,6 @@ describe('UsersService', () => {
                 role: EDefaultRoles.admin,
             }
             mockTokens = { ...tokensStub() }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('sould fail if email is exist and verified phone', async () => {
@@ -361,13 +359,11 @@ describe('UsersService', () => {
     })
 
     describe('updateAccount', () => {
-        let mockUser: User
         let mockUpdateUser: UpdateAccountInput
         let mockFile: FileUpload | null
 
         beforeEach(async () => {
             mockFile = null
-            mockUser = { ...userStub() }
             mockUpdateUser = {
                 ...object.withoutProperties(userStub(), ['password']),
                 fullname: userUpdateStub().fullname,
@@ -378,10 +374,6 @@ describe('UsersService', () => {
                 experience: userUpdateStub().experience,
                 language: userUpdateStub().language,
             }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should get current user from context', async () => {
@@ -475,32 +467,23 @@ describe('UsersService', () => {
     })
 
     describe('deleteAccount', () => {
-        let mockCurrentUser: User
-        beforeEach(async () => {
-            mockCurrentUser = { ...userStub() }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
-        })
-
         test('should get current user from context', async () => {
             const currentUser = getCurrentUser(context)
-            expect(currentUser).toEqual(mockCurrentUser)
+            expect(currentUser).toEqual(mockUser)
         })
 
         test("should delete user's files", async () => {
             await service.deleteAccount(context)
 
             expect(filesService.deleteFiles).toBeCalledTimes(1)
-            expect(filesService.deleteFiles).toBeCalledWith(mockCurrentUser.id)
+            expect(filesService.deleteFiles).toBeCalledWith(mockUser.id)
         })
 
         test('should delete account', async () => {
             await service.deleteAccount(context)
 
             expect(usersRepository.delete).toBeCalledTimes(1)
-            expect(usersRepository.delete).toBeCalledWith(mockCurrentUser.id)
+            expect(usersRepository.delete).toBeCalledWith(mockUser.id)
         })
 
         test('should fail if not delete account', async () => {
@@ -517,26 +500,17 @@ describe('UsersService', () => {
     })
 
     describe('myAccount', () => {
-        let mockCurrentUser: User
-        beforeEach(async () => {
-            mockCurrentUser = { ...userStub() }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
-        })
-
         test('should get current user from context', async () => {
             const currentUser = getCurrentUser(context)
-            expect(currentUser).toEqual(mockCurrentUser)
+            expect(currentUser).toEqual(mockUser)
         })
 
         test('should return user', async () => {
-            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
             const user = await service.myAccount(context)
             expect(user).toMatchObject({
                 ok: true,
-                user: mockCurrentUser,
+                user: mockUser,
             })
         })
         test('should fail if user is not found', async () => {
@@ -554,16 +528,10 @@ describe('UsersService', () => {
     })
 
     describe('findById', () => {
-        let mockUser: User
         let mockFindUser: FindByIdInput
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
             mockFindUser = { id: mockUser.id }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should return user by id', async () => {
@@ -590,16 +558,10 @@ describe('UsersService', () => {
     })
 
     describe('findByPhone', () => {
-        let mockUser: User
         let mockFindUser: FindByPhoneInput
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
             mockFindUser = { phone: mockUser.phone }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should return user by phone', async () => {
@@ -626,16 +588,10 @@ describe('UsersService', () => {
     })
 
     describe('findByEmail', () => {
-        let mockUser: User
         let mockFindUser: FindByEmailInput
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
             mockFindUser = { email: mockUser.email }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should return user by email', async () => {
@@ -662,16 +618,6 @@ describe('UsersService', () => {
     })
 
     describe('findAllUsers', () => {
-        let mockUser: User
-
-        beforeEach(async () => {
-            mockUser = { ...userStub() }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
-        })
-
         test('should return all users', async () => {
             usersRepository.find.mockResolvedValue([mockUser])
             const users = await service.findAllUsers()
@@ -696,28 +642,20 @@ describe('UsersService', () => {
     })
 
     describe('changePassword', () => {
-        let mockCurrentUser: User
         let mockChangePassword: ChangePasswordInput
-        let mockUser: User
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
-            mockCurrentUser = { ...userStub() }
             mockChangePassword = { ...changePasswordStub }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should get current user from context', async () => {
             const currentUser = getCurrentUser(context)
-            expect(currentUser).toEqual(mockCurrentUser)
+            expect(currentUser).toEqual(mockUser)
         })
 
         test('should exist user', async () => {
             usersRepository.save.mockResolvedValue(mockUser)
-            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
 
             await service.changePassword(mockChangePassword, context)
         })
@@ -737,7 +675,7 @@ describe('UsersService', () => {
 
         test('should update user', async () => {
             usersRepository.save.mockResolvedValue(mockUser)
-            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
 
             const updatedUser = await service.changePassword(mockChangePassword, context)
 
@@ -798,7 +736,7 @@ describe('UsersService', () => {
 
         test('should remove token', async () => {
             usersRepository.save.mockResolvedValue(mockUser)
-            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
 
             await service.changePassword(mockChangePassword, context)
 
@@ -808,7 +746,7 @@ describe('UsersService', () => {
 
         test('should change password', async () => {
             usersRepository.save.mockResolvedValue(mockUser)
-            usersRepository.findOne.mockResolvedValue(mockCurrentUser)
+            usersRepository.findOne.mockResolvedValue(mockUser)
 
             const changePassword = await service.changePassword(mockChangePassword, context)
 
@@ -817,25 +755,17 @@ describe('UsersService', () => {
     })
 
     describe('changeEmail', () => {
-        let mockCurrentUser: User
         let mockChangeEmail: ChangeEmailInput
-        let mockUser: User
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
-            mockCurrentUser = { ...userStub() }
             mockChangeEmail = { ...changeEmailStub }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should get current user from context', async () => {
             usersRepository.save.mockResolvedValue(mockUser)
 
             const currentUser = getCurrentUser(context)
-            expect(currentUser).toEqual(mockCurrentUser)
+            expect(currentUser).toEqual(mockUser)
         })
 
         test('should exist user', async () => {
@@ -932,25 +862,17 @@ describe('UsersService', () => {
     })
 
     describe('changePhone', () => {
-        let mockCurrentUser: User
         let mockChangePhone: ChangePhoneInput
-        let mockUser: User
 
         beforeEach(async () => {
-            mockUser = { ...userStub() }
-            mockCurrentUser = { ...userStub() }
             mockChangePhone = { ...changePhoneStub }
-        })
-
-        afterEach(async () => {
-            jest.clearAllMocks()
         })
 
         test('should get current user from context', async () => {
             usersRepository.save.mockResolvedValue(mockUser)
 
             const currentUser = getCurrentUser(context)
-            expect(currentUser).toEqual(mockCurrentUser)
+            expect(currentUser).toEqual(mockUser)
         })
 
         test('should exist user', async () => {
@@ -992,8 +914,6 @@ describe('UsersService', () => {
             usersRepository.save.mockResolvedValue({ ...mockUser, ...mockChangePhone })
 
             const updatedUser = await service.changePhone(mockChangePhone, context)
-            console.log('mockUser', mockUser.phone)
-            console.log('mockChangePhone', mockChangePhone.phone)
 
             expect(usersRepository.save).toBeCalledTimes(1)
             expect(usersRepository.save).toBeCalledWith({

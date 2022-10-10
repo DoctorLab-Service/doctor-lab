@@ -112,6 +112,7 @@ export class Cloudinary {
                     usersFolder = await this.subFolders(`${CLOUDINARY_PATH_USERS}/u${userId}`)
                     return usersFolder
                 }
+
                 return usersFolder
             }
             return usersFolder
@@ -140,10 +141,16 @@ export class Cloudinary {
     private async checkFolder(userId: number, key: CheckFolderKeys): Promise<any[]> {
         try {
             const usersFolder: any = await this.getUsersFolder(userId)
-            let folder: any[] = usersFolder.folders.filter(folder => folder.name === key)
-            if (!folder.length && usersFolder.length) {
+
+            let folder: any[] = []
+            folder =
+                'folder' in usersFolder
+                    ? usersFolder.folders.filter(folder => folder.name === key)
+                    : usersFolder.filter(folder => folder.name === key)
+            if (usersFolder.length && !folder.length) {
                 folder = await cloudinary.api.create_folder(`${usersFolder[0].path}/${key}`)
             }
+
             return folder
         } catch (error) {
             console.log(error)

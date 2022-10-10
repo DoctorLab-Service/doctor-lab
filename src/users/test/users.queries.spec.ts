@@ -9,8 +9,8 @@ jest.mock('../users.service')
 
 describe('UserQueries', () => {
     const context: any = {}
-    let usersService: UsersService
-    let usersQueries: UsersQueries
+    let service: UsersService
+    let queries: UsersQueries
     let mockUser: User
 
     beforeEach(async () => {
@@ -20,22 +20,27 @@ describe('UserQueries', () => {
             providers: [UsersService, UsersQueries],
         }).compile()
 
-        usersService = _module.get<UsersService>(UsersService)
-        usersQueries = _module.get<UsersQueries>(UsersQueries)
+        service = _module.get<UsersService>(UsersService)
+        queries = _module.get<UsersQueries>(UsersQueries)
     })
+
     afterEach(async () => {
         jest.clearAllMocks()
+    })
+
+    test('should be defined', () => {
+        expect(service).toBeDefined()
     })
 
     describe('myAccount', () => {
         let output: FindByOutput
 
         beforeEach(async () => {
-            output = await usersQueries.myAccount(context)
+            output = await queries.myAccount(context)
         })
 
         test('should call userService', () => {
-            expect(usersService.myAccount).toBeCalled()
+            expect(service.myAccount).toBeCalled()
         })
 
         test('sould return a user', () => {
@@ -50,11 +55,11 @@ describe('UserQueries', () => {
         let output: FindAllUsersOutput
 
         beforeEach(async () => {
-            output = await usersQueries.findAllUsers()
+            output = await queries.findAllUsers()
         })
 
         test('should call userService', () => {
-            expect(usersService.findAllUsers).toBeCalled()
+            expect(service.findAllUsers).toBeCalled()
         })
 
         test('sould return a users', () => {
@@ -69,11 +74,11 @@ describe('UserQueries', () => {
         let output: FindByOutput
 
         beforeEach(async () => {
-            output = await usersQueries.findById({ id: mockUser.id })
+            output = await queries.findById({ id: mockUser.id })
         })
 
         test('then it should call userService', () => {
-            expect(usersService.findById).toBeCalledWith({ id: mockUser.id })
+            expect(service.findById).toBeCalledWith({ id: mockUser.id })
         })
 
         test('then it should return a user', () => {
@@ -88,11 +93,11 @@ describe('UserQueries', () => {
         let output: FindByOutput
 
         beforeEach(async () => {
-            output = await usersQueries.findByPhone({ phone: mockUser.phone })
+            output = await queries.findByPhone({ phone: mockUser.phone })
         })
 
         test('should call userService', () => {
-            expect(usersService.findByPhone).toBeCalledWith({ phone: mockUser.phone })
+            expect(service.findByPhone).toBeCalledWith({ phone: mockUser.phone })
         })
 
         test('should return a user', () => {
@@ -107,11 +112,11 @@ describe('UserQueries', () => {
         let output: FindByOutput
 
         beforeEach(async () => {
-            output = await usersQueries.findByEmail({ email: mockUser.email })
+            output = await queries.findByEmail({ email: mockUser.email })
         })
 
         test('should call userService', () => {
-            expect(usersService.findByEmail).toBeCalledWith({ email: mockUser.email })
+            expect(service.findByEmail).toBeCalledWith({ email: mockUser.email })
         })
 
         test('should return a user', () => {

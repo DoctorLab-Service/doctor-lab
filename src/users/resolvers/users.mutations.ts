@@ -31,7 +31,6 @@ export class UsersMutations {
         @Args({ name: 'file', nullable: true, type: () => GraphQLUpload }) file: FileUpload | null,
         @Context() context: any,
     ): Promise<UpdateAccountOutput> {
-        console.log(file)
         return this.usersService.updateAccount(body, file, context)
     }
 

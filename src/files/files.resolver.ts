@@ -13,7 +13,7 @@ export class FilesResolver {
         file: FileUpload,
     ): Promise<UploadFilesOutput> {
         return this.filesService.uploadFiles(file, {
-            userId: 125,
+            userId: 34,
             key: 'avatar',
             fullData: true,
         })
@@ -25,7 +25,7 @@ export class FilesResolver {
         files: FileUpload[],
     ): Promise<UploadFilesOutput> {
         return this.filesService.uploadFiles(files, {
-            userId: 125,
+            userId: 34,
             key: 'avatar',
             fullData: true,
         })

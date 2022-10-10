@@ -22,8 +22,8 @@ jest.mock('../users.service')
 
 describe('UserMutations', () => {
     const context: any = {}
-    let usersService: UsersService
-    let usersMutations: UsersMutations
+    let service: UsersService
+    let mutations: UsersMutations
     let mockUser: User
     let mockTokens: GenerateTokens
 
@@ -35,16 +35,22 @@ describe('UserMutations', () => {
             providers: [UsersService, UsersMutations],
         }).compile()
 
-        usersService = _module.get<UsersService>(UsersService)
-        usersMutations = _module.get<UsersMutations>(UsersMutations)
+        service = _module.get<UsersService>(UsersService)
+        mutations = _module.get<UsersMutations>(UsersMutations)
     })
 
     afterEach(async () => {
         jest.clearAllMocks()
     })
+
+    test('should be defined', () => {
+        expect(service).toBeDefined()
+    })
+
     describe('createAccount', () => {
         let output: CreateAccountOutput
         let input: CreateAccountInput
+
         beforeEach(async () => {
             input = {
                 fullname: mockUser.fullname,
@@ -54,12 +60,12 @@ describe('UserMutations', () => {
                 rePassword: mockUser.password,
                 role: EDefaultRoles.admin,
             }
-            output = await usersMutations.createAccount(input)
+            output = await mutations.createAccount(input)
         })
 
         test('should call userService', () => {
-            expect(usersService.createAccount).toBeCalledTimes(1)
-            expect(usersService.createAccount).toBeCalledWith(input)
+            expect(service.createAccount).toBeCalledTimes(1)
+            expect(service.createAccount).toBeCalledWith(input)
         })
 
         test('should return output object', () => {
@@ -90,12 +96,12 @@ describe('UserMutations', () => {
                 gender: userUpdateStub().gender,
             }
 
-            output = await usersMutations.updateAccount(input, file, context)
+            output = await mutations.updateAccount(input, file, context)
         })
 
         test('should call userService', () => {
-            expect(usersService.updateAccount).toBeCalledTimes(1)
-            expect(usersService.updateAccount).toBeCalledWith(input, file, context)
+            expect(service.updateAccount).toBeCalledTimes(1)
+            expect(service.updateAccount).toBeCalledWith(input, file, context)
         })
 
         test('should return user', () => {
@@ -112,7 +118,7 @@ describe('UserMutations', () => {
         let output: DeleteAccountOutput
 
         beforeEach(async () => {
-            output = await usersMutations.deleteAccount(context)
+            output = await mutations.deleteAccount(context)
         })
 
         test('should return true', () => {
@@ -130,7 +136,7 @@ describe('UserMutations', () => {
                 rePassword: changePasswordStub.rePassword,
             }
 
-            output = await usersMutations.changePassword(input, context)
+            output = await mutations.changePassword(input, context)
         })
 
         test('should return true', () => {
@@ -148,7 +154,7 @@ describe('UserMutations', () => {
                 reEmail: changeEmailStub.reEmail,
             }
 
-            output = await usersMutations.changeEmail(input, context)
+            output = await mutations.changeEmail(input, context)
         })
 
         test('should return true', () => {
@@ -165,7 +171,7 @@ describe('UserMutations', () => {
                 phone: changePhoneStub.phone,
             }
 
-            output = await usersMutations.changePhone(input, context)
+            output = await mutations.changePhone(input, context)
         })
 
         test('should return true', () => {

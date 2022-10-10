@@ -25,6 +25,7 @@ export class FilesService {
 
             if (options && options.userId) {
                 uploads = await this.cloudinary.uploadUserImages(attachments, options)
+                console.log('uploads', uploads)
                 if (!uploads.length) {
                     throw new Error()
                 }

@@ -10,7 +10,7 @@ import { mockFilesOptions } from '../__mocks__/files-options.mock'
 jest.mock('../files.services.ts')
 
 describe('FilesResolver', () => {
-    let service: jest.Mocked<FilesService></FilesService>
+    let service: jest.Mocked<FilesService>
     let resolver: FilesResolver
 
     let mockOptions: UploadOptions
@@ -51,70 +51,4 @@ describe('FilesResolver', () => {
             })
         })
     })
-
-    // describe('uploadFile', () => {
-    //     let output: UploadFilesOutput
-
-    //     beforeEach(async () => {
-    //         mockAttachments = { ...uploadFileStub('file') }
-    //     })
-
-    //     test('should call filesService', async () => {
-    //         service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
-    //         await service.uploadFiles(mockAttachments, mockOptions)
-    //         expect(service.uploadFiles).toBeCalledWith(mockAttachments, mockOptions)
-    //     })
-
-    //     test('should return paths', async () => {
-    //         service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
-    //         output = await service.uploadFiles(mockAttachments, mockOptions)
-
-    //         expect(output).toMatchObject({
-    //             ...uploadOutputStub('paths'),
-    //         })
-    //     })
-
-    //     test('should return files', async () => {
-    //         service.uploadFiles.mockResolvedValue(uploadOutputStub('files'))
-    //         output = await service.uploadFiles(mockAttachments, mockOptions)
-
-    //         expect(service.uploadFiles).toBeCalledTimes(1)
-    //         expect(output).toMatchObject({
-    //             ...uploadOutputStub('files'),
-    //         })
-    //     })
-    // })
-
-    // describe('uploadFiles', () => {
-    //     let output: UploadFilesOutput
-
-    //     beforeEach(async () => {
-    //         mockAttachments = [...uploadFileStub('files')]
-    //     })
-
-    //     test('should call filesService', async () => {
-    //         service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
-    //         await service.uploadFiles([mockAttachments], mockOptions)
-    //         expect(service.uploadFiles).toBeCalledWith([mockAttachments], mockOptions)
-    //     })
-
-    //     test('should return paths', async () => {
-    //         service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
-    //         output = await service.uploadFiles([mockAttachments], mockOptions)
-
-    //         expect(output).toMatchObject({
-    //             ...uploadOutputStub('paths'),
-    //         })
-    //     })
-
-    //     test('should return files', async () => {
-    //         service.uploadFiles.mockResolvedValue(uploadOutputStub('files'))
-    //         output = await service.uploadFiles([mockAttachments], mockOptions)
-
-    //         expect(service.uploadFiles).toBeCalledTimes(1)
-    //         expect(output).toMatchObject({
-    //             ...uploadOutputStub('files'),
-    //         })
-    //     })
-    // })
 })

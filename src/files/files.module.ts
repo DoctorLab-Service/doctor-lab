@@ -5,6 +5,7 @@ import { TokenModule } from 'src/token/token.module'
 import { FilesModuleCloudinatyConfig } from './files'
 import { FilesResolver } from './files.resolver'
 import { FilesService } from './files.services'
+import { Cloudinary } from './libs/cloudinary.libs'
 
 @Module({})
 @Global()
@@ -13,12 +14,19 @@ export class FilesModule {
         return {
             module: FilesModule,
             providers: [
+                FilesService,
+                FilesResolver,
                 {
                     provide: CONFIG_OPTIONS,
                     useValue: options,
                 },
-                FilesService,
-                FilesResolver,
+                {
+                    provide: Cloudinary,
+                    inject: [CONFIG_OPTIONS],
+                    useFactory(config) {
+                        return new Cloudinary(config)
+                    },
+                },
             ],
             imports: [TokenModule, LanguageModule],
             exports: [FilesService],

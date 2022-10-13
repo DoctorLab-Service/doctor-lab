@@ -299,13 +299,12 @@ export class UsersService {
             })
         }
 
-        let updatedAccount: User
-            user.password = body.password
-            user.resetKey = null
+        user.password = body.password
+        user.resetKey = null
 
-            updatedAccount = await this.users.save(user)
+        const updatedAccount: User = await this.users.save(user)
 
-         if (!updatedAccount){
+        if (!updatedAccount) {
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'password']),
             })
@@ -346,13 +345,12 @@ export class UsersService {
             })
         }
 
-        let updatedAccount: User
-            user.email = body.email
-            user.verifiedEmail = false
-            user.resetKey = null
-            
-            updatedAccount = await this.users.save({ ...object.withoutProperties(user, ['password']) })
-        if (!updatedAccount){
+        user.email = body.email
+        user.verifiedEmail = false
+        user.resetKey = null
+
+        const updatedAccount: User = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+        if (!updatedAccount) {
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'email']),
             })
@@ -396,15 +394,14 @@ export class UsersService {
             })
         }
 
-        let updatedAccount: User
-            user.phone = body.phone
-            user.verifiedPhone = false
-            user.resetKey = null
+        user.phone = body.phone
+        user.verifiedPhone = false
+        user.resetKey = null
 
-            // Create new user object without password
-            updatedAccount = await this.users.save({ ...object.withoutProperties(user, ['password']) })
-        
-        if (!updatedAccount){
+        // Create new user object without password
+        const updatedAccount: User = await this.users.save({ ...object.withoutProperties(user, ['password']) })
+
+        if (!updatedAccount) {
             throw new ValidationException({
                 change: await this.languageService.setError(['isChange', 'phone']),
             })

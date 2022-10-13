@@ -5,7 +5,7 @@ import { FilesResolver } from './../files.resolver'
 import { UploadOptions } from '../files'
 import { uploadFileStub, uploadOptionsStub, uploadOutputStub } from './__stubs'
 import { UploadFilesOutput } from '../dtos/upload-files.dto'
-import { mockFilesOptions } from '../__mocks__/files-options.mock'
+import { DeleteFilesInput, DeleteFilesOutput } from '../dtos/delete-files.dto'
 
 jest.mock('../files.services.ts')
 
@@ -23,7 +23,6 @@ describe('FilesResolver', () => {
             providers: [FilesService, FilesResolver],
         }).compile()
 
-        // service = _module.get(FilesService)
         service = _module.get(FilesService)
         resolver = _module.get<FilesResolver>(FilesResolver)
     })
@@ -38,17 +37,78 @@ describe('FilesResolver', () => {
 
         beforeEach(async () => {
             file = uploadFileStub('file')
-            output = await resolver.uploadFile(file)
         })
 
-        test('should call filesService', async () => {
+        test('should call uploadFiles from filesService', async () => {
+            await resolver.uploadFile(file)
             expect(service.uploadFiles).toBeCalledWith(file, mockOptions)
         })
         test('should return paths', async () => {
             service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
+            output = await resolver.uploadFile(file)
+
             expect(output).toMatchObject({
                 ...uploadOutputStub('paths'),
             })
+        })
+
+        test('should return files', async () => {
+            service.uploadFiles.mockResolvedValue(uploadOutputStub('files'))
+            output = await resolver.uploadFile(file)
+
+            expect(output).toMatchObject({
+                ...uploadOutputStub('files'),
+            })
+        })
+    })
+
+    describe('uploadFiles', () => {
+        let output: UploadFilesOutput
+        let files: FileUpload
+
+        beforeEach(async () => {
+            files = uploadFileStub('files')
+        })
+
+        test('should call uploadFiles from filesService', async () => {
+            await resolver.uploadFiles(files)
+            expect(service.uploadFiles).toBeCalledWith(files, mockOptions)
+        })
+        test('should return paths', async () => {
+            service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
+            output = await resolver.uploadFiles(files)
+
+            expect(output).toMatchObject({
+                ...uploadOutputStub('paths'),
+            })
+        })
+
+        test('should return files', async () => {
+            service.uploadFiles.mockResolvedValue(uploadOutputStub('files'))
+            output = await resolver.uploadFiles(files)
+
+            expect(output).toMatchObject({
+                ...uploadOutputStub('files'),
+            })
+        })
+    })
+
+    describe('deleteFiles', () => {
+        let input: DeleteFilesInput
+        let output: DeleteFilesOutput
+
+        beforeEach(async () => {
+            input = { id: 1 }
+        })
+
+        test('should call deleteFiles from filesService', async () => {
+            await resolver.deleteFiles(input)
+            expect(service.deleteFiles).toBeCalledWith(input.id)
+        })
+        test('should return paths', async () => {
+            service.deleteFiles.mockResolvedValue({ ok: true })
+            output = await resolver.deleteFiles(input)
+            expect(output).toMatchObject({ ok: true })
         })
     })
 })

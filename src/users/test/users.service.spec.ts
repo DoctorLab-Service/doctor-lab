@@ -30,11 +30,11 @@ import {
 } from '../dtos'
 import { mockEmailService } from '../__mocks__/email.mock'
 import { mockFilesService } from '../__mocks__/files.mock'
-import { mockLanguageService } from '../__mocks__/languages.mock'
 import { mockRolesService } from '../__mocks__/roles.mock'
 import { mockTokenService } from '../__mocks__/token.mock'
 import { mockRepository } from '../__mocks__/users.repository'
 import { mockVerificationService } from '../__mocks__/verification.mock'
+import { mockLanguageService } from 'src/language/__mocks__/languages.mock'
 
 describe('UsersService', () => {
     let context: any

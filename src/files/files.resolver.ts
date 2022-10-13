@@ -2,6 +2,7 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { FilesService } from './files.services'
 import { UploadFilesOutput } from './dtos/upload-files.dto'
+import { DeleteFilesInput } from './dtos/delete-files.dto'
 
 @Resolver()
 export class FilesResolver {
@@ -29,5 +30,10 @@ export class FilesResolver {
             key: 'avatar',
             fullData: true,
         })
+    }
+
+    @Mutation(() => UploadFilesOutput)
+    async deleteFiles(@Args('input') body: DeleteFilesInput): Promise<UploadFilesOutput> {
+        return this.filesService.deleteFiles(body.id)
     }
 }

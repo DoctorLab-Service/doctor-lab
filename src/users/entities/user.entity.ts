@@ -3,7 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common'
 import { Field, InputType, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsBoolean, IsDate, IsEmail, IsPhoneNumber, Length, MaxLength } from 'class-validator'
 import { ELanguage } from 'src/language/dtos/languages.dto'
-import { AfterLoad, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { EGender, EResetKey } from '../config/users.enum'
 import { CoreEntity } from 'src/common/entities'
@@ -169,13 +169,13 @@ export class User extends CoreEntity {
         }
     }
 
-    async checkPassword(aPassword: string): Promise<boolean> {
-        try {
-            const statusCompare: boolean = await bcrypt.compare(aPassword, this.password)
-            return statusCompare
-        } catch (error) {
-            console.log(error)
-            throw new InternalServerErrorException()
-        }
-    }
+    // async checkPassword(aPassword: string): Promise<boolean> {
+    //     try {
+    //         const statusCompare: boolean = await bcrypt.compare(aPassword, this.password)
+    //         return statusCompare
+    //     } catch (error) {
+    //         console.log(error)
+    //         throw new InternalServerErrorException()
+    //     }
+    // }
 }

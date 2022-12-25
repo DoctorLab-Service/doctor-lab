@@ -8,6 +8,8 @@ import { LogoutInput, LogoutOutput } from './dtos/logout.dto'
 import { RefreshTokenInput, RefreshTokenOutput } from './dtos/refresh-token.dto'
 import { LanguageService } from 'src/language/language.service'
 import { User } from 'src/users/entities'
+import { object } from 'src/common/helpers'
+import { checkPassword } from 'src/users/helpers'
 
 @Injectable()
 export class AuthService {
@@ -44,23 +46,19 @@ export class AuthService {
             : body.facebookId
             ? 'facebookId'
             : body.googleId && 'googleId'
+
         if (!user && (body.phone || body.email)) {
             throw new ValidationException({
                 [key]: await this.languageService.setError(['isNotExist', key]),
             })
         }
 
-        if (!user && (body.facebookId || body.googleId))
+        if (!user && (body.facebookId || body.googleId)) {
             throw new ValidationException({ [key]: await this.languageService.setError(['isValid', key]) })
+        }
 
         // Check Password
-        if (!body.password)
-            throw new ValidationException({
-                password: await this.languageService.setError(['isLength', 'password']),
-            })
-
-        const passwordCorrect = await user.checkPassword(body.password)
-
+        const passwordCorrect = await checkPassword(body.password, user.password)
         if (!passwordCorrect) {
             throw new ValidationException({
                 password: await this.languageService.setError(['isValid', 'passwordEqual']),
@@ -69,6 +67,12 @@ export class AuthService {
 
         // Generate and save token
         const tokens = await this.token.generateTokens({ id: user.id })
+        if (!tokens.accessToken.length || !tokens.refreshToken.length) {
+            throw new ValidationException({
+                create: await this.languageService.setError(['token', 'notCreated']),
+            })
+        }
+
         this.token.saveTokens(user.id, tokens)
 
         return { ok: Boolean(user), ...tokens, user }

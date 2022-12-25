@@ -13,7 +13,7 @@ export const userStub = (): UserStub => {
         fullname: 'dl_user',
         email: 'dl.service@email.com',
         phone: '+380979995500',
-        password: 'dl.password',
+        password: '$2a$12$h2Inq9QcFzaLnWlkqrzaA.iPpoR9TB9QZ5tI0Mq1YEK1gyK7ZN/Jq',
         verifiedPhone: false,
         verifiedEmail: false,
         avatar: '',

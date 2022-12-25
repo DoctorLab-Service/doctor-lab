@@ -13,7 +13,7 @@ import { MockRepository, UserStub } from './types'
 import { systemUserStub, userStub, userUpdateStub } from './__stubs/user.stub'
 import { CreateAccountInput } from './../dtos/create-account.dto'
 import { ValidationException } from './../../exceptions/validation.exception'
-import { changeEmailStub, changePasswordStub, tokensStub, changePhoneStub } from './__stubs'
+import { changeEmailStub, changePasswordStub, changePhoneStub } from './__stubs'
 import { object } from 'src/common/helpers'
 import { getCurrentUser } from '../helpers'
 import { UpdateAccountInput } from './../dtos/update-account.dto'
@@ -31,10 +31,11 @@ import {
 import { mockEmailService } from '../__mocks__/email.mock'
 import { mockFilesService } from '../__mocks__/files.mock'
 import { mockRolesService } from '../__mocks__/roles.mock'
-import { mockTokenService } from '../__mocks__/token.mock'
 import { mockRepository } from '../__mocks__/users.repository'
 import { mockVerificationService } from '../__mocks__/verification.mock'
 import { mockLanguageService } from 'src/language/__mocks__/languages.mock'
+import { mockTokenService } from 'src/token/__mocks__/token.mock'
+import { tokensStub } from 'src/token/test/__stubs'
 
 describe('UsersService', () => {
     let context: any
@@ -328,7 +329,7 @@ describe('UsersService', () => {
             expect(verificationService.verificationPhoneCode).toBeCalledWith(mockUser)
         })
 
-        test('sould generate tokens and return their', async () => {
+        test('sould generate tokens', async () => {
             const tokens = tokenService.generateTokens({ id: mockUser.id })
 
             expect(tokenService.generateTokens).toBeCalledTimes(1)
@@ -344,8 +345,8 @@ describe('UsersService', () => {
             expect(tokenService.saveTokens).toBeCalledWith(mockUser.id, mockTokens)
         })
 
-        test('sould fail if tokens is not saved', async () => {
-            const errorMessage = "Couldn't create token, try to login1"
+        test('sould fail if tokens is not generated', async () => {
+            const errorMessage = "Couldn't create token, try to login"
             languageService.setError.mockResolvedValue(errorMessage)
 
             expect.assertions(2)

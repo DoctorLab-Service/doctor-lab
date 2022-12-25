@@ -16,7 +16,8 @@ import {
 import { User } from '../entities'
 import { UsersMutations } from '../resolvers/users.mutations'
 import { UsersService } from '../users.service'
-import { userStub, userUpdateStub, changePasswordStub, changeEmailStub, changePhoneStub, tokensStub } from './__stubs'
+import { userStub, userUpdateStub, changePasswordStub, changeEmailStub, changePhoneStub } from './__stubs'
+import { tokensStub } from 'src/token/test/__stubs'
 
 jest.mock('../users.service')
 

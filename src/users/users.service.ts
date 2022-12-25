@@ -133,18 +133,16 @@ export class UsersService {
         // * SEND SMS
         await this.verificationService.verificationPhoneCode(user)
 
-        try {
-            // Create accessToken and refreshToken
-            const tokens = await this.token.generateTokens({ id: user.id })
-            await this.token.saveTokens(user.id, tokens)
-
-            return { ok: Boolean(user), ...tokens, user }
-        } catch (error) {
-            console.log(error)
+        // Create accessToken and refreshToken
+        const tokens = await this.token.generateTokens({ id: user.id })
+        if (object.isEmpty(tokens)) {
             throw new ValidationException({
                 create: await this.languageService.setError(['token', 'notCreated']),
             })
         }
+        await this.token.saveTokens(user.id, tokens)
+
+        return { ok: Boolean(user), ...tokens, user }
     }
 
     /**

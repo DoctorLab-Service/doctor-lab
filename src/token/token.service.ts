@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import * as jwt from 'jsonwebtoken'
 import { CONFIG_OPTIONS } from 'src/common/common.constants'
-import { LanguageService } from 'src/language/language.service'
 import { User } from 'src/users/entities'
 import { DeleteResult, Repository } from 'typeorm'
 import { tokenConfig } from './config/token.config'
@@ -13,9 +12,7 @@ import { Token } from './entities'
 export class TokenService {
     constructor(
         @InjectRepository(Token) private readonly token: Repository<Token>,
-        @InjectRepository(User) private readonly users: Repository<User>,
         @Inject(CONFIG_OPTIONS) private readonly secrets: TokenModuleOptions,
-        private readonly languageService: LanguageService,
     ) {}
 
     /**

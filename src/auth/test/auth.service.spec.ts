@@ -10,9 +10,11 @@ import { mockRepository } from 'src/users/__mocks__/users.repository'
 import { AuthService } from '../auth.service'
 import { LoginInput, LoginOutput } from '../dtos/login.dto'
 import { userStub } from 'src/users/test/__stubs'
-import { inputAuthStub } from './__stubs'
-import { ValidationException } from 'src/exceptions'
+import { inputAuthStub, outputAuthStub } from './__stubs'
+import { ForbiddenException, ValidationException } from 'src/exceptions'
 import { checkPassword } from 'src/users/helpers'
+import { LogoutInput, LogoutOutput } from '../dtos/logout.dto'
+import { RefreshTokenInput, RefreshTokenOutput } from '../dtos'
 
 describe('AuthService', () => {
     let service: AuthService
@@ -198,10 +200,106 @@ describe('AuthService', () => {
             }
         })
 
-        test.todo('should fail if not generate tokens')
+        test('should login', async () => {
+            input = inputAuthStub('email').login
+            output = outputAuthStub.login
 
-        test.todo('should login')
+            usersRepository.findOne.mockResolvedValue({ ...mockUser })
+
+            const login = await service.login(input)
+            expect(login).toMatchObject(output)
+        })
     })
-    test.todo('logout')
-    test.todo('refreshToken')
+
+    describe('logout', () => {
+        let input: LogoutInput
+        let output: LogoutOutput
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('sould fail if not exist refresh token', async () => {
+            input = { refreshToken: '' }
+
+            const errorMessage = 'User is not authorized'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.logout(input)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ForbiddenException)
+                expect(error.messages).toEqual({ auth: errorMessage })
+            }
+        })
+
+        test('sould logout', async () => {
+            input = inputAuthStub().refreshToken
+            output = outputAuthStub.logout
+
+            const logout = await service.logout(input)
+            expect(logout).toMatchObject(output)
+        })
+    })
+
+    describe('refreshToken', () => {
+        let input: RefreshTokenInput
+        let output: RefreshTokenOutput
+        let mockUser: User
+
+        beforeEach(async () => {
+            mockUser = {
+                ...userStub(),
+            }
+        })
+
+        afterEach(async () => {
+            jest.clearAllMocks()
+        })
+
+        test('sould fail if not exist refresh token', async () => {
+            input = { refreshToken: '' }
+
+            const errorMessage = 'User is not authorized'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.logout(input)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ForbiddenException)
+                expect(error.messages).toEqual({ auth: errorMessage })
+            }
+        })
+
+        test('should fail if token is not valid', async () => {
+            input = inputAuthStub().refreshToken
+            // const mockUser = { ...userStub() }
+
+            // const userData = await this.token.validateToken('refreshToken', refreshToken)
+            // const tokenFromDb = await this.token.findToken('refreshT oken', refreshToken)
+            // if (!userData || !tokenFromDb) {
+            //     throw new ForbiddenException({
+            //         auth: await this.languageService.setError(['isNotAuth', 'auth']),
+            //     })
+            // }
+
+            tokenService.validateToken.mockReturnValue(userStub())
+            tokenService.findToken.mockResolvedValue(userStub())
+
+            const errorMessage = 'User is not authorized'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.refreshToken(input)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ForbiddenException)
+                expect(error.messages).toEqual({ auth: errorMessage })
+            }
+        })
+        test.todo('should fail if token is not fonund in database')
+        test.todo('should refresh token')
+    })
 })

@@ -3,13 +3,10 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { TokenService } from 'src/token/token.service'
 import { Repository } from 'typeorm'
-import { LoginInput, LoginOutput } from './dtos/login.dto'
-import { LogoutInput, LogoutOutput } from './dtos/logout.dto'
-import { RefreshTokenInput, RefreshTokenOutput } from './dtos/refresh-token.dto'
 import { LanguageService } from 'src/language/language.service'
 import { User } from 'src/users/entities'
-import { object } from 'src/common/helpers'
 import { checkPassword } from 'src/users/helpers'
+import { LoginInput, LoginOutput, LogoutInput, LogoutOutput, RefreshTokenInput, RefreshTokenOutput } from './dtos'
 
 @Injectable()
 export class AuthService {
@@ -79,20 +76,14 @@ export class AuthService {
     }
 
     async logout({ refreshToken }: LogoutInput): Promise<LogoutOutput> {
-        if (!refreshToken)
-            throw new ForbiddenException({
-                auth: await this.languageService.setError(['isNotAuth', 'auth']),
-            })
-
-        try {
-            await this.token.removeToken(refreshToken)
-            return { ok: true }
-        } catch (error) {
-            console.log(error)
+        if (!refreshToken) {
             throw new ForbiddenException({
                 auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
         }
+
+        await this.token.removeToken(refreshToken)
+        return { ok: true }
     }
 
     async refreshToken({ refreshToken }: RefreshTokenInput): Promise<RefreshTokenOutput> {
@@ -105,12 +96,15 @@ export class AuthService {
         // Check refresh token in db and validate it
         const userData = await this.token.validateToken('refreshToken', refreshToken)
         const tokenFromDb = await this.token.findToken('refreshToken', refreshToken)
-        if (!userData || !tokenFromDb)
+        console.log(userData, tokenFromDb)
+        if (!userData || !tokenFromDb) {
             throw new ForbiddenException({
                 auth: await this.languageService.setError(['isNotAuth', 'auth']),
             })
+        }
 
         try {
+            console.log(userData.id)
             const user = await this.users.findOne({ where: { id: userData.id } })
             const tokens = this.token.generateTokens({ id: user.id })
             await this.token.saveTokens(user.id, tokens)

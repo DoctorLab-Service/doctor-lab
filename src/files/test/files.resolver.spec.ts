@@ -43,6 +43,7 @@ describe('FilesResolver', () => {
             await resolver.uploadFile(file)
             expect(service.uploadFiles).toBeCalledWith(file, mockOptions)
         })
+
         test('should return paths', async () => {
             service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
             output = await resolver.uploadFile(file)
@@ -74,6 +75,7 @@ describe('FilesResolver', () => {
             await resolver.uploadFiles(files)
             expect(service.uploadFiles).toBeCalledWith(files, mockOptions)
         })
+
         test('should return paths', async () => {
             service.uploadFiles.mockResolvedValue(uploadOutputStub('paths'))
             output = await resolver.uploadFiles(files)
@@ -105,6 +107,7 @@ describe('FilesResolver', () => {
             await resolver.deleteFiles(input)
             expect(service.deleteFiles).toBeCalledWith(input.id)
         })
+
         test('should return paths', async () => {
             service.deleteFiles.mockResolvedValue({ ok: true })
             output = await resolver.deleteFiles(input)

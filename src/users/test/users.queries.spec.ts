@@ -39,7 +39,7 @@ describe('UserQueries', () => {
             output = await queries.myAccount(context)
         })
 
-        test('should call userService', () => {
+        test('should call myAccount from service', () => {
             expect(service.myAccount).toBeCalled()
         })
 
@@ -58,7 +58,7 @@ describe('UserQueries', () => {
             output = await queries.findAllUsers()
         })
 
-        test('should call userService', () => {
+        test('should call findAllUsers from service', () => {
             expect(service.findAllUsers).toBeCalled()
         })
 
@@ -77,7 +77,7 @@ describe('UserQueries', () => {
             output = await queries.findById({ id: mockUser.id })
         })
 
-        test('then it should call userService', () => {
+        test('then it should call findById from service', () => {
             expect(service.findById).toBeCalledWith({ id: mockUser.id })
         })
 
@@ -96,7 +96,7 @@ describe('UserQueries', () => {
             output = await queries.findByPhone({ phone: mockUser.phone })
         })
 
-        test('should call userService', () => {
+        test('should call findByPhone from service', () => {
             expect(service.findByPhone).toBeCalledWith({ phone: mockUser.phone })
         })
 
@@ -115,7 +115,7 @@ describe('UserQueries', () => {
             output = await queries.findByEmail({ email: mockUser.email })
         })
 
-        test('should call userService', () => {
+        test('should call findByEmail from service', () => {
             expect(service.findByEmail).toBeCalledWith({ email: mockUser.email })
         })
 

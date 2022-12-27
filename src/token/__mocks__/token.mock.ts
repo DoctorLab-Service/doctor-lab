@@ -1,4 +1,4 @@
-import { tokensStub } from '../test/__stubs'
+import { tokenDBStub, tokensStub } from '../test/__stubs'
 import { userStub } from 'src/users/test/__stubs'
 
 export const mockTokenService = () => ({
@@ -7,8 +7,5 @@ export const mockTokenService = () => ({
     removeToken: jest.fn(),
     removeTokenByUserId: jest.fn(),
     validateToken: jest.fn().mockReturnValue({ ...userStub() }),
-    findToken: jest.fn().mockReturnValue({
-        user: { ...userStub() },
-        ...tokensStub(),
-    }),
+    findToken: jest.fn().mockReturnValue({ ...tokenDBStub }),
 })

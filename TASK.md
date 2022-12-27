@@ -4,9 +4,11 @@
 - [x] - Logout
 - [x] - RefreshToken
 
-- [ ] - Test Login
-- [ ] - Test Logout
-- [ ] - Test RefreshToken
+- [x] - Test Login
+- [x] - Test Logout
+- [x] - Test RefreshToken
+
+- [x] - Test Auth Resolver
 
 ### Verification Service
 
@@ -36,6 +38,9 @@
 - [ ] - Test Change Password Code
 - [ ] - Test Change Email Code
 - [ ] - Test Change Phone Code
+
+- [ ] - Test Verification Resolver
+
   
 ### Users Service
 
@@ -58,6 +63,22 @@
 - [x] - Test Change Password
 - [x] - Test Change Email
 - [x] - Test Change Phone
+
+- [x] - Test Help Mutation
+- [x] - Test Help Query
+
+
+### Find Service
+
+- [x] - FindAll
+- [x] - FindById
+- [x] - FindByPhone
+- [x] - FindByEmail
+
+- [x] - Test FindAll
+- [x] - Test FindById
+- [x] - Test FindByPhone
+- [x] - Test FindByEmail
   
 
 ### Help Service
@@ -80,17 +101,9 @@
 - [ ] - Test Answer To Help Message
 - [ ] - Test Close Help Message
 
-### Find Service
+- [ ] - Test Help Mutation
+- [ ] - Test Help Query
 
-- [x] - FindAll
-- [x] - FindById
-- [x] - FindByPhone
-- [x] - FindByEmail
-
-- [x] - Test FindAll
-- [x] - Test FindById
-- [x] - Test FindByPhone
-- [x] - Test FindByEmail
 
 ### Roles Service
 
@@ -110,6 +123,9 @@
 - [ ] - Test SetUserRole
 - [ ] - Test DeleteUserRole
 - [ ] - Test FindAllRole
+
+- [ ] - Test Roles Mutation
+- [ ] - Test Roles Query
 
 ### Permissions Service
 
@@ -141,6 +157,8 @@
 - [ ] - Test Remove Token By User Id
 - [ ] - Test Get Context User
 
+- [ ] - Test Token Resolver
+
 
 ### Language Service
 
@@ -155,5 +173,7 @@
 - [x] - Upload File
 - [x] - Delete File
 
-- [ ] - Test Upload File
-- [ ] - Test Delete File
+- [x] - Test Upload File
+- [x] - Test Delete File
+
+- [x] - Test Files Resolver

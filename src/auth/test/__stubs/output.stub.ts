@@ -4,7 +4,7 @@ import { userStub } from 'src/users/test/__stubs'
 export const outputAuthStub = {
     login: {
         ok: true,
-        accessToken: tokensStub().accessToken,
+        ...tokensStub(),
         user: userStub(),
     },
     logout: {
@@ -12,7 +12,7 @@ export const outputAuthStub = {
     },
     refreshToken: {
         ok: true,
-        accessToken: tokensStub().accessToken,
+        ...tokensStub(),
         user: userStub(),
     },
 }

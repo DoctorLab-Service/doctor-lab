@@ -54,7 +54,7 @@ export class TokenService {
      * @param refreshToken string
      * @returns founds tokens
      */
-    async findToken(key: 'recoveryToken' | 'accessToken' | 'refreshToken', token: string) {
+    async findToken(key: 'recoveryToken' | 'accessToken' | 'refreshToken', token: string): Promise<Token> {
         return this.token.findOne({ where: { [key]: token } })
     }
 

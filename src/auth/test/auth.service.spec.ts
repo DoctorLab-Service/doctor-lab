@@ -273,20 +273,13 @@ describe('AuthService', () => {
             }
         })
 
-        test('should fail if token is not valid', async () => {
+        test('should fail if token is not valid or token is not fonund in database', async () => {
             input = inputAuthStub().refreshToken
-            // const mockUser = { ...userStub() }
 
-            // const userData = await this.token.validateToken('refreshToken', refreshToken)
-            // const tokenFromDb = await this.token.findToken('refreshT oken', refreshToken)
-            // if (!userData || !tokenFromDb) {
-            //     throw new ForbiddenException({
-            //         auth: await this.languageService.setError(['isNotAuth', 'auth']),
-            //     })
-            // }
+            tokenService.validateToken.mockReturnValue(null)
+            tokenService.findToken.mockResolvedValue(undefined)
 
-            tokenService.validateToken.mockReturnValue(userStub())
-            tokenService.findToken.mockResolvedValue(userStub())
+            usersRepository.findOne.mockResolvedValue({ ...mockUser })
 
             const errorMessage = 'User is not authorized'
             languageService.setError.mockResolvedValue(errorMessage)
@@ -299,7 +292,53 @@ describe('AuthService', () => {
                 expect(error.messages).toEqual({ auth: errorMessage })
             }
         })
-        test.todo('should fail if token is not fonund in database')
-        test.todo('should refresh token')
+
+        test('should fail if user is not found', async () => {
+            input = inputAuthStub().refreshToken
+
+            usersRepository.findOne.mockResolvedValue(undefined)
+
+            const errorMessage = 'User is not authorized'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.refreshToken(input)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ForbiddenException)
+                expect(error.messages).toEqual({ auth: errorMessage })
+            }
+        })
+
+        test('should fail if tokens is not generated', async () => {
+            input = inputAuthStub().refreshToken
+            const tokens = {
+                accessToken: '',
+                refreshToken: '',
+            }
+
+            usersRepository.findOne.mockResolvedValue({ ...mockUser })
+            tokenService.generateTokens.mockReturnValue(tokens)
+
+            const errorMessage = 'User is not authorized'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            expect.assertions(2)
+            try {
+                await service.refreshToken(input)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ForbiddenException)
+                expect(error.messages).toEqual({ auth: errorMessage })
+            }
+        })
+
+        test('should refresh token', async () => {
+            input = inputAuthStub().refreshToken
+            output = outputAuthStub.logout
+            usersRepository.findOne.mockResolvedValue({ ...mockUser })
+
+            const refreshToken = await service.refreshToken(input)
+            expect(refreshToken).toMatchObject(output)
+        })
     })
 })

@@ -1,7 +1,7 @@
 import { rolesOutputStub } from '../../roles/test/__stubs/output.stub'
 
 export const RolesService = () => ({
-    _deffaultRoles: jest.fn(),
+    _deffaultRoles: jest.fn().mockResolvedValue(true),
     createRole: jest.fn().mockResolvedValue(
         rolesOutputStub({
             role: true,

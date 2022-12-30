@@ -14,7 +14,7 @@ export enum EDefaultRoles {
 
 export enum ESystemsRoles {
     super_admin = 'super_admin',
-    admin = "admin"
+    admin = 'admin',
 }
 
 /**

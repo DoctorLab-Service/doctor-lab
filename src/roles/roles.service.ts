@@ -1,4 +1,3 @@
-import { object } from 'src/common/helpers'
 import { EDefaultRoles } from 'src/roles/roles.enums'
 import { ERolesType, ESystemsRoles } from './roles.enums'
 import { SetUserRoleInput, SetUserRoleOutput } from './dtos/set-user-role.dto'
@@ -14,7 +13,6 @@ import { UpdateRoleInput, UpdateRoleOutput } from './dtos/update-role.dto'
 import { DeleteUserRoleInput, DeleteUserRoleOutput } from './dtos/delete-user-role.dto'
 import { string } from 'src/common/helpers'
 import { relationsConfig } from 'src/common/configs'
-import { TokenService } from 'src/token/token.service'
 import { User } from 'src/users/entities'
 import { UserRoles, Role } from './entities'
 import { getCurrentUser } from 'src/users/helpers'
@@ -26,7 +24,6 @@ export class RolesService {
         @InjectRepository(UserRoles) private readonly userRoles: Repository<UserRoles>,
         @InjectRepository(Role) private readonly roles: Repository<Role>,
         private readonly languageService: LanguageService,
-        private readonly token: TokenService,
     ) {}
 
     /**
@@ -35,91 +32,28 @@ export class RolesService {
      */
     async _deffaultRoles(): Promise<boolean> {
         try {
-            /**
-             * Check roles on the existing default roles in database
-             * @param _deffaultRoles default roles
-             * @returns true if created roles, false if all roles exist
-             */
-            const _checkExistRole = async (_deffaultRoles: object): Promise<boolean> => {
-                const roles = await this.roles.find({})
+            const roles = await this.roles.find({})
+            const existedRoles = []
 
-                // Check founded roles exist in the database
-                const existedRoles = roles.filter(el => {
-                    let role: object
-                    for (const key in _deffaultRoles) {
-                        if (_deffaultRoles[key] === el.roleKey) {
-                            role = el
-                        }
-                    }
-                    return role
-                })
+            await roles.forEach(role => {
+                existedRoles.push(role.roleKey)
+            })
 
-                // If roles not exist, return true
-                if (!existedRoles.length) {
-                    return true
+            const deffaultRoles = Object.keys({ ...EDefaultRoles, ...ESystemsRoles })
+
+            await deffaultRoles.forEach(async role => {
+                if (existedRoles.indexOf(role) === -1) {
+                    await this.roles.save(
+                        this.roles.create({
+                            role: role,
+                            description: 'Default system role',
+                            type: ERolesType.system,
+                            user: null,
+                        }),
+                    )
                 }
-                // Check if created all roles in the database,
-                // If not all to create in the database
-                if (existedRoles.length !== object.length(_deffaultRoles)) {
-                    try {
-                        for (const key in _deffaultRoles) {
-                            await existedRoles.forEach(async el => {
-                                if (el.role !== key) {
-                                    await this.roles.save(
-                                        this.roles.create({
-                                            role: key,
-                                            description: 'Default system role',
-                                            type: ERolesType.system,
-                                            user: null,
-                                        }),
-                                    )
-                                    return
-                                }
-                                return
-                            })
-                        }
-                        return false
-                    } catch (error) {
-                        console.log(error)
-                        throw new Error(await this.languageService.setError(['isNot', 'createDefaultRole'], 'roles'))
-                    }
-                }
-                return false
-            }
+            })
 
-            /**
-             * Create default and system roles in database
-             * @param _deffaultRoles default roles
-             */
-            const _createDefaultRoles = async (_deffaultRoles: object): Promise<void> => {
-                try {
-                    for (const key in _deffaultRoles) {
-                        await this.roles.save(
-                            this.roles.create({
-                                role: key,
-                                description: 'Default system role',
-                                type: ERolesType.system,
-                                user: null,
-                            }),
-                        )
-                    }
-                    return
-                } catch (error) {
-                    console.log(error)
-                    throw new Error(await this.languageService.setError(['isNot', 'createDefaultRole'], 'roles'))
-                }
-            }
-
-            // Check and create no existing default roles in database and create it
-            const defaultRoles = await _checkExistRole(EDefaultRoles)
-            const systemsRoles = await _checkExistRole(ESystemsRoles)
-
-            if (defaultRoles) {
-                await _createDefaultRoles(EDefaultRoles)
-            }
-            if (systemsRoles) {
-                await _createDefaultRoles(ESystemsRoles)
-            }
             return true
         } catch (error) {
             console.log(error)
@@ -134,10 +68,11 @@ export class RolesService {
      */
     async createRole(body: CreateRoleInput, context): Promise<CreateRoleOutput> {
         const checkRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
-        if (checkRole)
+        if (checkRole) {
             throw new ValidationException({
                 exists: await this.languageService.setError(['isExists', 'role']),
             })
+        }
 
         // Succes to create system role
         if (body.type === ERolesType.system) {
@@ -254,7 +189,9 @@ export class RolesService {
      */
     async deleteRole({ id }: DeleteRoleInput, context): Promise<DeleteRoleOutput> {
         const dRole = await this.roles.findOne({ where: { id } })
-        if (!dRole) throw new ValidationException({ role: await this.languageService.setError(['isNot', 'foundRole']) })
+        if (!dRole) {
+            throw new ValidationException({ role: await this.languageService.setError(['isNot', 'foundRole']) })
+        }
 
         // Check current user role by existing systems roles
         const currentUser: User = getCurrentUser(context)
@@ -298,10 +235,11 @@ export class RolesService {
     async setUserRole(body: SetUserRoleInput, system = false, context?: any): Promise<SetUserRoleOutput> {
         // Check candidat for role
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
-        if (!candidate)
+        if (!candidate) {
             throw new ValidationException({
                 not_found: await this.languageService.setError(['isNotFound', 'foundUser']),
             })
+        }
 
         let userSetTheRole: User
         if (!system && context) {
@@ -317,10 +255,11 @@ export class RolesService {
         const roleKey = string.trimRole(body.role)
 
         const role = await this.roles.findOne({ where: { roleKey } })
-        if (!role)
+        if (!role) {
             throw new ValidationException({
                 not_exists: await this.languageService.setError(['isNotExist', 'role']),
             })
+        }
 
         const userRole = await this.userRoles.save(
             this.userRoles.create({
@@ -344,12 +283,8 @@ export class RolesService {
      */
     async deleteUserRole(body: DeleteUserRoleInput): Promise<DeleteUserRoleOutput> {
         const candidate = await this.users.findOne({ where: { id: body.userId }, ...relationsConfig.users })
-        if (!candidate) {
+        if (!candidate && !candidate.roles.length) {
             throw new ValidationException({ not_found: await this.languageService.setError(['isNot', 'foundUser']) })
-        }
-
-        if (!candidate.roles.length) {
-            throw new ValidationException({ not_found: await this.languageService.setError(['isNot', 'foundRole']) })
         }
 
         // TODO: Check to system or not, if role system user  cant't delete it.

@@ -18,6 +18,13 @@ describe('AuthResolver', () => {
 
         service = _module.get<AuthService>(AuthService)
         resolver = _module.get<AuthResolver>(AuthResolver)
+
+        // Mock Context
+        context = {
+            req: {
+                cookies: inputAuthStub().refreshToken,
+            },
+        }
     })
 
     afterEach(async () => {
@@ -53,11 +60,6 @@ describe('AuthResolver', () => {
         let logout: LogoutOutput
 
         beforeEach(async () => {
-            context = {
-                req: {
-                    cookies: inputAuthStub().refreshToken,
-                },
-            }
             logout = await resolver.logout(context)
         })
 
@@ -76,11 +78,6 @@ describe('AuthResolver', () => {
         let refreshToken: RefreshTokenOutput
 
         beforeEach(async () => {
-            context = {
-                req: {
-                    cookies: inputAuthStub().refreshToken,
-                },
-            }
             refreshToken = await resolver.refreshToken(context)
         })
 

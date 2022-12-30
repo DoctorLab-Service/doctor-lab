@@ -5,8 +5,6 @@ import { mockLanguageService } from 'src/language/__mocks__/languages.mock'
 import { TokenService } from 'src/token/token.service'
 import { mockTokenService } from 'src/token/__mocks__/token.mock'
 import { User } from 'src/users/entities'
-import { MockRepository } from 'src/users/test/types'
-import { mockRepository } from 'src/users/__mocks__/users.repository'
 import { AuthService } from '../auth.service'
 import { LoginInput, LoginOutput } from '../dtos/login.dto'
 import { userStub } from 'src/users/test/__stubs'
@@ -15,6 +13,8 @@ import { ForbiddenException, ValidationException } from 'src/exceptions'
 import { checkPassword } from 'src/users/helpers'
 import { LogoutInput, LogoutOutput } from '../dtos/logout.dto'
 import { RefreshTokenInput, RefreshTokenOutput } from '../dtos'
+import { mockRepository } from 'src/__mocks__/repository.mock'
+import { MockRepository } from 'src/__mocks__/types'
 
 describe('AuthService', () => {
     let service: AuthService
@@ -54,7 +54,7 @@ describe('AuthService', () => {
         jest.clearAllMocks()
     })
 
-    // Test to defined UsersService -- service
+    // Test defined UsersService -- service
     test('should be defined', () => {
         expect(service).toBeDefined()
     })
@@ -75,7 +75,7 @@ describe('AuthService', () => {
             jest.clearAllMocks()
         })
 
-        test('should to find user by email', async () => {
+        test('should find user by email', async () => {
             input = inputAuthStub('email').login
             usersRepository.findOne.mockResolvedValue({ ...mockUser, password: null })
 
@@ -88,7 +88,7 @@ describe('AuthService', () => {
             }
         })
 
-        test('should to find user by phone', async () => {
+        test('should find user by phone', async () => {
             input = inputAuthStub('phone').login
             usersRepository.findOne.mockResolvedValue({ ...mockUser, password: null })
 
@@ -101,7 +101,7 @@ describe('AuthService', () => {
             }
         })
 
-        test('should to find user by facebookId', async () => {
+        test('should find user by facebookId', async () => {
             input = inputAuthStub('facebookId').login
             usersRepository.findOne.mockResolvedValue({ ...mockUser, password: null })
 
@@ -114,7 +114,7 @@ describe('AuthService', () => {
             }
         })
 
-        test('should to find user by googleId', async () => {
+        test('should find user by googleId', async () => {
             input = inputAuthStub('googleId').login
             usersRepository.findOne.mockResolvedValue({ ...mockUser, password: null })
 
@@ -188,7 +188,7 @@ describe('AuthService', () => {
             usersRepository.findOne.mockResolvedValue({ ...mockUser })
             tokenService.generateTokens.mockReturnValue(tokens)
 
-            const errorMessage = "Couldn't create token, try to login"
+            const errorMessage = "Couldn't create token, try login"
             languageService.setError.mockResolvedValue(errorMessage)
 
             expect.assertions(2)

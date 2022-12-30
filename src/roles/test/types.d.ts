@@ -6,11 +6,5 @@ export interface RolesStubParams {
     roleType?: 'custom' | 'system'
 }
 
-export interface RolesStub {
-    id: number
-    role: string
-    roleKey: string
-    description: string
-    type: ERolesType
-    user: number | null
-}
+export type RolesStub = Role
+export type UserRolesStub = UserRoles

@@ -4,6 +4,7 @@ import { validate } from 'class-validator'
 import { ValidationException } from 'src/exceptions'
 import { ELanguage } from 'src/language/dtos/languages.dto'
 import { LanguageService } from 'src/language/language.service'
+import { graphQLQueryFilter } from 'src/common/helpers'
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
@@ -13,7 +14,10 @@ export class ValidationPipe implements PipeTransform {
     }
     async transform(value: any, metadata: ArgumentMetadata): Promise<any> {
         const errors = {}
-        const fields = plainToClass(metadata.metatype, value) || {}
+
+        const input = graphQLQueryFilter(value)
+        const fields = plainToClass(metadata.metatype, input) || {}
+
         /**
          * Set custom valid messages on languages
          */

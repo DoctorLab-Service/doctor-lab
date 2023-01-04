@@ -17,6 +17,7 @@ export class RolesGuard implements CanActivate {
         if (gqlContext.req && gqlContext.req.user) {
             // Get current user
             const currentUser = gqlContext.req.user
+
             if (!currentUser.roles.length) return false
 
             // Check to mainRoles by exists

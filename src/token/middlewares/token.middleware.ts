@@ -5,7 +5,6 @@ import { ForbiddenException } from 'src/exceptions'
 import { UsersService } from 'src/users/users.service'
 import { TokenService } from '../token.service'
 import { tokenKey } from '../config/token.enums'
-import { User } from 'src/users/entities'
 
 @Injectable()
 export class TokenMiddleware implements NestMiddleware {
@@ -19,12 +18,12 @@ export class TokenMiddleware implements NestMiddleware {
             const accessToken = req.headers[tokenKey.JWT]
             try {
                 const decoded = await this.tokenService.validateToken('accessToken', accessToken.toString())
+
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
                     const user = await this.usersService.findById({ id: decoded.id })
                     req['user'] = user.user
                 }
             } catch (error) {
-                console.log(error.message)
                 if (error.message === 'jwt expired') {
                     await this.tokenService.removeExpiredToken('accessToken', accessToken.toString())
                     next(

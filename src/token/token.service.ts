@@ -64,15 +64,16 @@ export class TokenService {
      * @param tokens  { accessToken, refreshToken, recoveryToken }
      * @returns token
      */
-    async saveTokens(user, tokens): Promise<Token | Token[]> {
-        const tokenData = await this.token.findOne({ where: { user } })
+    async saveTokens(id, tokens): Promise<Token | Token[]> {
+        const tokenData = await this.token.findOne({ where: { user: { id } } })
         if (tokenData) {
             tokenData.accessToken = tokens.accessToken || null
             tokenData.recoveryToken = tokens.recoveryToken || null
             tokenData.refreshToken = tokens.refreshToken || null
             return this.token.save(tokenData)
         }
-        const token = await this.token.save(this.token.create({ user, ...tokens }))
+        const token = await this.token.save(this.token.create({ user: id, ...tokens }))
+
         return token
     }
 

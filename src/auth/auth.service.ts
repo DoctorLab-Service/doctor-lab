@@ -70,7 +70,7 @@ export class AuthService {
             })
         }
 
-        this.token.saveTokens(user.id, tokens)
+        await this.token.saveTokens(user.id, tokens)
 
         return { ok: Boolean(user), ...tokens, user }
     }

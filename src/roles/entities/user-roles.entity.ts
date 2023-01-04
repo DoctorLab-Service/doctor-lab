@@ -22,6 +22,6 @@ export class UserRoles extends CoreEntity {
     type: ERolesType
 
     @ManyToOne(() => User, user => user.setRoles, { onDelete: 'CASCADE', eager: true })
-    @Field(() => User)
+    @Field(() => User, { nullable: true })
     setTheRole: User
 }

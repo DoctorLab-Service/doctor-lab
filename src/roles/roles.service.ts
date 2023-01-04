@@ -68,24 +68,31 @@ export class RolesService {
      */
     async createRole(body: CreateRoleInput, context): Promise<CreateRoleOutput> {
         const checkRole = await this.roles.findOne({ where: { roleKey: string.trimRole(body.role) } })
+
         if (checkRole) {
             throw new ValidationException({
                 exists: await this.languageService.setError(['isExists', 'role']),
             })
         }
 
+        console.log(checkRole)
+
         // Succes to create system role
         if (body.type === ERolesType.system) {
             // Check current user role by existing systems roles
             const currentUser: User = getCurrentUser(context)
-            const existSystemRole = currentUser.roles.filter(role => role.role.roleKey === ESystemsRoles.super_admin)
-
+            console.log('currentUser', currentUser)
+            const existSystemRole = currentUser.roles.filter(role => {
+                console.log(role)
+                return role.role.roleKey === ESystemsRoles.super_admin
+            })
             if (!existSystemRole.length) {
                 throw new ValidationException({
                     permission: await this.languageService.setError(['permission', 'createSystemRole']),
                 })
             }
         }
+
         const currentUser: User = getCurrentUser(context)
         const user = await this.users.findOne({ where: { id: currentUser.id } })
         if (!user) {

@@ -11,7 +11,12 @@ async function bootstrap() {
         credentials: true,
     })
     app.use(cookieParser())
-    app.use(graphqlUploadExpress())
+    app.use(
+        graphqlUploadExpress({
+            maxFileSize: 10000,
+            maxFiles: 10,
+        }),
+    )
 
     // Interceptors
     app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector))) // Interceptor for @Exclude({ toPlainOnly: true })

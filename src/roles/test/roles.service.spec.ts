@@ -9,8 +9,17 @@ import { mockRepository } from 'src/__mocks__/repository.mock'
 import { MockRepository } from 'src/__mocks__/types'
 import { FindAllRolesOutput } from '../dtos/find.dto'
 import { systemRolesStub, customRoleStub } from './__stubs/roles.stub'
+import { ValidationException } from 'src/exceptions'
+import { CreateRoleInput, CreateRoleOutput } from '../dtos/create-role.dto'
+import { userStub } from 'src/users/test/__stubs'
+import { ERolesType } from '../roles.enums'
+import { getCurrentUser } from 'src/users/helpers'
+import { string } from 'src/common/helpers'
 
 describe('RolesService', () => {
+    let context = {}
+    let mockUser: User
+
     let service: RolesService
     let usersRepository: MockRepository<User>
     let userRolesRepository: MockRepository<UserRoles>
@@ -49,6 +58,14 @@ describe('RolesService', () => {
         usersRepository = _module.get(getRepositoryToken(User))
         userRolesRepository = _module.get(getRepositoryToken(UserRoles))
         rolesRepository = _module.get(getRepositoryToken(Role))
+
+        // Mock context
+        mockUser = { ...userStub() }
+        context = {
+            req: {
+                user: { ...mockUser },
+            },
+        }
     })
 
     afterEach(async () => {
@@ -96,8 +113,66 @@ describe('RolesService', () => {
     })
 
     describe('createRole', () => {
-        test.todo('should fail if find role')
-        test.todo('should fail if input type system and user do not have system role')
+        let input: CreateRoleInput
+        let output: CreateRoleOutput
+
+        beforeEach(async () => {
+            input = {
+                role: customRoleStub().role,
+                roleKey: customRoleStub().roleKey,
+                description: customRoleStub().description,
+                type: customRoleStub().type,
+                user: customRoleStub().user,
+            }
+        })
+
+        test('should fail if find role', async () => {
+            rolesRepository.findOne.mockResolvedValue(customRoleStub())
+
+            const errorMessage = 'Role already exists'
+            languageService.setError.mockResolvedValue(errorMessage)
+
+            try {
+                await service.createRole(input, context)
+            } catch (error) {
+                expect(error).toBeInstanceOf(ValidationException)
+                expect(error.messages).toEqual({ exists: errorMessage })
+            }
+        })
+
+        test('should get current user from context', async () => {
+            input.type = ERolesType.system
+            mockUser.roles = [...mockUser.roles, systemRolesStub()[0]]
+
+            context = {
+                req: {
+                    user: { ...mockUser },
+                },
+            }
+
+            const currentUser = getCurrentUser(context)
+            // currentUser.roles = [...currentUser.roles, systemRolesStub()[0]]
+            await rolesRepository.findOne.mockResolvedValueOnce(null)
+
+            await service.createRole(input, context)
+
+            expect(currentUser).toEqual(mockUser)
+        })
+
+        // test('should fail if input type system and user do not have system role', async () => {
+        //     const currentUser = getCurrentUser(context)
+        //     currentUser.roles = []
+
+        //     const errorMessage = 'You do not have permission to create the system role'
+        //     languageService.setError.mockResolvedValue(errorMessage)
+
+        //     try {
+        //         await service.createRole(input, context)
+        //     } catch (error) {
+        //         expect(error).toBeInstanceOf(ValidationException)
+        //         expect(error.messages).toEqual({ permission: errorMessage })
+        //     }
+        // })
         test.todo('should fail if not find user')
         test.todo('should create role')
     })

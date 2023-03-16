@@ -19,6 +19,7 @@
     "jsx": "preserve",
     "rootDirs": [
       "src",
+      "src/assets",
       "src/components",
       "src/core",
       "src/hooks",
@@ -42,7 +43,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  
+
   "include": [
     "src"
   ]

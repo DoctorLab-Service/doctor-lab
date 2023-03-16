@@ -1,0 +1,200 @@
+.select
+    $border-color: #c7ccd1
+    $checked-color: #F5F6FB
+    $disabled-color: #e6e4e4
+    $hover-color: #e1e3e9
+    $list-background-color: var(--very-light-gray)
+    $scrollbar-thumb-color: #BEBEBE
+
+    position: relative
+    display: flex
+    width: 100%
+    height: 48px
+    margin: 0 auto
+    z-index: 1
+    &[data-state="open"]
+        .select
+            &-title
+                &:hover
+                    box-shadow: inset var(--easy-shadow)
+            &-arrow
+                &::before
+                    transform: translate(-3px, -50%) rotate(-45deg)
+                &::after
+                    transform: translate(3px, -50%) rotate(45deg)
+            &-content
+                max-height: 160px
+                border-width: 1px
+                border-color: rgba($border-color, 1)
+                animation: openList .3s ease-out
+                @keyframes openList
+                    from
+                        max-height: 0px
+                    to 
+                        max-height: 160px
+            &-label
+                max-height: 40px
+                border-width: 1px
+                &::before
+                    opacity: 1
+                
+    &[data-state="close"]
+        .select
+            &-content
+                max-height: 0px
+                animation: closeList .3s ease-out
+                @keyframes closeList
+                    from
+                        max-height: 160px
+                    to 
+                        max-height: 0px
+                
+
+    // Arrow 
+    &-arrow
+        &::before,
+        &::after
+            content: ""
+            position: absolute
+            top: 50%
+            right: 16px
+            display: block
+            width: 10px
+            height: 2px
+            transition: all 0.3s ease-out
+            background-color: var(--font-color)
+            transform: translate(-3px, -50%) rotate(45deg)
+        &::after
+            transform: translate(3px, -50%) rotate(-45deg)
+        &:hover
+            box-shadow: inset var(--primary-outline-shadow-hover)
+            &::before,
+            &::after
+                background-color: var(--font-color)
+        
+    &-title
+        display: flex
+        align-items: center
+        width: 100%
+        height: 100%
+        padding: 8px 16px
+        border-radius: 5px
+        cursor: pointer
+        z-index: 2
+        box-shadow: inset var(--easy-shadow)
+        background-color: var(--background-color)
+        color: var(--font-color)
+        &:hover
+            box-shadow: inset var(--primary-outline-shadow-hover)
+            
+    
+    &-content
+        position: absolute
+        top: 48px
+        left: 3px
+        display: flex
+        flex-direction: column
+        width: calc(100% - 6px)
+        max-height: 0px
+        background-color: $list-background-color
+        border: 0px solid $border-color
+        border-top-width: 0 
+        border-bottom-width: 0
+        border-top: none
+        border-radius: 0px 0px 5px 5px
+        transition: all 0.3s ease-out
+        z-index: 1
+
+        // Scrolbar
+        overflow: auto
+        &::-webkit-scrollbar
+            width: 1px
+        &::-webkit-scrollbar-track
+            background-color: none
+            margin-bottom: 2.5px
+        &::-webkit-scrollbar-thumb
+            border-radius: 2.5px
+            background-color: $scrollbar-thumb-color
+        &::-webkit-scrollbar-thumb:hover
+            background-color: $scrollbar-thumb-color
+
+
+    &-input
+        display: none
+        pointer-events: none
+        &-checked + label
+            background-color: $checked-color
+            &:hover
+                background-color: $checked-color !important
+                padding-left: 16px
+        &:disabled + label
+            opacity: 0.5
+            background-color: $disabled-color !important
+            pointer-events: none
+    &-label
+        border-bottom: .5px solid rgba(#c7ccd1, 0.3)
+        display: flex
+        align-items: center
+        width: 100%
+        height: 40px
+        max-height: 0
+        padding: 0 16px
+        transition: all 0.2s ease-out
+        cursor: pointer
+        &:hover
+            background-color: $hover-color !important
+            color: var(--font-color)
+            padding-left: 20px
+        &::before
+            content: attr(data-value)
+            transition: all 0.2s ease-out
+            opacity: 0
+    
+        &::after
+            position: absolute
+            top: -48px
+            left: 0
+            display: flex
+            align-items: center
+            width: 200px
+            height: 40px
+            padding: 8px 16px
+            color: var(--font-color)
+            z-index: -1
+
+[data-theme="dark"]
+
+    .select
+        $border-color: #4A4A4A
+        $checked-color: #30363D
+        $disabled-color: #191d20
+        $hover-color: #2D3239
+        $list-background-color: var(--very-light-dark)
+        $scrollbar-thumb-color: var(--dark)
+
+        &[data-state="open"]
+            .select
+                &-content
+                    border-color: rgba($border-color, 1)
+        &-content
+            background-color: $list-background-color
+            border: 0px solid $border-color
+            border-top-width: 0 
+            border-bottom-width: 0
+            border-top: none
+
+            &::-webkit-scrollbar-thumb
+                background-color: $scrollbar-thumb-color
+            &::-webkit-scrollbar-thumb:hover
+                background-color: $scrollbar-thumb-color
+        &-input
+            &-checked + label
+                background-color: $checked-color
+                &:hover
+                    background-color: $checked-color !important
+            &:disabled + label
+                background-color: $disabled-color !important
+        &-label
+            border-bottom-color: rgba($border-color, 1)
+            &:hover
+                background-color: $hover-color !important

@@ -17,6 +17,7 @@
     "vueIndentScriptAndStyle": false,
     "embeddedLanguageFormatting": "auto",
     "importOrder": [
+        "^assets/(.*)$",
         "^core/(.*)$",
         "^components/(.*)$",
         "^modules/(.*)$",

@@ -1,0 +1,73 @@
+.language-toggle
+    position: relative
+    z-index: 1
+    display: flex
+    flex-direction: column
+    align-items: center
+    color: var(--font-color)
+    text-shadow: var(--easy-shadow)
+    &[data-state='open']
+        .language-toggle
+            &-selected
+                box-shadow: var(--easy-shadow)
+                background-color: var(--block-color)
+            &-list
+                box-shadow: inset 0px 0px 1px .5px rgba(var(--rgb-dark), .5), inset 0px 0px 1px .5px rgba(var(--rgb-dark), .02)
+                background-color: var(--background-color)
+                padding: 46px  0px 16px 0px 
+                margin-top: -46px
+            &-item
+                max-height: 32px
+
+    &[data-state='close']
+        .language-toggle
+            &-selected
+                &:hover
+                    color: var(--primary)
+                    text-shadow: var(--easy-shadow)
+            &-list
+                opacity: 0
+            &-item
+                max-height: 0px
+                opacity: 0
+
+    &-selected
+        width: 56px
+        height: 56px
+        border-radius: 50%
+        display: flex
+        justify-content: center
+        align-items: center
+        transition: .5s all
+        z-index: 1
+        
+
+    &-list
+        display: flex
+        flex-direction: column
+        width: 40px
+        overflow: hidden
+        transition: .5s all
+        border-radius: 20px
+        
+    &-item
+        display: flex
+        align-items: center
+        justify-content: center
+        height: 32px
+        max-height: 0
+        transition: .5s all
+        overflow: hidden
+        
+        &:hover
+            color: var(--primary)
+            padding-left: 3px
+
+[data-theme='dark']
+    .language-toggle
+        &[data-state='open']
+            .language-toggle
+                &-list
+                    box-shadow: inset 0px 0px 1px .5px rgba(var(--rgb-light-gray), .5), inset 0px 0px 1px .5px rgba(var(--rgb-light-gray), .02)
+
+@import media

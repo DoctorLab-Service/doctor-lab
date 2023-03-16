@@ -1,0 +1,150 @@
+@media (max-width: 639px)
+    .login
+        .form
+            height: 100%
+            position: static
+            box-shadow: none
+            align-items: center
+            padding: 84px 28px 28px
+            &-wrapper
+                position: relative
+                background-color: var(--block-color)
+
+                /* HEADER */
+            &-header
+                position: static
+                &-logo
+                    display: none
+
+            /* BODY */
+            &-body
+                width: 100%
+                flex-grow: 1
+                margin-top: 48px
+
+            /* FOOTER */
+            &-footer
+                position: static
+                .social
+                    flex-direction: row
+                    margin: 20px
+                    .item
+                        width: 64px
+                        height: 64px
+                        box-shadow: none
+                        margin-right: 15px
+                        margin-bottom: 0px
+                        padding: 0px
+                        background-color: var(--block-color)
+                         box-shadow: var(--extra-shadow)
+                        &:last-child
+                            margin-right: 0px
+                        .btn
+                            
+                            &-icon
+                                width: 32px
+                                height: 32px
+                        &:hover
+                            .btn
+                                box-shadow: var(--medium-shadow), inset var(--primary-outline-shadow-hover)
+                                border-radius: 10px
+
+@media (min-width: 640px) and (max-width: 895px) and (max-height: 601px)
+    .login
+        .form
+            position: static
+            box-shadow: none
+            flex-grow: 1
+            flex-direction: row
+            align-items: center
+            &-wrapper
+                position: relative
+                background-color: var(--block-color)
+
+            /* HEADER */
+            &-header
+                top: auto
+                left: 20px
+                &-logo
+                    display: none
+                
+            /* BODY */
+            &-body
+                flex-grow: 1
+
+            /* FOOTER */
+            &-footer
+                position: absolute
+                top: auto
+                right: 20px
+                .social
+                    flex-direction: column
+                    margin: 20px
+                    .item
+                        width: 54px
+                        height: 54px
+                        box-shadow: none
+                        margin-right: 0px
+                        margin-bottom: 10px
+                        padding: 0px
+                        background-color: var(--block-color)
+                        &:last-child
+                            margin-bottom: 0px
+                        .btn
+                            &-icon
+                                width: 32px
+                                height: 32px
+                        &:hover
+                            .btn
+                                box-shadow: var(--medium-shadow), inset var(--primary-outline-shadow-hover)
+                                border-radius: 10px
+
+@media (min-width: 896px) and (max-height: 601px)
+    .login
+        .form
+            position: static
+            box-shadow: none
+            flex-grow: 1
+            flex-direction: row
+            align-items: center
+
+            &-wrapper
+                position: relative
+                background-color: var(--block-color)
+
+            /* HEADER */
+            &-header
+                top: auto
+                left: 20px
+                &-logo
+                    display: none
+            /* BODY */
+            &-body
+                flex-grow: 1
+
+            /* FOOTER */
+            &-footer
+                position: absolute
+                top: auto
+                right: 20px
+                .social
+                    flex-direction: column
+                    margin: 20px
+                    .item
+                        width: 54px
+                        height: 54px
+                        box-shadow: none
+                        margin-right: 0px
+                        margin-bottom: 10px
+                        padding: 0px
+                        background-color: var(--block-color)
+                        &:last-child
+                            margin-bottom: 0px
+                        .btn
+                            &-icon
+                                width: 32px
+                                height: 32px
+                        &:hover
+                            .btn
+                                box-shadow: var(--medium-shadow), inset var(--primary-outline-shadow-hover)
+                                border-radius: 10px

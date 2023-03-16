@@ -1,0 +1,1 @@
+export { default as FacebookButton } from './facebook-button'

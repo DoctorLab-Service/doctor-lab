@@ -1,8 +1,9 @@
-import { EmailSVG, PasswordSVG, GoogleSVG } from 'assets/icons'
+import { EmailSVG, PasswordSVG, GoogleSVG, FacebookSVG } from 'assets/icons'
 import { FC, useState } from 'react'
 import { Background, Actions } from 'modules'
-import { FacebookButton, Logo, Roles, TitleForm } from 'components'
+import { Logo, Roles, TitleForm } from 'components'
 import { Button, Input } from 'components/ui'
+import { IResolveParams, LoginSocialFacebook, LoginSocialGoogle } from 'reactjs-social-login'
 
 interface Props {
     darkMode: boolean
@@ -88,27 +89,60 @@ const Login: FC<Props> = ({ darkMode, toggleTheme }) => {
                         {/* <!-- START FORM LOGIN --> */}
                         <footer className='form-footer'>
                             <ul className='social'>
-                                {/* <FacebookLogin
-                                    appId='1295097498019777'
-                                    fields='name,email,picture'
-                                    callback={handleFacebookLogin}
-                                    render={renderProps => (
-                                        <Button onClick={renderProps.onClick} circle>
-                                            <FacebookSVG className='btn-icon' />
-                                        </Button>
-                                    )}
-                                    autoLoad={false}
-                                /> */}
                                 <li className='item circle'>
-                                    <FacebookButton circle />
-                                    {/* <Button onClick={() => console.log('Continue With Facebook')} circle>
-                                        <FacebookSVG className='btn-icon' />
-                                    </Button> */}
+                                    <Button circle>
+                                        <LoginSocialFacebook
+                                            appId={'1648460842243016'}
+                                            version={'v16.0'}
+                                            fieldsProfile={
+                                                'id,first_name,last_name,middle_name,name,name_format,picture,short_name,email,gender'
+                                            }
+                                            // onLoginStart={onLoginStart}
+                                            // onLogoutSuccess={onLogoutSuccess}
+                                            // redirect_uri={REDIRECT_URI}
+                                            onResolve={({ provider, data }: IResolveParams) => {
+                                                console.log('provider', provider)
+                                                console.log('data', data)
+                                                // setProvider(provider)
+                                                // setProfile(data)
+                                            }}
+                                            onReject={err => {
+                                                console.log(err)
+                                            }}
+                                        >
+                                            
+                                                <FacebookSVG className='btn-icon' />
+                                        </LoginSocialFacebook>
+                                    </Button>
+
                                 </li>
                                 <li className='item circle'>
-                                    <Button onClick={() => console.log('Continue With Google')} circle>
+                                    <Button circle>
+                                        <LoginSocialGoogle
+                                            client_id={'1017899643553-d88n6jpsoquu8d9bp6s6f69nb38ito0p.apps.googleusercontent.com'}
+                                            // onLoginStart={onLoginStart}
+                                            // redirect_uri={REDIRECT_URI}
+                                            scope="openid profile email"
+                                            discoveryDocs="claims_supported"
+                                            access_type="offline"
+                                            onResolve={({ provider, data }: IResolveParams) => {
+                                                console.log('provider', provider)
+                                                console.log('data', data)
+                                                // setProvider(provider)
+                                                // setProfile(data)
+                                            }}
+                                            onReject={err => {
+                                                console.log(err)
+                                            }}
+                                        >
+                                            <GoogleSVG className='btn-icon' />
+                                        </LoginSocialGoogle>
+                                    </Button> 
+
+
+                                    {/* <Button onClick={() => console.log('Continue With Google')} circle>
                                         <GoogleSVG className='btn-icon' />
-                                    </Button>
+                                    </Button> */}
                                 </li>
                             </ul>
                         </footer>

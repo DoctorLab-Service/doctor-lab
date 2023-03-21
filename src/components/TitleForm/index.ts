@@ -1,1 +1,1 @@
-export { default as TitleForm } from './titleForm'
+export { default as TitleForm } from './TitleForm'

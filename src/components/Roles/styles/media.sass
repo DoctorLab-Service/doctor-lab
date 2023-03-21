@@ -3,14 +3,17 @@
         padding: 0px
         .item
             width: 56px
-            height: 56px
+            // height: 56px
+            background-color: var(--block-color)
             padding: 0
             margin-right: 10px
             &:last-child
                 margin-right: 0px
-                
+            &-text
+                display: none
             &-role
                 margin-bottom: 5px
+                height: 56px
                 &-image
                     width: 28px
                     height: 28px
@@ -30,14 +33,17 @@
             height: 64px
             .item
                 margin-bottom: 20px
+                &-text
+                    font-size: 12
+                    display: block
                 &-role
+                    height: 64px
                     border-radius: 15px
                     &-image
                         width: 32px
                         height: 32px
             &:hover
                 width: 64px
-                height: 64px
                 .item
                     &-text
                         opacity: .7

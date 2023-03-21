@@ -1,1 +1,1 @@
-export { default as ToggleTheme } from './toggleTheme'
+export { default as ToggleTheme } from './ToggleTheme'

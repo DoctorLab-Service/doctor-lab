@@ -1,1 +1,1 @@
-export { default as ToggleLanguage } from './toggleLanguage'
+export { default as ToggleLanguage } from './ToggleLanguage'

@@ -1,6 +1,6 @@
 import { DoctorAvatarIMG, DentistAvatarIMG, PatientAvatarIMG, AdminAvatarIMG } from 'assets/img'
 import { FC, useEffect, useMemo, useState } from 'react'
-import RoleItem from './roleItem'
+import RoleItem from './RoleItem'
 
 import './styles/index.sass'
 
@@ -75,7 +75,6 @@ const Roles: FC<Props> = ({}) => {
         <div className='form-header-roles'>
             {
                 roles.map(({ value, src, changed }, idx) => {
-                    console.log()
                     return <RoleItem 
                         key={idx}
                         value={value}

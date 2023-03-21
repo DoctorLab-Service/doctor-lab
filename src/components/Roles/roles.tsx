@@ -2,7 +2,7 @@ import { DoctorAvatarIMG, DentistAvatarIMG, PatientAvatarIMG, AdminAvatarIMG } f
 import { FC, useEffect, useMemo, useState } from 'react'
 import RoleItem from './RoleItem'
 
-import './styles/index.sass'
+import './index.sass'
 
 interface Props {}
 

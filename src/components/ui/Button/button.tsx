@@ -1,7 +1,7 @@
 import { FC, MouseEventHandler } from 'react'
 import classNames from 'classnames'
 
-import './styles/index.sass'
+import './index.sass'
 import { Link } from 'react-router-dom'
 
 interface ButtonProps {

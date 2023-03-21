@@ -3,6 +3,8 @@ import { TitleForm } from 'components'
 import { Input, Button } from 'components/ui'
 import { useState } from 'react'
 
+import './index.sass'
+
 const Form = () => {
     const [statusField, setStatusField] = useState<'success' | 'error' | undefined>(undefined)
 

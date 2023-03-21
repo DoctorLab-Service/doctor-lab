@@ -1,7 +1,7 @@
 import { DarkSVG, LightSVG } from 'assets/icons'
 import { FC } from 'react'
 
-import './styles/index.sass'
+import './index.sass'
 
 interface Props {
     darkMode?: boolean

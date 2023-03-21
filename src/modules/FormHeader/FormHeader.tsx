@@ -1,6 +1,8 @@
 import { Logo, Roles } from 'components'
 import { FC } from 'react'
 
+import './index.sass'
+
 interface Props {
     darkMode: boolean
 }

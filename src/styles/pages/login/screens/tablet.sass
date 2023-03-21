@@ -1,4 +1,4 @@
-@media (max-width: 639px)
+@media (min-width: 640px) and (max-width: 895px) and (max-height: 601px)
     .login
         /* ACTIONS */
         .actions
@@ -33,130 +33,122 @@
                                 text-shadow: none
                         &-item
                             max-width: 0px
-
                 &-selected
                     width: 56px
                     height: 56px
                 &-list
                     flex-direction: row-reverse
-                    justify-content: center
-                    align-items: center
                     width: auto
                     overflow: auto
                     max-width: 172px
-                    height: 36px
 
                 &-item
                     height: 32px
                     width: 32px
                     max-width: 0
                     max-height: auto
-        
-        
+
         /* FORM */
         .form
-            height: 100%
             position: static
             box-shadow: none
+            flex-grow: 1
+            flex-direction: row
             align-items: center
-            padding: 84px 28px 64px 28px
             &-wrapper
                 position: relative
                 background-color: var(--block-color)
 
 
+
             /* FORM HEADER */
             &-header
-                position: static
+                top: auto
+                left: 20px
                 &-logo
                     display: none
 
                 /* FORM HEADER ROLES */
                 &-roles
-                    padding: 0px
+                    flex-direction: column
+                    align-items: center
                     .item
-                        width: 56px
-                        // height: 56px
-                        background-color: var(--block-color)
+                        width: 48px
+                        height: 48px
                         padding: 0
-                        margin-right: 10px
-                        &:last-child
-                            margin-right: 0px
+                        margin-bottom: 10px
                         &-text
-                            display: none
+                            font-size: 12px
                         &-role
                             margin-bottom: 5px
-                            height: 56px
                             &-image
-                                width: 28px
-                                height: 28px
+                                width: 24px
+                                height: 24px
                         &:hover
-                            width: 56px
-                            height: 56px
+                            width: 48px
+                            height: 48px
                             .item
                                 &-text
                                     opacity: .0
                                 &-role
                                     box-shadow: var(--medium-shadow), inset var(--primary-outline-shadow-hover)
                                     &-image
-                                        width: 28px
-                                        height: 28px
+                                        width: 24px
+                                        height: 24px
                     .changed
-                        width: 64px
-                        height: 64px
+                        width: 54px
+                        height: 54px
+                        margin-bottom: 30px
                         .item
                             margin-bottom: 20px
-                            &-text
-                                font-size: 12
-                                display: block
                             &-role
-                                height: 64px
-                                border-radius: 15px
+                                border-radius: 10px
                                 &-image
                                     width: 32px
                                     height: 32px
                         &:hover
-                            width: 64px
+                            width: 54px
+                            height: 54px
+                            margin-bottom: 30px
                             .item
+                                margin-bottom: 20px
                                 &-text
                                     opacity: .7
                                 &-role
-                                    border-radius: 15px
+                                    border-radius: 10px
+                                    border-radius: 10px
                                     box-shadow: var(--medium-shadow), inset var(--primary-outline-shadow)
                                     &-image
+                                        transition: .5s all
                                         width: 32px
                                         height: 32px
 
+
             /* FORM BODY */
             &-body
-                width: 100%
                 flex-grow: 1
-                margin-top: 24px
-                &-footer
-                    .link-text
-                        font-size: 12px
 
             /* FORM FOOTER */
             &-footer
-                position: static
+                position: absolute
+                top: auto
+                right: 20px
 
                 /* FORM FOOTER SOCIAL */
                 .social
-                    flex-direction: row
+                    flex-direction: column
                     margin: 20px
                     .item
-                        width: 64px
-                        height: 64px
+                        width: 54px
+                        height: 54px
                         box-shadow: none
-                        margin-right: 15px
-                        margin-bottom: 0px
+                        margin-right: 0px
+                        margin-bottom: 10px
                         padding: 0px
                         background-color: var(--block-color)
-                         box-shadow: var(--extra-shadow)
                         &:last-child
-                            margin-right: 0px
+                            margin-bottom: 0px
                         .btn
-                            
                             &-icon
                                 width: 32px
                                 height: 32px

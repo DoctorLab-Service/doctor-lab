@@ -2,7 +2,7 @@ import { SuccessSVG, ErrorSVG } from 'assets/icons'
 import React, { FC, HTMLInputTypeAttribute, ReactNode } from 'react'
 import classNames from 'classnames'
 
-import './styles/index.sass'
+import './index.sass'
 
 interface StatusImage {
     success: ReactNode

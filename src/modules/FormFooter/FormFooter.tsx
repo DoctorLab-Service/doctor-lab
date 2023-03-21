@@ -1,6 +1,8 @@
 import { Social } from 'components'
 import { FC } from 'react'
 
+import './index.sass'
+
 interface Props {}
 
 const FormFooter: FC<Props> = ({}) => {

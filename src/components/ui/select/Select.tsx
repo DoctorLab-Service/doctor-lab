@@ -1,7 +1,7 @@
 import { FC, HTMLInputTypeAttribute, useEffect, useState } from 'react'
 import classNames from 'classnames'
 
-import './Select.sass'
+import './index.sass'
 
 interface SelectOptions {
     value: string

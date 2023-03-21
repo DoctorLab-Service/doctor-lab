@@ -1,6 +1,8 @@
 import { FC } from 'react'
 import { Background, Actions, Form, FormHeader, FormFooter } from 'modules'
 
+import './index.sass'
+
 interface Props {
     darkMode: boolean
     toggleTheme: () => void

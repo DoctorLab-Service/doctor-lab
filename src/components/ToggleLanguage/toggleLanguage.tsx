@@ -1,6 +1,6 @@
 import { useState, useEffect, FC } from 'react'
 
-import './styles/index.sass'
+import './index.sass'
 
 interface Props  {
     langauges? : LanguagesOptions[]

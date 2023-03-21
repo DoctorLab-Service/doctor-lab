@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { FC, MouseEventHandler } from 'react'
 
-import './styles/index.sass'
+import './index.sass'
 
 interface Props {
     value: string

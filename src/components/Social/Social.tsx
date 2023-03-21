@@ -2,6 +2,8 @@ import { SocialLoginButton } from 'components'
 import { FC } from 'react'
 import { SocialProviders } from 'types'
 
+import './index.sass'
+
 interface Props {
     providers: SocialProviders[]
 }

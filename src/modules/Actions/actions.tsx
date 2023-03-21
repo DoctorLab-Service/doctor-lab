@@ -2,7 +2,7 @@ import { ToggleTheme, ToggleLanguage } from 'components'
 import classNames from 'classnames'
 import { FC } from 'react'
 
-import './styles/index.sass'
+import './index.sass'
 
 interface Props {
     darkMode: boolean

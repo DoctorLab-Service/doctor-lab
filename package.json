@@ -2,9 +2,13 @@
   "name": "auth",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "MaridiM Developments",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "npm": ">=9.0.0 <9.2.0",
+    "node": ">=18.0.0 <18.15.0"
+  },
   "scripts": {
     "prebuild": "rm -rf dist && npm cache clean --force",
     "build": "npx @nestjs/cli build",

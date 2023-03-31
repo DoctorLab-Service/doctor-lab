@@ -4,6 +4,7 @@ import { User } from 'src/users/entities'
 
 @InputType()
 export class NoRequiredInput extends PartialType(PickType(User, ['phone', 'email', 'facebookId', 'googleId'])) {}
+
 @InputType()
 export class RequiredInput extends PickType(User, ['password']) {}
 

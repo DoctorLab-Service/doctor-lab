@@ -1,5 +1,5 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
-import { plainToClass } from 'class-transformer'
+import { plainToClass, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { ValidationException } from 'src/exceptions'
 import { ELanguage } from 'src/language/dtos/languages.dto'
@@ -16,7 +16,8 @@ export class ValidationPipe implements PipeTransform {
         const errors = {}
 
         const input = graphQLQueryFilter(value)
-        const fields = plainToClass(metadata.metatype, input) || {}
+        // const fields = plainToClass(metadata.metatype, input) || {}
+        const fields = plainToInstance(metadata.metatype, input) || {}
 
         /**
          * Set custom valid messages on languages

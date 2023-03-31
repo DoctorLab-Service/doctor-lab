@@ -75,15 +75,11 @@ export class RolesService {
             })
         }
 
-        console.log(checkRole)
-
         // Succes to create system role
         if (body.type === ERolesType.system) {
             // Check current user role by existing systems roles
             const currentUser: User = getCurrentUser(context)
-            console.log('currentUser', currentUser)
             const existSystemRole = currentUser.roles.filter(role => {
-                console.log(role)
                 return role.role.roleKey === ESystemsRoles.super_admin
             })
             if (!existSystemRole.length) {

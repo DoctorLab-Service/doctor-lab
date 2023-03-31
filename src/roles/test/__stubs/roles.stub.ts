@@ -1,5 +1,6 @@
+import { userStub } from 'src/users/test/__stubs'
 import { ERolesType } from '../../roles.enums'
-import { RolesStub } from '../types'
+import { RolesStub, UserRolesStub } from '../types'
 
 export const systemRolesStub = (): RolesStub[] => [
     {
@@ -69,4 +70,15 @@ export const customRoleStub = (): RolesStub => ({
     createdAt: new Date(),
     updatedAt: new Date(),
     _v: 1,
+})
+
+export const userRolesStub = (type: 'system' | 'custom' = 'system'): UserRolesStub => ({
+    id: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    _v: 1,
+    type,
+    user: { ...userStub() },
+    role: { ...systemRolesStub()[0] },
+    setTheRole: null,
 })

@@ -27,7 +27,7 @@ import { HelpAnswer, HelpMessage } from './help/entities'
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env.test',
+            envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
             ignoreEnvFile: process.env.NODE_ENV === 'production',
             validationSchema: Joi.object({
                 NODE_ENV: Joi.string().valid('development', 'production').required(),
@@ -64,7 +64,8 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORDS,
             database: process.env.DB_NAME,
-            synchronize: process.env.NODE_ENV !== 'production',
+            // synchronize: process.env.NODE_ENV !== 'production',
+            synchronize: true, // Auto create entities on database
             logging: process.env.NODE_ENV !== 'production',
             entities: [
                 User,
@@ -84,6 +85,9 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             cors: false,
             path: 'auth',
             autoSchemaFile: true,
+            playground: true,
+            introspection: true,
+            persistedQueries: false,
             context: ({ req, res }) => ({ req, res }),
             // formatError: (error: GraphQLError | any) => {
             //     const graphQLFormattedError: GraphQLFormattedError = {

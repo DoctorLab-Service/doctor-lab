@@ -27,7 +27,8 @@ import { HelpAnswer, HelpMessage } from './help/entities'
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env.test',
+            // envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env.test',
+            envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
             ignoreEnvFile: process.env.NODE_ENV === 'production',
             validationSchema: Joi.object({
                 NODE_ENV: Joi.string().valid('development', 'production').required(),
@@ -84,6 +85,8 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             cors: false,
             path: 'auth',
             autoSchemaFile: true,
+            persistedQueries: false,
+            cache: 'bounded',
             context: ({ req, res }) => ({ req, res }),
             // formatError: (error: GraphQLError | any) => {
             //     const graphQLFormattedError: GraphQLFormattedError = {

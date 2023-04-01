@@ -65,7 +65,7 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             password: process.env.DB_PASSWORDS,
             database: process.env.DB_NAME,
             // synchronize: process.env.NODE_ENV !== 'production',
-            synchronize: true,
+            synchronize: true, // Auto create entities on database
             logging: process.env.NODE_ENV !== 'production',
             entities: [
                 User,
@@ -84,6 +84,8 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             driver: ApolloDriver,
             cors: false,
             path: 'auth',
+            playground: true,
+            introspection: true,
             autoSchemaFile: true,
             persistedQueries: false,
             cache: 'bounded',

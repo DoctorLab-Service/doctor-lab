@@ -27,7 +27,6 @@ import { HelpAnswer, HelpMessage } from './help/entities'
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            // envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env.test',
             envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env',
             ignoreEnvFile: process.env.NODE_ENV === 'production',
             validationSchema: Joi.object({
@@ -65,7 +64,8 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORDS,
             database: process.env.DB_NAME,
-            synchronize: process.env.NODE_ENV !== 'production',
+            // synchronize: process.env.NODE_ENV !== 'production',
+            synchronize: true,
             logging: process.env.NODE_ENV !== 'production',
             entities: [
                 User,

@@ -1,6 +1,7 @@
 import { useState, useEffect, FC } from 'react'
 
 import './index.sass'
+import { localStorageKey } from 'core/localstorage'
 
 interface Props  {
     langauges? : LanguagesOptions[]
@@ -19,10 +20,10 @@ const ToggleLanguage: FC<Props> = ({ langauges, defaultValue }) => {
 
 
     useEffect(() => {
-        const currentLang = localStorage.getItem('dl-lng')
+        const currentLang = localStorage.getItem(localStorageKey.language)
         const existLang = options.filter(option => option.value === currentLang)
         
-        currentLang === null && localStorage.setItem('dl-lng', value)
+        currentLang === null && localStorage.setItem(localStorageKey.language, value)
         existLang.length ? setValue(currentLang) : setValue(defaultValue)
 
     }, [defaultValue, options, value])
@@ -32,7 +33,7 @@ const ToggleLanguage: FC<Props> = ({ langauges, defaultValue }) => {
     }
     const checkOption = (e) => {
         const optionValue = e.target.textContent
-        localStorage.setItem('dl-lng', optionValue)
+        localStorage.setItem(localStorageKey.language, optionValue)
         setValue(optionValue)
         setIsOpen(false)
     }

@@ -12,8 +12,8 @@ const Social: FC<Props> = ({ providers }) => {
     return (
         <ul className='social'>
             {
-                providers && providers.map(provider => (
-                    <li className='item circle'>
+                providers && providers.map((provider, idx) => (
+                    <li key={idx} className='item circle'>
                         <SocialLoginButton circle provider={provider} />
                     </li>
 

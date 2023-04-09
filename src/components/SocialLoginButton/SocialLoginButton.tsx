@@ -39,7 +39,7 @@ const SocialLoginButton: FC<Props> = ({ children, circle, redirect_uri, onLogout
     
     return (
         <Button circle={circle}>
-        <Component
+            <Component
                 // For Facebook
                 appId={facebookBool ? process.env.REACT_APP_FACEBOOK_APP_ID || '' : ''}
                 version={facebookBool ? process.env.REACT_APP_FACEBOOK_APP_VERSION || '' : null}
@@ -56,6 +56,8 @@ const SocialLoginButton: FC<Props> = ({ children, circle, redirect_uri, onLogout
                 redirect_uri={redirect_uri}
                 onResolve={onResolve}
                 onReject={onReject}
+
+                className='circle'
             >
                 <Icon className='btn-icon' />
             </Component>

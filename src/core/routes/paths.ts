@@ -15,6 +15,7 @@ export const paths = {
     auth: gPaths.auth,
     login: `${gPaths.auth}/login`,
     register: {
+        register: `${gPaths.auth}${codes.register}`,
         patient: `${gPaths.auth}${codes.register}/patient`,
         doctor: {
             doctor: `${gPaths.auth}${codes.register}/doctor`,

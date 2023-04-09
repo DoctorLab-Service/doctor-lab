@@ -42,7 +42,7 @@ const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, va
         <>
             {
                 link 
-                    ? <Link className={classes} to={link}>
+                    ? <Link className={classes} to={link} >
                         <span className={classesText}>{children ? children : text}</span>
                     </Link>
                     : <button

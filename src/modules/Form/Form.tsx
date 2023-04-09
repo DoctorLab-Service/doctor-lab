@@ -1,43 +1,32 @@
-import { EmailSVG, PasswordSVG } from 'assets/icons'
-import { TitleForm } from 'components'
-import { Input, Button } from 'components/ui'
-import { useState } from 'react'
+import { InputGroup, TitleForm } from 'components'
+import { Button } from 'components/ui'
 
 import './index.sass'
+import { paths } from 'core/routes'
+import { FC } from 'react'
 
-const Form = () => {
-    const [statusField, setStatusField] = useState<'success' | 'error' | undefined>(undefined)
+interface Props {
+    currentRole: string
+}
 
-
+const Form: FC<Props> = ({ currentRole }) => {
+    const pathWithRole = currentRole === 'doctor' || currentRole === 'dentist' ? paths.register.doctor[currentRole] : currentRole !== 'admin' ? paths.register[currentRole] : paths.login
+    const roleName = currentRole[0].toLocaleUpperCase() + currentRole.slice(1)
     return (
         <form className='form-body'>
-            <TitleForm title='Sign In' />
+            <TitleForm title={`Sign In as ${roleName}`} />
 
-            <div className='input-group'>
-                <Input
-                    id='email'
-                    status={statusField}
-                    image={<EmailSVG className='input-icon' />} // <PhoneSVG className='input-icon'/>
-                    placeholder='Email or Phone'
-                />
-                <Input
-                    id='password'
-                    type='password'
-                    status={statusField}
-                    autoComplete='off'
-                    image={<PasswordSVG className='input-icon' />}
-                    placeholder='Password' />
-            </div>
+            <InputGroup />
 
             <footer className='form-body-footer'>
                 <div className='link-group'>
                     <Button
-                        link='/register'
+                        link={pathWithRole}
                         size='medium'
                         text='Have not account'
                     />
                     <Button
-                        link='/forgot'
+                        link={paths.forgot.password}
                         size='medium'
                         text='Forgot password?'
                     />

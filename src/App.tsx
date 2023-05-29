@@ -1,6 +1,6 @@
 
 import { useDarkMode } from 'hooks'
-import { Link, Route, Routes, useLocation } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
 import { paths } from 'core'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
 

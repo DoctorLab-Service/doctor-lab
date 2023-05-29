@@ -77,9 +77,11 @@ export const useDarkMode = () => {
         resetTransition(true)
         setIsDark(!isDark)
     }
-
+    
     return {
         darkMode: isDark, 
+        transition,
         toggleTheme,
+        resetTransition,
     }
 }

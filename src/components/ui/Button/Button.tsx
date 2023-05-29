@@ -2,8 +2,12 @@ import { FC } from 'react'
 import classNames from 'classnames'
 import { Link } from 'react-router-dom'
 import { ButtonProps } from 'types/props'
+import { useDarkMode } from 'hooks'
 
 const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, variant, onClick, children, noReset, link, circle, button, noSize, ...args }) => {
+    const { resetTransition } = useDarkMode()
+
+
     type =  type === undefined && !link ? 'button' : type
     const classes = classNames(
         link && type !== 'button' ? 'link' : 'btn',
@@ -27,7 +31,12 @@ const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, va
         <>
             {
                 link 
-                    ? <Link className={classes} to={link} >
+                    ? <Link className={classes} to={link} onClick={() => {
+                        resetTransition(true)
+                        setTimeout(() => {
+                            resetTransition()
+                        }, 100)
+                    }}>
                         <span className={classesText}>{children ? children : text}</span>
                     </Link>
                     : <button

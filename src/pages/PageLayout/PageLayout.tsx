@@ -4,7 +4,6 @@ import { PageLayoutProps } from 'types/props'
 import { Header, Footer } from 'components'
 import { usePathname } from 'hooks'
 import classNames from 'classnames'
-import { useNavigate } from 'react-router-dom'
 
 const PageLayout: FC<PageLayoutProps> = ({ toggleTheme, darkMode }) => {
     const { pagename } = usePathname()
@@ -13,7 +12,7 @@ const PageLayout: FC<PageLayoutProps> = ({ toggleTheme, darkMode }) => {
         'page',
         pagename === 'changePassword' ? 'change-password' : pagename
     )
-    // console.log(document.location)
+    console.log(document.location)
     return (
         <div className={classes}>
 

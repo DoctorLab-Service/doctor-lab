@@ -35,7 +35,6 @@ const Select: FC = () => {
         // Hide Content list
         !isOpen && setTimeout(() => {
             setHideList(false)
-            console.log()
         }, 100)
 
         // Set default checkbox

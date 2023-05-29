@@ -3,7 +3,7 @@ import { Roles } from "types/core"
 import { FormBodyHeaderProps } from "types/props"
 
 const FormBodyHeader: FC<FormBodyHeaderProps> = ({ pagename, currentRole }) => {
-    // const isLogin = pagename === 'login'
+    const isLogin = pagename === 'login'
     const isRegister = pagename === 'register'
     const isForgot = pagename === 'forgot'
     const isSupport = pagename === 'support'
@@ -11,7 +11,7 @@ const FormBodyHeader: FC<FormBodyHeaderProps> = ({ pagename, currentRole }) => {
     const isChangePassword = pagename === 'changePassword'
 
     const title = {
-        login: 'Sign In as Doctor',
+        login: (role: Roles) => `Sign In as ${role[0].toUpperCase() + role.slice(1).toLowerCase()}`,
         forgot: 'Forgot password',
         changePassword: 'Change password',
         register: (role: Roles) => `Sign Up as ${role[0].toUpperCase() + role.slice(1).toLowerCase()}`,
@@ -27,7 +27,11 @@ const FormBodyHeader: FC<FormBodyHeaderProps> = ({ pagename, currentRole }) => {
 
     return (
         <header className='form-body-header'>
-            <h1 className='form-body-title'>{isRegister ? title.register(currentRole) : title[pagename]}</h1>
+            <h1 className='form-body-title'>
+                {
+                    isRegister || isLogin ? title[pagename](currentRole) : title[pagename]
+                }
+            </h1>
             {
                 (isForgot || isChangePassword || isSupport || isVerification) 
                 && <span className="form-body-text">{bodyText[pagename]}</span>

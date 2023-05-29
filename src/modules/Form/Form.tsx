@@ -1,46 +1,38 @@
-import { InputGroup, TitleForm } from 'components'
-import { Button } from 'components/ui'
-
-import './index.sass'
-import { paths } from 'core/routes'
 import { FC } from 'react'
+import { usePathname, useRoles } from 'hooks'
+import { FormProps } from 'types/props'
+import FormFooter from './FormFooter'
+import FormHeader from './FormHeader'
+import { FormBody } from 'modules'
 
-interface Props {
-    currentRole: string
-}
+const Form: FC<FormProps> = ({ darkMode }) => {
+    const { roles, changeRole, currentRole } = useRoles()
+    const { pagename } = usePathname()
 
-const Form: FC<Props> = ({ currentRole }) => {
-    const pathWithRole = currentRole === 'doctor' || currentRole === 'dentist' ? paths.register.doctor[currentRole] : currentRole !== 'admin' ? paths.register[currentRole] : paths.login
-    const roleName = currentRole[0].toLocaleUpperCase() + currentRole.slice(1)
+    const isLogin = pagename === 'login'
+
     return (
-        <form className='form-body'>
-            <TitleForm title={`Sign In as ${roleName}`} />
+        <div className='form-wrapper'>
+            <div className='form'>
 
-            <InputGroup />
+                {
+                    isLogin && 
+                        <FormHeader
+                            darkMode={darkMode}
+                            roles={roles}
+                            changeRole={changeRole}
+                        />
+                }
 
-            <footer className='form-body-footer'>
-                <div className='link-group'>
-                    <Button
-                        link={pathWithRole}
-                        size='medium'
-                        text='Have not account'
-                    />
-                    <Button
-                        link={paths.forgot.password}
-                        size='medium'
-                        text='Forgot password?'
-                    />
-                </div>
+                <FormBody currentRole={currentRole} pagename={pagename} />
 
-                <Button
-                    text='Sign In'
-                    variant='primary'
-                    onClick={() => console.log('Sign In Button')}
-                    fullSize
-                />
 
-            </footer>
-        </form>
+                {
+                    isLogin && <FormFooter />
+                }
+
+            </div>
+        </div>
   )
 }
 

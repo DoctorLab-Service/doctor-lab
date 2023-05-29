@@ -1,19 +1,10 @@
 import { useState, useEffect, FC } from 'react'
 
-import './index.sass'
 import { localStorageKey } from 'core/localstorage'
+import { ToggleLanguageProps, LanguagesOptions } from 'types/props'
 
-interface Props  {
-    langauges? : LanguagesOptions[]
-    defaultValue?: string
-}
 
-interface LanguagesOptions {
-    value: string
-    checked: boolean
-}
-
-const ToggleLanguage: FC<Props> = ({ langauges, defaultValue }) => {
+const ToggleLanguage: FC<ToggleLanguageProps> = ({ langauges, defaultValue }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [options, setOptions] = useState<LanguagesOptions[]>(langauges)
     const [value, setValue] = useState<string>(defaultValue)

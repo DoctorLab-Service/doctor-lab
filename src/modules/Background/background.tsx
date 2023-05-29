@@ -1,15 +1,8 @@
 import { LoginDarkContentImg, LoginLightContentImg } from 'assets/img'
 import { FC } from 'react'
+import { BackgroundProps } from 'types/props'
 
-import './styles/index.sass'
-
-interface Props {
-    darkMode: boolean
-    type: 'login'
-    children: JSX.Element | JSX.Element[]
-} 
-
-const Background: FC<Props> = ({ children, type, darkMode }) => {
+const Background: FC<BackgroundProps> = ({ type, darkMode }) => {
 
     let imgSrc: string
     switch (type) {
@@ -22,18 +15,11 @@ const Background: FC<Props> = ({ children, type, darkMode }) => {
     }
 
     return (
-        <>
-            <div className='image-block'>
-                <div className='image-wrapper'>
-                    <img src={imgSrc} alt={type} />
-                </div>
+        <div className='image-block'>
+            <div className='image-wrapper'>
+                <img src={imgSrc} alt={type} />
             </div>
-
-            <div className='content-block'>
-                <div className='content-background'></div>
-                    { children }
-            </div>
-        </>
+        </div>
     )
 }
 

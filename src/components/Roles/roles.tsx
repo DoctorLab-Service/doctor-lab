@@ -1,16 +1,9 @@
 import { FC } from 'react'
 import RoleItem from './RoleItem'
+import { RolesProps } from 'types/props'
 
-import './index.sass'
-import { RolesList } from 'types'
 
-interface Props {
-    roles: RolesList[]
-    changeRole: (idx: number) => void
-
-}
-
-const Roles: FC<Props> = ({ roles, changeRole }) => {
+const Roles: FC<RolesProps> = ({ roles, changeRole }) => {
     return (
         <div className='form-header-roles'>
             {
@@ -29,6 +22,8 @@ const Roles: FC<Props> = ({ roles, changeRole }) => {
     )
 }
 
-Roles.defaultProps = {}
+Roles.defaultProps = {
+    roles: [],
+}
 
 export default Roles

@@ -1,6 +1,4 @@
-export { Actions } from './Actions' 
 export { Background } from './Background' 
-export { FormHeader } from './FormHeader' 
-export { FormFooter } from './FormFooter' 
+export { Content } from './Content'
 export { Form } from './Form' 
-
+export { FormBody } from './FormBody' 

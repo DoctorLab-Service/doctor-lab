@@ -1,16 +1,10 @@
 import { MiniLightLogoIMG, MiniDarkLogoIMG } from 'assets/img'
 import classNames from 'classnames'
 import { FC } from 'react'
+import { LogoProps } from 'types/props'
 
-import './index.sass'
 
-interface Props {
-    darkMode: boolean;
-    circle?: boolean;
-    className?: string;
-}
-
-const Logo: FC<Props> = ({ darkMode, circle , className}) => {
+const Logo: FC<LogoProps> = ({ darkMode, circle , className}) => {
     const classes = classNames(
         'logo',
         className,

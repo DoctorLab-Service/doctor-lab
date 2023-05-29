@@ -1,6 +1,5 @@
 const codes = {
     register: '/r',
-    step: '/s', 
     forgot: '/f', 
     cahnge: '/c', 
     verify: '/v',
@@ -23,20 +22,19 @@ export const paths = {
             // ... other paths for doctors.
         },
     },
-    step: (step: number): string => `${codes.forgot}-${step}`,
     forgot: {
         phone: `${gPaths.auth}${codes.forgot}/phone`,
         password: `${gPaths.auth}${codes.forgot}/password`,
     },
     cahnge: {
-        phone: `${gPaths.auth}${codes.cahnge}/phone`,
+        // phone: `${gPaths.auth}${codes.cahnge}/phone`,
         password: `${gPaths.auth}${codes.cahnge}/password`,
     },
-    verify: {
+    verification: {
         phone: `${gPaths.auth}${codes.verify}/phone`,
         password: `${gPaths.auth}${codes.verify}/password`,
     },
-    help: '/help',
+    support: '/support',
     privacyPolicy: '/privacy-policy',
     termOfUse: '/term-of-use',
 }

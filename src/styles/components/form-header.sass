@@ -1,0 +1,90 @@
+/* FORM HEADER*/
+.form-header
+    position: absolute
+    top: -62px
+    left: -62px
+    &-nav
+        width: 100%
+        display: flex
+
+    /* FORM HEADER LOGO */
+    &-logo
+        padding: 10px
+        width: 124px
+        height: 124px
+        display: flex 
+        justify-content: center
+        align-items: center
+        background-color: var(--background-color)
+
+    /* FORM HEADER ROLES */
+    &-roles
+        height: auto
+        padding-top: 2px
+        text-align: center
+        display: flex
+
+        /* ROLES ITEM */ 
+        .item
+            width: 84px
+            height: 84px
+            transition: .5s all
+            background-color: var(--background-color)
+            padding: 8px
+            &-text
+                transition: .5s all
+                opacity: 0
+                width: 100%
+                text-align: center
+                font-size: 14px
+            &-role
+                transition: .5s all
+                width: 100%
+                height: 100%
+                display: flex
+                justify-content: center
+                align-items: center
+                margin-bottom: 10px
+                box-shadow: var(--medium-shadow)
+                background-color: var(--block-color)
+                &-image
+                    transition: .5s all
+                    width: 36px
+                    height: 36px
+            &:hover
+                width: 94px
+                height: 94px
+                border-radius: 30px
+                background-color: var(--background-color)
+                .item
+                    &-text
+                        opacity: .8
+                        text-shadow: var(--easy-text-shadow)
+                    &-role
+                        box-shadow: inset var(--primary-outline-shadow-hover)
+                        border-radius: 25px
+                        &-image
+                            width: 42px
+                            height: 42px
+        .changed
+            transition: .5s all
+            width: 94px
+            height: 94px
+            border-radius: 30px
+            .item
+                // &-text
+                //     transition: .5s all
+                //     opacity: .8
+                //     text-shadow: var(--easy-text-shadow)
+                &-role
+                    border-radius: 25px
+                    transition: .5s all
+                    box-shadow: var(--medium-shadow), inset var(--primary-outline-shadow)
+                    &-image
+                        transition: .5s all
+                        width: 42px
+                        height: 42px
+            &:hover
+                .item
+                    &-role
+                        box-shadow: inset var(--primary-outline-shadow)

@@ -1,0 +1,20 @@
+{
+    "errors": {
+        "empty": {
+            "field": "The field cannot be empty",
+            "form": "The form cannot be empty"
+        },
+        "password": {
+            "length": "Password must be between 6-32 characters",
+            "Equal": "Passwords do not match",
+            "password": "Incorrect password"
+        },
+        "phone": {
+            "format": "Invalid phone format"
+        },
+        "email": {
+            "format": "Invalid E-Mail format",
+            "existed": "This e-mail is already taken"
+        }
+    }
+}

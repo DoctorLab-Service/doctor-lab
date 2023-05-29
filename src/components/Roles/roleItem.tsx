@@ -1,18 +1,10 @@
 import classNames from 'classnames'
-import { FC, MouseEventHandler } from 'react'
+import { FC } from 'react'
+import { RoleItemProps } from 'types/props'
 
-import './index.sass'
 
-interface Props {
-    value: string
-    src: string
-    changed: boolean
-    circle?: boolean
-    className?: string
-    onClick: MouseEventHandler<HTMLDivElement>
-}
 
-const RoleItem: FC<Props> = ({ value, src, changed, circle, className, onClick }) => {
+const RoleItem: FC<RoleItemProps> = ({ value, src, changed, circle, className, onClick }) => {
     const itemClasses = classNames(
         'item',
         className,

@@ -1,27 +1,10 @@
 import { SuccessSVG, ErrorSVG } from 'assets/icons'
-import React, { FC, HTMLInputTypeAttribute, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import classNames from 'classnames'
 
-import './index.sass'
+import { InputProps } from 'types/props'
 
-interface StatusImage {
-    success: ReactNode
-    error: ReactNode
-}
-
-interface Props {
-    autoComplete?: 'on' | 'off'
-    className?: string
-    id: string
-    name?: string
-    placeholder?: string
-    type?: HTMLInputTypeAttribute
-    image?: ReactNode
-    status?: 'success' | 'error' | undefined
-    statusImage?: StatusImage
-}
-
-const Input: FC<Props> = ({ id, image, status, className, autoComplete, type, name, placeholder }) => {
+const Input: FC<InputProps> = ({ id, image, status, className, autoComplete, type, name, placeholder, statusimage, ...args }) => {
     let StatusSVG: ReactNode
     const inputClasses = classNames('input', className)
     let fieldClasses = classNames(
@@ -36,7 +19,7 @@ const Input: FC<Props> = ({ id, image, status, className, autoComplete, type, na
             break
         case 'error':
             StatusSVG = < ErrorSVG className='input-icon-status' />
-            fieldClasses= fieldClasses + ' input-field-error'
+            fieldClasses = fieldClasses + ' input-field-error'
             break
         default: 
             StatusSVG = undefined
@@ -56,6 +39,7 @@ const Input: FC<Props> = ({ id, image, status, className, autoComplete, type, na
                     type={type}
                     name={name ? name : id}
                     placeholder={placeholder}
+                    {...args}
                 />
                 {status && StatusSVG }
             </div>
@@ -71,6 +55,6 @@ Input.defaultProps = {
     placeholder: 'Input text',
     image: undefined,
     status: undefined,
-    statusImage: undefined,
+    statusimage: undefined,
 }
 export default Input

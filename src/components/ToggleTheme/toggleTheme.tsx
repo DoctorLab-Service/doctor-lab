@@ -1,15 +1,8 @@
 import { DarkSVG, LightSVG } from 'assets/icons'
 import { FC } from 'react'
+import { ToggleThemeProps } from 'types/props'
 
-import './index.sass'
-
-interface Props {
-    darkMode?: boolean
-    toggleTheme: () => void
-}
-
-
-const ToggleTheme: FC<Props> = ({ darkMode, toggleTheme }) => {
+const ToggleTheme: FC<ToggleThemeProps> = ({ darkMode, toggleTheme }) => {
 
     return (
         <button className='theme-toggle circle' onClick={() => toggleTheme()}>

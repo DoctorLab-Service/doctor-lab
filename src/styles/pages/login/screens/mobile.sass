@@ -1,70 +1,8 @@
 @media (max-width: 639px)
     .login
-        /* ACTIONS */
-        .actions
-            flex-direction: row-reverse
-            justify-content: flex-start
-            align-items: flex-start
-
-            /* TOGGLE THEME */
-            .theme-toggle
-                width: 56px
-                height: 56px
-
-            /* TOGGLE LANGUAGE */
-            .language-toggle
-                flex-direction: row-reverse
-                &[data-state='open']
-                    .language-toggle
-                        &-selected
-                            box-shadow: none
-                            background-color: var(--block-color)
-                        &-list
-                            padding: 0px  6px 0px 6px 
-                            margin-top: 0px
-                        &-item
-                            min-width: 32px
-                            max-width: 32px
-                &[data-state='close']
-                    .language-toggle
-                        &-selected
-                            &:hover
-                                color: var(--font-color)
-                                text-shadow: none
-                        &-item
-                            max-width: 0px
-
-                &-selected
-                    width: 56px
-                    height: 56px
-                &-list
-                    flex-direction: row-reverse
-                    justify-content: center
-                    align-items: center
-                    width: auto
-                    overflow: auto
-                    max-width: 172px
-                    height: 36px
-
-                &-item
-                    height: 32px
-                    width: 32px
-                    max-width: 0
-                    max-height: auto
-        
-        
         /* FORM */
         .form
             height: 100%
-            position: static
-            box-shadow: none
-            align-items: center
-            padding: 84px 28px 64px 28px
-            &-wrapper
-                position: relative
-                background-color: var(--block-color)
-
-
             /* FORM HEADER */
             &-header
                 position: static
@@ -76,7 +14,7 @@
                     padding: 0px
                     .item
                         width: 56px
-                        // height: 56px
+                        height: 56px
                         background-color: var(--block-color)
                         padding: 0
                         margin-right: 10px
@@ -129,17 +67,9 @@
 
             /* FORM BODY */
             &-body
-                width: 100%
-                flex-grow: 1
-                margin-top: 24px
-                &-footer
-                    .link-text
-                        font-size: 12px
-
+                margin-bottom: 0px
             /* FORM FOOTER */
             &-footer
-                position: static
-
                 /* FORM FOOTER SOCIAL */
                 .social
                     flex-direction: row

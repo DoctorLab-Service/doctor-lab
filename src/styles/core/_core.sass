@@ -6,29 +6,88 @@
     text-shadow: var(--medium-text-shadow)
     transition: .5s all
     &:hover
-        transition: .5s all
         background-color: rgba(var(--rgb-primary), .9)
 
+.success
+    background-color: var(--success)
+    color: var(--white)
+    box-shadow: var(--success-shadow)
+    text-shadow: var(--medium-text-shadow)
+    transition: .5s all
+    &:hover
+        background-color: rgba(var(--rgb-success), .9)
 
-
-// /* Size */
-// .small
-//     height: calc(10px * 2 + 12px)
-//     padding: 1px 16px 0px 16px
-//     border-radius: 10px
-//     font-size: 12px
-// .medium
-//     height: calc(12px * 2 + 14px)
-//     padding: 0px 20px
-//     border-radius: 10px
-//     font-size: 14px
+.error
+    background-color: var(--error)
+    color: var(--white)
+    box-shadow: var(--error-shadow)
+    text-shadow: var(--medium-text-shadow)
+    transition: .5s all
+    &:hover
+        background-color: rgba(var(--rgb-error), .9)
     
-// .large
-//     height: calc(20px * 2 + 16px)
-//     padding: 0px 30px
-//     border-radius: 10px
-//     font-size: 16px
+.warning
+    background-color: var(--warning)
+    color: var(--white)
+    box-shadow: var(--warning-shadow)
+    text-shadow: var(--medium-text-shadow)
+    transition: .5s all
+    &:hover
+        background-color: rgba(var(--rgb-warning), .9)
 
+.default
+    color: var(--font-color)
+    text-shadow: var(--medium-text-shadow)
+    transition: .5s all
+    &:hover
+        background-color: rgba(var(--rgb-default), .03)
+
+// Text Color
+.default-color
+    color: var(--font-color)
+    fill: var(--font-color)
+.primary-color
+    color: var(--primary) !important
+    fill: var(--primary) !important
+.primary-hover
+    cursor: default
+    &:hover
+        color: rgba(var(--rgb-primary), .9) !important
+        fill: rgba(var(--rgb-primary), .9) !important
+.success-color
+    color: var(--success)
+    fill: var(--success)
+.error-color
+    color: var(--error)
+    fill: var(--error)
+.warning-color
+    color: var(--warning)
+    fill: var(--warning)
+
+
+/* Size */
+.small
+    height: calc(10px * 2 + 12px)
+    padding: 1px 16px 0px 16px
+    border-radius: 10px
+    font-size: 12px
+    line-height: 16px
+    
+    
+.medium
+    height: calc(12px * 2 + 14px)
+    padding: 0px 20px
+    border-radius: 10px
+    font-size: 14px
+    line-height: 18px
+    
+
+.large
+    height: calc(20px * 2 + 16px)
+    padding: 0px 30px
+    border-radius: 10px
+    font-size: 16px
+    line-height: 24px
 
 
 /* Form */

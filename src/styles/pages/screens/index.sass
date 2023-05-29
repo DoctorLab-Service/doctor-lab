@@ -1,0 +1,32 @@
+@import desktop
+@import tablet
+@import mobile
+
+/* BACKGROUND IMAGE | BACKGROUND CONTENT */
+@media (max-width: 1280px)
+    .page
+        .image
+            &-block
+                display: none
+        .content
+            &-block
+                max-width: 100%
+                background-color: transparent
+            &-background
+                display: none
+                
+/* CONFIG WRAPPER */
+@media (max-height: 601px) 
+    .page
+        /* FORM */
+        .form
+            padding-top: 0px
+            &-body
+                padding-top: 0px
+/* CONFIG WRAPPER */
+@media (max-height: 520px) 
+    .page
+        /* FORM */
+        .form
+            &-wrapper
+                height: auto

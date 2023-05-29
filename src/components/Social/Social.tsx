@@ -1,20 +1,14 @@
-import { SocialLoginButton } from 'components'
+import { SocialButton } from 'components'
 import { FC } from 'react'
-import { SocialProviders } from 'types'
+import { SocialProps } from 'types/props'
 
-import './index.sass'
-
-interface Props {
-    providers: SocialProviders[]
-}
-
-const Social: FC<Props> = ({ providers }) => {
+const Social: FC<SocialProps> = ({ providers }) => {
     return (
         <ul className='social'>
             {
                 providers && providers.map((provider, idx) => (
                     <li key={idx} className='item circle'>
-                        <SocialLoginButton circle provider={provider} />
+                        <SocialButton circle provider={provider} icon />
                     </li>
 
                 ))   

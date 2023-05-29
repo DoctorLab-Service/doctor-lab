@@ -1,0 +1,328 @@
+.login .form,
+.forgot .form,
+.support .form,
+.register .form,
+.verification .form,
+.change-password .form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  max-width: 480px;
+  min-width: 320px;
+  width: 100%;
+  height: auto;
+  position: relative;
+  /* FORM BODY*/
+}
+.login .form-wrapper,
+.forgot .form-wrapper,
+.support .form-wrapper,
+.register .form-wrapper,
+.verification .form-wrapper,
+.change-password .form-wrapper {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.login .form-body,
+.forgot .form-body,
+.support .form-body,
+.register .form-body,
+.verification .form-body,
+.change-password .form-body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+  padding: 48px;
+  border-radius: 20px;
+  -webkit-box-shadow: var(--medium-shadow);
+          box-shadow: var(--medium-shadow);
+  background-color: var(--block-color);
+  /* FORM BODY TITLE*/
+  /* FORM BODY FOOTER */
+}
+.login .form-body-header,
+.forgot .form-body-header,
+.support .form-body-header,
+.register .form-body-header,
+.verification .form-body-header,
+.change-password .form-body-header {
+  margin-bottom: 16px;
+}
+.login .form-body-title,
+.forgot .form-body-title,
+.support .form-body-title,
+.register .form-body-title,
+.verification .form-body-title,
+.change-password .form-body-title {
+  text-shadow: var(--easy-shadow);
+  text-align: center;
+  color: var(--font-color);
+  cursor: default;
+  font-size: 24px;
+  letter-spacing: 1.4px;
+  font-weight: 400;
+}
+.login .form-body-footer,
+.forgot .form-body-footer,
+.support .form-body-footer,
+.register .form-body-footer,
+.verification .form-body-footer,
+.change-password .form-body-footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.login .form-body-footer .link,
+.forgot .form-body-footer .link,
+.support .form-body-footer .link,
+.register .form-body-footer .link,
+.verification .form-body-footer .link,
+.change-password .form-body-footer .link {
+  opacity: 0.7;
+  cursor: default;
+}
+.login .form-body-footer .btn,
+.forgot .form-body-footer .btn,
+.support .form-body-footer .btn,
+.register .form-body-footer .btn,
+.verification .form-body-footer .btn,
+.change-password .form-body-footer .btn {
+  padding: 0px;
+}
+.login .form-body-footer .btn-text,
+.forgot .form-body-footer .btn-text,
+.support .form-body-footer .btn-text,
+.register .form-body-footer .btn-text,
+.verification .form-body-footer .btn-text,
+.change-password .form-body-footer .btn-text {
+  width: 100%;
+  height: 100%;
+}
+
+.forgot .form,
+.support .form,
+.register .form,
+.verification .form,
+.change-password .form {
+  /* FORM BODY*/
+}
+.forgot .form-body,
+.support .form-body,
+.register .form-body,
+.verification .form-body,
+.change-password .form-body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+  padding: 48px;
+  border-radius: 20px;
+  -webkit-box-shadow: var(--medium-shadow);
+          box-shadow: var(--medium-shadow);
+  background-color: var(--block-color);
+  /* FORM BODY TITLE TEXT*/
+  /* FORM BODY FOOTER */
+}
+.forgot .form-body-text,
+.support .form-body-text,
+.register .form-body-text,
+.verification .form-body-text,
+.change-password .form-body-text {
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(var(--rgb-font-color), 0.75);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: center;
+}
+.forgot .form-body-text-number,
+.support .form-body-text-number,
+.register .form-body-text-number,
+.verification .form-body-text-number,
+.change-password .form-body-text-number {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: var(--font-color);
+  font-weight: bold;
+  font-size: 16px;
+}
+.forgot .form-body-text-group,
+.support .form-body-text-group,
+.register .form-body-text-group,
+.verification .form-body-text-group,
+.change-password .form-body-text-group {
+  margin-top: 10px;
+}
+.forgot .form-body-footer,
+.support .form-body-footer,
+.register .form-body-footer,
+.verification .form-body-footer,
+.change-password .form-body-footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.forgot .form-body-footer .link,
+.support .form-body-footer .link,
+.register .form-body-footer .link,
+.verification .form-body-footer .link,
+.change-password .form-body-footer .link {
+  opacity: 0.7;
+  cursor: default;
+}
+.forgot .form-body-footer .link:hover,
+.support .form-body-footer .link:hover,
+.register .form-body-footer .link:hover,
+.verification .form-body-footer .link:hover,
+.change-password .form-body-footer .link:hover {
+  opacity: 0.9;
+}
+.forgot .form-body-footer .btn,
+.support .form-body-footer .btn,
+.register .form-body-footer .btn,
+.verification .form-body-footer .btn,
+.change-password .form-body-footer .btn {
+  padding: 0px;
+}
+.forgot .form-body-footer .btn-text,
+.support .form-body-footer .btn-text,
+.register .form-body-footer .btn-text,
+.verification .form-body-footer .btn-text,
+.change-password .form-body-footer .btn-text {
+  width: 100%;
+  height: 100%;
+}
+
+.forgot,
+.support,
+.register,
+.change-password {
+  /* FORM */
+}
+.forgot .form,
+.support .form,
+.register .form,
+.change-password .form {
+  /* FORM BODY*/
+}
+.forgot .form-body,
+.support .form-body,
+.register .form-body,
+.change-password .form-body {
+  /* FORM BODY FOOTER */
+}
+.forgot .form-body-footer,
+.support .form-body-footer,
+.register .form-body-footer,
+.change-password .form-body-footer {
+  /* Link */
+}
+.forgot .form-body-footer .link,
+.support .form-body-footer .link,
+.register .form-body-footer .link,
+.change-password .form-body-footer .link {
+  -webkit-box-shadow: 0px 0px 0.5px 1px rgba(var(--rgb-default), 0.1);
+          box-shadow: 0px 0px 0.5px 1px rgba(var(--rgb-default), 0.1);
+}
+.forgot .form-body-footer .link:hover,
+.support .form-body-footer .link:hover,
+.register .form-body-footer .link:hover,
+.change-password .form-body-footer .link:hover {
+  -webkit-box-shadow: 0px 0px 0.5px 1px rgba(var(--rgb-default), 0.2);
+          box-shadow: 0px 0px 0.5px 1px rgba(var(--rgb-default), 0.2);
+}
+.forgot .form-body-footer .btn,
+.support .form-body-footer .btn,
+.register .form-body-footer .btn,
+.change-password .form-body-footer .btn {
+  margin-top: 24px;
+  margin-bottom: 40px;
+}
+
+.login .form {
+  /* FORM BODY*/
+}
+.login .form::-webkit-scrollbar {
+  width: 0px;
+}
+.login .form-body {
+  /* FORM BODY FOOTER */
+}
+.login .form-body-footer {
+  margin-bottom: 20px;
+}
+.login .form-body-footer .link {
+  -webkit-transition: 0.5s all;
+  transition: 0.5s all;
+}
+.login .form-body-footer .link:nth-child(1) {
+  padding-left: 0px;
+}
+.login .form-body-footer .link:nth-child(2) {
+  padding-right: 0px;
+}
+.login .form-body-footer .link-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}

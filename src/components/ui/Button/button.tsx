@@ -1,41 +1,26 @@
-import { FC, MouseEventHandler } from 'react'
+import { FC } from 'react'
 import classNames from 'classnames'
-
-import './index.sass'
 import { Link } from 'react-router-dom'
+import { ButtonProps } from 'types/props'
 
-interface ButtonProps {
-    link?: string
-    id?: string
-    text?: string
-    className?: string
-    size?: 'small' | 'medium' | 'large'
-    type?: 'button' | 'submit' | 'reset'
-    onClick?: MouseEventHandler<HTMLButtonElement>
-    children?: JSX.Element | JSX.Element[]
-    variant?: 'primary' | 'secondary' | 'default' | 'disabled' | 'warning'
-    fullSize?: boolean
-    noReset?: boolean
-    circle?: boolean
-}
-
-const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, variant, onClick, children, noReset, link, circle }) => {
+const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, variant, onClick, children, noReset, link, circle, button, noSize, ...args }) => {
+    type =  type === undefined && !link ? 'button' : type
     const classes = classNames(
-        link ? 'link' : 'btn',
-        size,
+        link && type !== 'button' ? 'link' : 'btn',
+        !noSize && size,
         className,
         fullSize && 'full',
         circle && 'circle',
     )
     const classesText = classNames(
         link ? 'link-text' : 'btn-text',
-        size,
+        // size,
         variant,
     )
 
     const clickHandler = (e) => {
         noReset && e.preventDefault()
-        return onClick(e)
+        return onClick && onClick(e)
     }
 
     return (
@@ -49,7 +34,9 @@ const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, va
                         id={id}
                         type={type}
                         className={classes}
-                        onClick={(e) => clickHandler(e)}>
+                        onClick={(e) => clickHandler(e)}
+                        {...args}
+                        >
                         <span className={classesText}>{ children ? children : text }</span>
                     </button>
             }
@@ -61,11 +48,12 @@ Button.defaultProps = {
     className: '',
     text: 'Submit',
     size: 'medium',
-    type: 'button',
-    variant: 'default',
+    type: undefined,
+    variant: 'none',
     fullSize: false,
     noReset: false,
     circle: false,
+    noSize: false,
     link: undefined,
 }
 

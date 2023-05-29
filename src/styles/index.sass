@@ -1,6 +1,5 @@
 @import core/index
 
-
 body
     background-color: var(--background-color)
     font-family: var(--font-family)
@@ -16,7 +15,7 @@ body
     -moz-user-select: none        // Firefox
     -ms-user-select: none         // Internet Explorer/Edge
     user-select: none             // Non-prefixed version, currently
-                                    //   not supported by any browser
+                                  //   not supported by any browser
 
 
 
@@ -53,7 +52,12 @@ textare:-webkit-autofill:focus
     height: 100vh
     overflow: hidden
 
+.page
+    width: 100%
+    height: 100%
+    display: flex
+    position: relative
 
 
-// @import components/index
 @import pages/index
+@import components/index

@@ -1,0 +1,106 @@
+@media (max-width: 720px)
+    .page
+        background-color: var(--block-color)
+        /* ACTIONS */
+        .actions
+            flex-direction: row-reverse
+            justify-content: flex-start
+            align-items: flex-start
+
+            position: static
+            background-color: var(--block-color)
+
+            /* TOGGLE THEME */
+            .theme-toggle
+                width: 56px
+                height: 56px
+
+            /* TOGGLE LANGUAGE */
+            .language-toggle
+                flex-direction: row-reverse
+                &[data-state='open']
+                    .language-toggle
+                        &-selected
+                            box-shadow: none
+                            background-color: var(--block-color)
+                        &-list
+                            padding: 0px  6px 0px 6px 
+                            margin-top: 0px
+                        &-item
+                            min-width: 32px
+                            max-width: 32px
+                &[data-state='close']
+                    .language-toggle
+                        &-selected
+                            &:hover
+                                color: var(--font-color)
+                                text-shadow: none
+                        &-item
+                            max-width: 0px
+
+                &-selected
+                    width: 56px
+                    height: 56px
+                &-list
+                    flex-direction: row-reverse
+                    justify-content: center
+                    align-items: center
+                    width: auto
+                    overflow: auto
+                    max-width: 172px
+                    height: 36px
+
+                &-item
+                    height: 32px
+                    width: 32px
+                    max-width: 0
+                    max-height: auto
+        
+        
+        /* FORM */
+        .form
+            position: static
+            align-items: center
+            justify-content: center
+            padding: 0px 28px 
+            &-wrapper
+                position: relative
+                height: auto
+                justify-content: flex-start
+
+            /* FORM BODY */
+            &-body
+                flex-grow: 1
+                box-shadow: none
+                padding: 0px 20px 20px 20px
+                
+                &-footer
+                    .link-text
+                        font-size: 12px
+
+            /* FORM FOOTER */
+            &-footer
+                position: static
+
+       
+        /* FOOTER */ 
+        .footer
+            align-items: center
+            position: static
+            background-color: var(--block-color)
+            .help
+                .help-text
+                    font-size: 14px
+                .help-icon
+                    width: 14px
+
+@media (max-width: 420px)
+    .page
+        /* FORM */
+        .form
+            /* FORM BODY */
+            &-body
+                padding-right: 10px
+                padding-left: 10px
+                &-title
+                    font-size: 20px

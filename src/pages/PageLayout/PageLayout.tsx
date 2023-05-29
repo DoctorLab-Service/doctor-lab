@@ -6,13 +6,14 @@ import { usePathname } from 'hooks'
 import classNames from 'classnames'
 
 const PageLayout: FC<PageLayoutProps> = ({ toggleTheme, darkMode }) => {
-    const { pagename } = usePathname()
+    const { pagename, pathname } = usePathname()
     const isNotSupport = pagename !== 'support'
-    console.log(pagename === 'changePassword' ? 'change-password' : pagename)
     const classes = classNames(
         'page',
         pagename === 'changePassword' ? 'change-password' : pagename
     )
+
+    console.log(pathname)
     return (
         <div className={classes}>
 

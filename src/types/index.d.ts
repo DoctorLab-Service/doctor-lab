@@ -39,3 +39,12 @@ export interface UsePaths {
     hostname: string
     paths: any
 }
+
+export interface UseLanguage {
+    value: string
+    changeLanguage: (e: any) => void
+    currentLanguage: string
+    setCurrentLanguage: Dispatch<SetStateAction<string>>
+    languages: LanguagesOptions[]
+    setLanguages: Dispatch<SetStateAction<LanguagesOptions[]>>
+}

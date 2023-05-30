@@ -1,111 +1,90 @@
 {
     "auth": {
-        "base": {
+        "core": {
             "help": "Help",
-            "authBtn": "I have account",
+            "loginLink": "I have account",
             "inputs": {
+                "login": "E-Mail or Phone", 
                 "fullname": "Fullname",
                 "email": "E-Mail",
                 "phone": "Phone",
+                "code": "Your code from sms",
                 "password": "Password",
-                "confirm": "Confirm password",
-                "clinicName": "Clinic name",
-                "country": "Country",
-                "state": "State",
-                "city": "City",
-                "clinicAddress": "Clinic address",
-                "help": "Write your question"
-            }
-        },
-        "forgot": {
-            "title": "Forgot password",
-            "info": "Enter the E-Mail to which your account was registered to reset your password",
-            "buttons": {
-                "back": "Back",
-                "submit": "Remind"
-            }
-        },
-        "reset": {
-            "title": "Reset password",
-            "buttons": {
-                "submit": "Submit",
-                "cancel": "Cancel"
+                "newPassword": "New password",
+                "confirmPassword": "Confirm password",
+                "subject": "Subject",
+                "support": "Write your question"
             }
         },
         "login": {
-            "title": "Sign In",
-            "selectList": [
-                [
-                    "dentist",
-                    "Dentist"
-                ],
-                [
-                    "patient",
-                    "Patient"
-                ]
-            ],
+            "title":  "Sign In as",
+            "roles": {
+                "doctor": "Doctor",
+                "dentist": "Dentist",
+                "patient": "Patient",
+                "admin": "Admin"
+            },
             "buttons": {
-                "submit": "Sign In",
-                "facebook": "Continue with Facebook",
-                "google": "Continue with Google"
+                "submit": "Sign In"
             },
             "links": {
                 "forgot": "Forgot password?",
                 "register": "Have not account"
             }
         },
-        "dentist": {
-            "title": "Dentist registration",
-            "steps": {
-                "step": "Step ",
-                "of": "of"
-            },
-            "experience": {
-                "label": "Experience: ",
-                "years": [
-                    [
-                        "1",
-                        "1 year"
-                    ],
-                    [
-                        "3",
-                        "3 years"
-                    ],
-                    [
-                        "5",
-                        "5 years"
-                    ],
-                    [
-                        "7",
-                        "7 years"
-                    ],
-                    [
-                        "more",
-                        "More 7 years"
-                    ]
-                ]
+        "register": {
+            "title":  "Sign Up as",
+            "roles": {
+                "doctor": "Doctor",
+                "dentist": "Dentist",
+                "patient": "Patient",
+                "admin": "Admin"
             },
             "buttons": {
-                "next": "Next step",
-                "submit": "Create",
-                "cancel": "Back"
+                "submit": "Create Account"
             }
         },
-        "patient": {
-            "title": "Patient registration",
+        "forgot": {
+            "title": "Forgot password",
+            "info": "Enter the email to which your account was registered to reset your password",
             "buttons": {
-                "submit": "Create account"
+                "submit": "Submit"
+            },
+            "links": {
+                "cancel": "I remember the password"
+            }
+        },
+        "verification": {
+            "title": "Verification",
+            "info": "A token has been sent to your email to confirm your mail. E-Mail confirmation will allow you to use it to log into your account.",
+            "infoGroup": [
+                "A verification code has been sent to your number",
+                "Enter it to verify your number."
+            ],
+            "buttons": {
+                "submit": "Submit"
+            },
+            "links": {
+                "cancel": "Cancel"
             }
         },
         "change": {
-            "title": "Change as:",
-            "patient": "Patient",
-            "dentist": "Dentist"
-        },
-        "help": {
-            "title": "You need help?",
+            "title": "Change password",
+            "info": "After changing the password, you can use its login for your account.",
             "buttons": {
-                "submit": "Submit",
+                "submit": "Submit"
+            },
+            "links": {
+                "cancel": "I remember the password"
+            }
+        },
+        "support": {
+            "title": "Support",
+            "info": "You can enter the question to which you will get an answer in the specified email.",
+            "buttons": {
+                "submit": "Submit"
+            },
+            "links": {
                 "cancel": "Cancel"
             }
         }

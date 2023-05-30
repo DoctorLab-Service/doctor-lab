@@ -1,49 +1,33 @@
-import { useState, useEffect, FC } from 'react'
+import { useState, FC } from 'react'
 
-import { localStorageKey } from 'core/localstorage'
-import { ToggleLanguageProps, LanguagesOptions } from 'types/props'
+import { ToggleLanguageProps } from 'types/props'
+import { useLanguage } from 'hooks'
 
 
-const ToggleLanguage: FC<ToggleLanguageProps> = ({ langauges, defaultValue }) => {
+const ToggleLanguage: FC<ToggleLanguageProps> = () => {
+    const languagesMock = [
+        { value: 'EN', checked: true, },
+        { value: 'RU', checked: false, },
+    ]
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [options, setOptions] = useState<LanguagesOptions[]>(langauges)
-    const [value, setValue] = useState<string>(defaultValue)
-
-
-    useEffect(() => {
-        const currentLang = localStorage.getItem(localStorageKey.language)
-        const existLang = options.filter(option => option.value === currentLang)
-        
-        currentLang === null && localStorage.setItem(localStorageKey.language, value)
-        existLang.length ? setValue(currentLang) : setValue(defaultValue)
-
-    }, [defaultValue, options, value])
-
-    const openList = (e) => {
-        setIsOpen(!isOpen)
-    }
-    const checkOption = (e) => {
-        const optionValue = e.target.textContent
-        localStorage.setItem(localStorageKey.language, optionValue)
-        setValue(optionValue)
-        setIsOpen(false)
-    }
+    const { languages, value, changeLanguage } = useLanguage('EN', languagesMock)
+    
     return (
         <div 
             className='language-toggle' 
-            data-state={isOpen && options.length > 1 ? 'open' : 'close'}  
+            data-state={isOpen && languages.length > 1 ? 'open' : 'close'}  
             onMouseLeave={() => setIsOpen(false)}
         >
-            <div className='language-toggle-selected' onClick={(e) => openList(e)}>{value}</div>
+            <div className='language-toggle-selected' onClick={() => setIsOpen(!isOpen)}>{value}</div>
             <ul className='language-toggle-list'>
                 {
-                    options && options.map((option, idx) => {
+                    languages && languages.map((option, idx) => {
                         return option.value !== value && (
                             <li
                                 key={idx}
                                 id={option.value}
                                 className='language-toggle-item'
-                                onClick={e => checkOption(e)}
+                                onClick={e => changeLanguage(e)}
                             ><span>{option.value}</span></li>
                         )
                     })
@@ -53,7 +37,7 @@ const ToggleLanguage: FC<ToggleLanguageProps> = ({ langauges, defaultValue }) =>
     )
 }
 ToggleLanguage.defaultProps = {
-    langauges: [{ value: 'EN', checked: true, }],
+    languages: [{ value: 'EN', checked: true, }],
     defaultValue: 'EN'    
 
 }

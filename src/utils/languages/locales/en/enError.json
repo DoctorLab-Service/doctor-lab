@@ -6,7 +6,7 @@
         },
         "password": {
             "length": "Password must be between 6-32 characters",
-            "Equal": "Passwords do not match",
+            "equal": "Passwords do not match",
             "password": "Incorrect password"
         },
         "phone": {

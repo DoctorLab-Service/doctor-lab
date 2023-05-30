@@ -97,10 +97,7 @@ export interface SupportLinkProps {
 
 export interface ToggleThemeProps extends DefaultProps { }
 
-export interface ToggleLanguageProps {
-    langauges?: LanguagesOptions[]
-    defaultValue?: string
-}
+export interface ToggleLanguageProps {}
 
 export interface LanguagesOptions {
     value: string

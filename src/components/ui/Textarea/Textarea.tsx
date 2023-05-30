@@ -36,7 +36,6 @@ const Textarea: FC<TextareaProps> = ({ children, id, image, status, className, a
                     autoComplete={autoComplete}
                     name={name ? name : id}
                     placeholder={placeholder}
-                    value={value}
                     {...args}
                 >
                     { value || children }

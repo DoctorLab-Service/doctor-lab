@@ -1,9 +1,9 @@
 
-import { useDarkMode, usePaths } from 'hooks'
+import { useDarkMode, useLanguage, usePaths } from 'hooks'
 import { Link, Route, Routes } from 'react-router-dom'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import 'utils/languages/i18next'
@@ -13,30 +13,24 @@ const App = (props) => {
     const { paths } = usePaths()
     const { darkMode, toggleTheme } = useDarkMode()
 
-    const [lng, setLng] = useState<string>('en')
+    const { currentLanguage } = useLanguage('EN')
     const { i18n } = useTranslation();
 
     useEffect(() => {
-        i18n.changeLanguage(lng)
-    }, [i18n, lng])
-
-    const changeLanguage = (lng: string): void => {
-        setLng(lng)
-    }
-
-
+        i18n.changeLanguage(currentLanguage)
+    }, [i18n, currentLanguage])
 
     return (
         <div className='app'>
             <Routes>
                 {/* LOGIN LINKS */}
-                <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />}>
+                <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >
                     <Route path={paths.auth} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} />
                     <Route path={paths.login} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} />
                 </Route>
 
                 {/* REGISTER LINKS */}
-                <Route path={paths.register.register} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />}>
+                <Route path={paths.register.register} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >
                     <Route path={paths.register.patient} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} />
                     <Route path={paths.register.doctor.doctor} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} />
                     <Route path={paths.register.doctor.dentist} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} />

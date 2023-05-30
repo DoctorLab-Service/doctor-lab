@@ -1,7 +1,6 @@
 
-import { useDarkMode } from 'hooks'
+import { useDarkMode, usePaths } from 'hooks'
 import { Link, Route, Routes } from 'react-router-dom'
-import { paths } from 'core'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
 
 import { useState, useEffect } from 'react'
@@ -11,6 +10,7 @@ import 'utils/languages/i18next'
 import 'styles/index.sass'
 
 const App = (props) => {
+    const { paths } = usePaths()
     const { darkMode, toggleTheme } = useDarkMode()
 
     const [lng, setLng] = useState<string>('en')

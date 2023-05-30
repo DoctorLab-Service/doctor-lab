@@ -1,5 +1,9 @@
 export type SocialProviders = 'facebook' | 'google'
 
+export type Paths = {
+    [key: string]: any
+}
+
 export interface SVGProps {
     className?: string
 }
@@ -29,7 +33,9 @@ export interface UseRoles {
     changeRole: (idx: number) => void
 }
 
-export interface UsePathname {
+export interface UsePaths {
     pathname: string
     pagename: FormType
+    hostname: string
+    paths: any
 }

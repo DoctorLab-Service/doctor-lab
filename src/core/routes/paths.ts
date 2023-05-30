@@ -1,3 +1,5 @@
+import { Paths } from "types"
+
 const codes = {
     register: '/r',
     forgot: '/f', 
@@ -9,32 +11,35 @@ const gPaths = {
     auth: '/auth'
 }
 
-export const paths = {
+const isAuth = (auth = false): string => auth ? gPaths.auth : ''
+
+
+export const paths = (auth = false): Paths => ({
     main: gPaths.main,
     auth: gPaths.auth,
-    login: `${gPaths.auth}/login`,
+    login: `${isAuth(auth)}/login`,
     register: {
-        register: `${gPaths.auth}${codes.register}`,
-        patient: `${gPaths.auth}${codes.register}/patient`,
+        register: `${isAuth(auth) }${codes.register}`,
+        patient: `${isAuth(auth) }${codes.register}/patient`,
         doctor: {
-            doctor: `${gPaths.auth}${codes.register}/doctor`,
-            dentist: `${gPaths.auth}${codes.register}/dentist`,
+            doctor: `${isAuth(auth) }${codes.register}/doctor`,
+            dentist: `${isAuth(auth) }${codes.register}/dentist`,
             // ... other paths for doctors.
         },
     },
     forgot: {
-        phone: `${gPaths.auth}${codes.forgot}/phone`,
-        password: `${gPaths.auth}${codes.forgot}/password`,
+        phone: `${isAuth(auth)}${codes.forgot}/phone`,
+        password: `${isAuth(auth)}${codes.forgot}/password`,
     },
     cahnge: {
-        // phone: `${gPaths.auth}${codes.cahnge}/phone`,
-        password: `${gPaths.auth}${codes.cahnge}/password`,
+        // phone: `${isAuth(auth)}${codes.cahnge}/phone`,
+        password: `${isAuth(auth)}${codes.cahnge}/password`,
     },
     verification: {
-        phone: `${gPaths.auth}${codes.verify}/phone`,
-        password: `${gPaths.auth}${codes.verify}/password`,
+        phone: `${isAuth(auth)}${codes.verify}/phone`,
+        password: `${isAuth(auth)}${codes.verify}/password`,
     },
     support: '/support',
     privacyPolicy: '/privacy-policy',
     termOfUse: '/term-of-use',
-}
+})

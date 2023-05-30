@@ -1,8 +1,8 @@
-import { usePathname, useRoles } from 'hooks'
+import { usePaths, useRoles } from 'hooks'
 import { Helmet } from 'react-helmet-async'
 
 const Title = () => {
-    const { pagename } = usePathname()
+    const { pagename } = usePaths()
     const { currentRole } = useRoles()
 
     const upperPagename = pagename[0].toUpperCase() + pagename.slice(1).toLowerCase()

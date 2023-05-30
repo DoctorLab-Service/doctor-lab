@@ -1,12 +1,13 @@
 import { FC } from 'react'
 import { InputGroup } from 'components'
-import { paths } from 'core'
 import { FormBodyProps } from 'types/props'
 import FormBodyFooter from './FormBodyFooter'
 import FormBodyHeader from './FormBodyHeader'
+import { usePaths } from 'hooks'
 
 
 const FormBody: FC<FormBodyProps> = ({ currentRole, pagename }) => {
+    const { paths } = usePaths()
     const pathWithRole = currentRole === 'doctor' || currentRole === 'dentist' 
         ? paths.register.doctor[currentRole] 
         : currentRole !== 'admin' ? paths.register[currentRole] : paths.login

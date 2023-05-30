@@ -1,7 +1,9 @@
 import { Support } from 'components'
-import { paths } from 'core'
+import { usePaths } from 'hooks'
 
 const Footer = () => {
+    const { paths } = usePaths()
+    
     return (
         <footer className="footer">
             <Support path={paths.support}/>

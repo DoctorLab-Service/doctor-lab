@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { usePathname, useRoles } from 'hooks'
+import { usePaths, useRoles } from 'hooks'
 import { FormProps } from 'types/props'
 import FormFooter from './FormFooter'
 import FormHeader from './FormHeader'
@@ -7,7 +7,7 @@ import { FormBody } from 'modules'
 
 const Form: FC<FormProps> = ({ darkMode }) => {
     const { roles, changeRole, currentRole } = useRoles()
-    const { pagename } = usePathname()
+    const { pagename } = usePaths()
 
     const isLogin = pagename === 'login'
 

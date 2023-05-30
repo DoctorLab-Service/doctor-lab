@@ -1,9 +1,11 @@
 import { Button } from 'components/ui'
-import { paths } from 'core'
+import { usePaths } from 'hooks'
 import { FC } from 'react'
 import { FormBodyFooterProps } from 'types/props'
 
 const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onClick }) => {
+    const { paths } = usePaths()
+    
     const isLogin = pagename === 'login'
     const isRegister = pagename === 'register'
     const isForgot = pagename === 'forgot'

@@ -1,36 +1,40 @@
-import i18next from "i18next"
+import i18next from 'i18next'
+import Backend from 'i18next-http-backend'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from "react-i18next"
 
-import { localStorageKey } from "core/localstorage"
 import { translations } from 'utils'
 
 
 
-const fallbackLng = ['en']
+const fallbackLng = ['EN']
 
 
 const { enAuth, enError } = translations
 const { ruAuth, ruError } = translations
 
 const languages = {
-    en: {
+    EN: {
         ...enAuth,
         ...enError
     },
-    ru: {
+    RU: {
         ...ruAuth,
         ...ruError
     }
 }
 
 i18next
+    .use(Backend)
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
     debug: false,
     resources: languages,
     fallbackLng,
+    interpolation: {
+        escapeValue: false
+    },
     detection: {
         // order and from where user language should be detected
         // order: ['querystring', 'cookie', 'localStorage'],

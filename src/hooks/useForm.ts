@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useValidation } from 'hooks'
-import { UseFormResponse } from 'types'
+import { Form, UseForm } from 'types'
 
 
-
-export const useForm = (initialState: Record<string, any> = {}): UseFormResponse => {
+export const useForm = (initialState: Record<string, any> = {}): UseForm => {
     const [form, setForm] = useState<Record<string, any>>(initialState)
 
-    const { validationInput, validate, emptyForm } = useValidation()
+    const { validationInput, validate, isEmpty, setValidate, setForm: setInitialForm } = useValidation()
+
+    useEffect(() => {
+        setInitialForm(form)
+    }, [form, setInitialForm])
 
     const onFocus = (e) => {
         console.log(e.target.focus)
@@ -31,14 +34,32 @@ export const useForm = (initialState: Record<string, any> = {}): UseFormResponse
         console.log(form)
     }
 
+    const emptyForm = (form: Form): boolean => {
+        if (!isEmpty(form)) {
+            const formLength = Object.keys(form)
+            const fieldsLength = []
+            
+            for(let key in form) {
+                if(form[key].length) fieldsLength.push(form[key])
+            }
+            return formLength.length !== fieldsLength.length
+        }
+
+        return true
+    }  
+ 
+    const clearValidate = () => setValidate({})
 
     return {
-        onChange,
-        onSubmit,
-        onFocus,
-        onBlur,
-        validate,
         form,
+        onBlur,
+        onFocus,
+        setForm,
+        onSubmit,
+        onChange,
+        validate,
+        setValidate,
+        clearValidate,
         emptyForm: emptyForm(form)
     }
 }

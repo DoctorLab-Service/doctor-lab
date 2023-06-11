@@ -1,10 +1,7 @@
 
-import { useDarkMode, useLanguage, usePaths } from 'hooks'
+import { useDarkMode, usePaths } from 'hooks'
 import { Link, Route, Routes } from 'react-router-dom'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
-
-import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 
 import 'utils/languages/i18next'
 import 'styles/index.sass'
@@ -12,13 +9,6 @@ import 'styles/index.sass'
 const App = (props) => {
     const { paths } = usePaths()
     const { darkMode, toggleTheme } = useDarkMode()
-
-    const { currentLanguage } = useLanguage('EN')
-    const { i18n } = useTranslation();
-
-    useEffect(() => {
-        i18n.changeLanguage(currentLanguage)
-    }, [i18n, currentLanguage])
 
     return (
         <div className='app'>

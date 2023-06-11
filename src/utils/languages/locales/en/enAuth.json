@@ -1,8 +1,7 @@
 {
     "auth": {
         "core": {
-            "help": "Help",
-            "loginLink": "I have account",
+            "support": "Help",
             "inputs": {
                 "login": "E-Mail or Phone", 
                 "fullname": "Fullname",
@@ -13,11 +12,11 @@
                 "newPassword": "New password",
                 "confirmPassword": "Confirm password",
                 "subject": "Subject",
-                "support": "Write your question"
+                "supportMessage": "Write your question"
             }
         },
         "login": {
-            "title":  "Sign In as",
+            "title":  "Sign In as a",
             "roles": {
                 "doctor": "Doctor",
                 "dentist": "Dentist",
@@ -33,7 +32,7 @@
             }
         },
         "register": {
-            "title":  "Sign Up as",
+            "title":  "Sign Up as a",
             "roles": {
                 "doctor": "Doctor",
                 "dentist": "Dentist",
@@ -42,6 +41,9 @@
             },
             "buttons": {
                 "submit": "Create Account"
+            },
+            "links": {
+                "login": "I have an account"
             }
         },
         "forgot": {
@@ -51,7 +53,7 @@
                 "submit": "Submit"
             },
             "links": {
-                "cancel": "I remember the password"
+                "back": "I remember the password"
             }
         },
         "verification": {
@@ -65,17 +67,17 @@
                 "submit": "Submit"
             },
             "links": {
-                "cancel": "Cancel"
+                "back": "Change phone"
             }
         },
-        "change": {
+        "changePassword": {
             "title": "Change password",
-            "info": "After changing the password, you can use its login for your account.",
+            "info": "After changing the password, you can \n use its login for your account.",
             "buttons": {
                 "submit": "Submit"
             },
             "links": {
-                "cancel": "I remember the password"
+                "back": "I remember the password"
             }
         },
         "support": {

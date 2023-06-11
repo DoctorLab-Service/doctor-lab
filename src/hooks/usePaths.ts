@@ -1,9 +1,11 @@
 import { paths as defaultPath } from "core"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Paths, UsePaths } from "types"
 
 export const usePaths = (): UsePaths => {
-    const { pathname } = useLocation()
+    const { pathname, state } = useLocation()
+    const navigate = useNavigate()
+
     const hostname = document.location.hostname.split('.')[0]
     const paths: Paths = defaultPath(hostname !== 'auth')
 
@@ -17,7 +19,12 @@ export const usePaths = (): UsePaths => {
         : 'login'
 
 
-
-       
-    return { pathname, pagename, hostname, paths }
+    return { 
+        state,
+        paths,
+        navigate,
+        pathname,
+        pagename,
+        hostname,
+    }
 }

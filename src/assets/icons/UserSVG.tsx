@@ -4,10 +4,10 @@ import { SVGProps } from '../types'
 const UserSVG: FC<SVGProps> = ({ className }) => {
     return (
         <span className={className}>
-            <svg id='UserSVG' className={`${className}-svg`} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <rect width="24" height="24" fill="white" />
-                <path fillRule="evenodd" clipRule="evenodd" d="M6 8C6 4.68629 8.68629 2 12 2C15.3137 2 18 4.68629 18 8C18 11.3137 15.3137 14 12 14C8.68629 14 6 11.3137 6 8Z" fill="#323232" />
-                <path fillRule="evenodd" clipRule="evenodd" d="M5.43094 16.9025C7.05587 16.2213 9.2233 16 12 16C14.771 16 16.9351 16.2204 18.5586 16.8981C20.3012 17.6255 21.3708 18.8613 21.941 20.6587C22.1528 21.3267 21.6518 22 20.9592 22H3.03459C2.34482 22 1.84679 21.3297 2.0569 20.6654C2.62537 18.8681 3.69119 17.6318 5.43094 16.9025Z" fill="#323232" />
+            <svg id='UserSVG' className={`${className}-svg`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="User">
+                    <path id="Vector" d="M20 21C20 18.2386 16.4183 16 12 16C7.58172 16 4 18.2386 4 21M12 13C9.23858 13 7 10.7614 7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8C17 10.7614 14.7614 13 12 13Z" stroke="#000000" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                </g>
             </svg>
         </span>
     )

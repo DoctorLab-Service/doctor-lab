@@ -1,14 +1,11 @@
-import { RolesList, SocialProviders } from "types"
+import { CurrentRole, RolesList, SocialProviders, Validate } from "types"
 import {
     ButtonSize,
-    ButtonType,
-    ButtonVariant,
-    DefaultProps,
     FormType,
+    statusimage,
+    DefaultProps,
+    ButtonVariant,
     InputAutoComplete,
-    InputStatus,
-    Roles,
-    statusimage
 } from "./core"
 
 // MODULES
@@ -38,16 +35,21 @@ export interface ContentProps {
 //  COMPONENTS
 export interface FormBodyHeaderProps {
     pagename: FormType
-    currentRole?: Roles
+    currentRole?: CurrentRole
+    formState: Form
 }
 
 export interface FormBodyFooterProps {
-    pathWithRole?: string
+    paths?: any
+    emptyForm?: boolean
     pagename?: FormType
-    onClick: () => void
+    pathWithRole?: string
+    toRegister?: () => void
+    toVerification?: () => void
+    onClick?: (e: MouseEventHandler<HTMLButtonElement>) => void
 }
 export interface FormBodyProps {
-    currentRole?: Roles
+    currentRole?: CurrentRole
     pagename?: FormType
 }
 
@@ -58,16 +60,16 @@ export interface FormHeaderProps {
 
 }
 export interface SocialButtonProps {
-    provider: SocialProviders
-    circle?: boolean
+    text?: string
     scope?: string
+    icon?: boolean
+    circle?: boolean
+    className?: string
+    children?: ReactNode
     redirect_uri?: string
+    provider: SocialProviders
     onLoginStart?: () => void
     onLogoutSuccess?: () => void
-    className?: string
-    icon?: boolean
-    text?: string
-    children?: ReactNode
 }
 
 export interface SocialProps {
@@ -104,24 +106,33 @@ export interface LanguagesOptions {
     checked: boolean
 }
 
+
+export interface FieldsProps {
+    placeholders?: any
+    setForm?: Dispatch<SetStateAction<Record<string, Form>>>
+    setValidate?: Dispatch<SetStateAction<Record<string, any>>>
+}
+
 export interface InputGroupProps {
     pagename?: FormType
+    setForm?: Dispatch<SetStateAction<Record<string, Form>>>
+    setValidate?: Dispatch<SetStateAction<Record<string, any>>>
 }
 
 
 export interface TextareaProps {
-    children?: ReactNode
-    value?: string
-    autoComplete?: InputAutoComplete
-    className?: string
+    args?: any
     id: string
     name?: string
-    placeholder?: string
+    value?: string
     image?: ReactNode
-    status?: InputStatus
+    className?: string
+    validate?: Validate
+    placeholder?: string
+    children?: ReactNode
     statusimage?: statusimage
     value?: string
-    args?: any
+    autoComplete?: InputAutoComplete
     onChange?: (e: InputEvent<HTMLInputElement>) => void
     onBlur?: (e: InputEvent<HTMLInputElement>) => void
     onFocus?: (e: InputEvent<HTMLInputElement>) => void
@@ -129,17 +140,17 @@ export interface TextareaProps {
 
 
 export interface InputProps {
-    autoComplete?: InputAutoComplete
-    className?: string
+    args?: any
     id: string
     name?: string
-    placeholder?: string
-    type?: HTMLInputTypeAttribute
-    image?: ReactNode
-    status?: InputStatus
-    statusimage?: statusimage
     value?: string
-    args?: any
+    className?: string
+    placeholder?: string
+    image?: ReactNode
+    validate?: Validate
+    statusimage?: statusimage
+    type?: HTMLInputTypeAttribute
+    autoComplete?: InputAutoComplete
     onChange?: (e: InputEvent<HTMLInputElement>) => void
     onBlur?: (e: InputEvent<HTMLInputElement>) => void
     onFocus?: (e: InputEvent<HTMLInputElement>) => void
@@ -147,21 +158,22 @@ export interface InputProps {
 
 
 export interface ButtonProps {
-    link?: string
+    args?: any
     id?: string
+    link?: string
     text?: string
-    className?: string
-    size?: ButtonSize
-    type?: ButtonType
-    onClick?: (e: MouseEventHandler<HTMLButtonElement>) => void
-    children?: ReactNode
-    variant?: ButtonVariant
-    fullSize?: boolean
-    noReset?: boolean
     circle?: boolean
     button?: boolean
     noSize?: boolean
-    args?: any
+    noReset?: boolean
+    fullSize?: boolean
+    disabled?: boolean
+    className?: string
+    size?: ButtonSize
+    type?: ButtonType
+    children?: ReactNode
+    variant?: ButtonVariant
+    onClick?: (e: MouseEventHandler<HTMLButtonElement>) => void
 }
 
 

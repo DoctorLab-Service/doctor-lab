@@ -1,23 +1,41 @@
 import { Button } from 'components/ui'
-import { usePaths } from 'hooks'
+
 import { FC } from 'react'
 import { FormBodyFooterProps } from 'types/props'
+import { useTranslate } from 'utils/languages'
 
-const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onClick }) => {
-    const { paths } = usePaths()
-    
+const FormBodyFooter: FC<FormBodyFooterProps> = ({ paths, pathWithRole, pagename, onClick, toVerification, toRegister, emptyForm }) => {
+    const { translation: {
+        login, forgot, changePassword, register, support, verification
+    } } = useTranslate('auth', [
+        ['login', true],
+        ['forgot', true],
+        ['changePassword', true],
+        ['register', true],
+        ['support', true],
+        ['verification', true]
+    ])
+   
     const isLogin = pagename === 'login'
     const isRegister = pagename === 'register'
     const isForgot = pagename === 'forgot'
     const isSupport = pagename === 'support'
     const isVerification = pagename === 'verification'
-    // const isChangePassword = pagename === 'changePassword'
+    const isChangePassword = pagename === 'changePassword'
 
-    const buttonText = isLogin ? 'Sign In' : isRegister ? 'Create Account' : 'Submit'
+    const buttonText = isLogin 
+        ? login.buttons.submit : isRegister 
+        ? register.buttons.submit : isForgot 
+        ? forgot.buttons.submit : isSupport 
+        ? support.buttons.submit : isVerification
+        ? verification.buttons.submit : changePassword.buttons.submit
+
     const linkText = isRegister 
-        ? 'I have an account' : isSupport 
-        ? 'Cancel' : isVerification 
-        ? 'Back' : 'I remember the password'
+        ? register.links.login : isForgot 
+        ? forgot.links.back : isSupport 
+        ? support.links.cancel : isVerification
+        ? verification.links.back : changePassword.links.back
+
 
     return (
         <footer className='form-body-footer'>
@@ -27,12 +45,12 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onCli
                     <Button
                         link={pathWithRole}
                         size='medium'
-                        text='Have not account'
-                    />
+                        text={login.links.register}
+                        />
                     <Button
                         link={paths.forgot.password}
                         size='medium'
-                        text='Forgot password?'
+                        text={login.links.forgot}
                     />
                 </div>
             }
@@ -42,16 +60,20 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onCli
                 variant='primary'
                 size={!isLogin ? 'medium' : undefined}
                 type='button'
-                link={isRegister ? paths.verification.phone : undefined}
                 fullSize
-                onClick={onClick}
+                disabled={(isRegister || isChangePassword || isForgot) && emptyForm}
+                onClick={isRegister 
+                    ? emptyForm ? undefined : toVerification 
+                    : (isChangePassword || isForgot) && emptyForm ? undefined : onClick
+                }
             />
             
             {
                 !isLogin && <Button
                     size={!isForgot ? 'medium' : undefined}
-                    variant='default'
-                    link={paths.login}
+                    type='link'
+                    link={isVerification ? pathWithRole : paths.login}
+                    onClick={isVerification ? toRegister : undefined}
                     text={linkText}
                 />
             }

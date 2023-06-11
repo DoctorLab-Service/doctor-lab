@@ -1,16 +1,22 @@
 import { SuccessSVG, ErrorSVG } from 'assets/icons'
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import classNames from 'classnames'
 
 import { InputProps } from 'types/props'
+import { InputStatus } from 'types/core'
+import { useEffect } from 'react';
 
-const Input: FC<InputProps> = ({ id, image, status, className, autoComplete, type, name, placeholder, statusimage, ...args }) => {
+const Input: FC<InputProps> = ({ id, image, validate, className, autoComplete, type, name, placeholder, statusimage, ...args }) => {
     let StatusSVG: ReactNode
+    
+    const [status, setStatus] = useState<InputStatus>(undefined) 
+    
     const inputClasses = classNames('input', className)
     let fieldClasses = classNames(
         'input-field',
         !image && 'input-field-no-icon',
     )
+        
 
     switch(status) {
         case 'success':
@@ -26,6 +32,9 @@ const Input: FC<InputProps> = ({ id, image, status, className, autoComplete, typ
             break
     }
 
+    useEffect(() => {
+        setStatus(validate && validate[id] ? validate[id].status ? 'success' : 'error' : undefined )
+    }, [id, status, validate])
 
     
     return (
@@ -54,7 +63,7 @@ Input.defaultProps = {
     type: 'text',
     placeholder: 'Input text',
     image: undefined,
-    status: undefined,
+    validate: undefined,
     statusimage: undefined,
 }
 export default Input

@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { localStorageKey } from 'core/localstorage'
 import { LanguagesOptions } from 'types/props'
 import { UseLanguage } from 'types'
+import { useTranslation } from 'react-i18next'
 
 
 export const useLanguage = (defaultLanguage: string, languages: LanguagesOptions[] = []): UseLanguage => {
+    const { i18n } = useTranslation();
+
     const [options, setOptions] = useState<LanguagesOptions[]>(languages)
     const [value, setValue] = useState<string>(defaultLanguage)
     const [currentLanguage, setCurrentLanguage] = useState<string>(defaultLanguage)
@@ -25,6 +28,8 @@ export const useLanguage = (defaultLanguage: string, languages: LanguagesOptions
         localStorage.setItem(localStorageKey.language, optionValue)
         setValue(optionValue)
         setCurrentLanguage(optionValue)
+        i18n.changeLanguage(optionValue)
+        // document.location.reload()
     }
 
     return {

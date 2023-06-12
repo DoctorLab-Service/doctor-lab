@@ -80,8 +80,8 @@ export const useValidation = (): UseValidation => {
             } 
             // Validate Password to Equal if exist confirmPassword
             if (inputName === 'password' && (validateForm && !!validateForm.confirmPassword)) {
-              validateInput((validateForm && validateForm.confirmPassword === inputValue), password.equal, 'confirmPassword')
-             validateInput((inputValue.length >= 6 && inputValue.length <= 64), password.length)
+                validateInput((validateForm && validateForm.confirmPassword === inputValue), password.equal, 'confirmPassword')
+                validateInput((inputValue.length >= 6 && inputValue.length <= 64), password.length)
             }
             // Validate Confirm password to Equal
             if(inputName === 'confirmPassword') {

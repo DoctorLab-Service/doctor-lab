@@ -1,4 +1,3 @@
-
 export type SocialProviders = 'facebook' | 'google'
 
 export type Paths = {

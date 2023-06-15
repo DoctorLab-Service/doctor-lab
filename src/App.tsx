@@ -1,5 +1,5 @@
 
-import { useDarkMode, usePaths } from 'hooks'
+import { useDarkMode, useDevice, usePaths } from 'hooks'
 import { Link, Route, Routes } from 'react-router-dom'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
 
@@ -9,9 +9,11 @@ import 'styles/index.sass'
 const App = (props) => {
     const { paths } = usePaths()
     const { darkMode, toggleTheme } = useDarkMode()
+    const { device, orientation } = useDevice()
 
     return (
-        <div className='app'>
+        <div className='app' data-device={device} data-orient={orientation}>
+            <span style={{color: 'rgba(0,0,0, .5)', fontSize: '12px', marginLeft: '20px'}}>{device}</span>
             <Routes>
                 {/* LOGIN LINKS */}
                 <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >

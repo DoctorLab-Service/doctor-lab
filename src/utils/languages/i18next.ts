@@ -4,6 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from "react-i18next"
 
 import { translations } from 'utils'
+import { localStorageKey } from 'core'
 
 
 
@@ -37,13 +38,13 @@ i18next
     },
     detection: {
         // order and from where user language should be detected
-        // order: ['querystring', 'cookie', 'localStorage'],
+        order: ['querystring', 'cookie', 'localStorage'],
         // order: ['querystring', 'cookie', 'localStorage', 'sessionStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
         
         // keys or params to lookup language from
-        // lookupQuerystring: localStorageKey.language,
-        // lookupCookie: localStorageKey.language,
-        // lookupLocalStorage: localStorageKey.language,
+        lookupQuerystring: localStorageKey.language,
+        lookupCookie: localStorageKey.language,
+        lookupLocalStorage: localStorageKey.language,
         
         // Default params
         // lookupQuerystring: 'lng',

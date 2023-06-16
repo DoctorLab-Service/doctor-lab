@@ -12,7 +12,7 @@ const App = (props) => {
     const { darkMode, toggleTheme } = useDarkMode()
     const { device, orientation } = useDevice()
     useEffect(() => {
-        window.scrollTo(0,1)
+        document.body.requestFullscreen()
     }, [])
     return (
         <div className='app' data-device={device} data-orient={orientation} >

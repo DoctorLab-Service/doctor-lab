@@ -11,10 +11,8 @@ const App = (props) => {
     const { darkMode, toggleTheme } = useDarkMode()
     const { device, orientation } = useDevice()
 
-    const [windowHeight] = useWindowSize()
-
     return (
-        <div className='app' data-device={device} data-orient={orientation} style={{ height: (device === 'tablet' || device === 'mobile') && windowHeight - 80 - 48}}>
+        <div className='app' data-device={device} data-orient={orientation} >
             <Routes>
                 {/* LOGIN LINKS */}
                 <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >

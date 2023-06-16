@@ -1,19 +1,16 @@
 
-import { useDarkMode, useDevice, usePaths, useWindowSize } from 'hooks'
+import { useDarkMode, useDevice, usePaths } from 'hooks'
 import { Link, Route, Routes } from 'react-router-dom'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
 
 import 'utils/languages/i18next'
 import 'styles/index.sass'
-import { useEffect } from 'react';
 
 const App = (props) => {
     const { paths } = usePaths()
     const { darkMode, toggleTheme } = useDarkMode()
     const { device, orientation } = useDevice()
-    useEffect(() => {
-        document.body.requestFullscreen()
-    }, [])
+
     return (
         <div className='app' data-device={device} data-orient={orientation} >
             <Routes>

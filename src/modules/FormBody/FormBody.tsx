@@ -16,6 +16,8 @@ const FormBody: FC<FormBodyProps> = ({ currentRole, pagename }) => {
     const pathWithRole = currentRole.key === 'doctor' || currentRole.key === 'dentist' 
     ? paths.register.doctor[currentRole.key] 
     : currentRole.key !== 'admin' ? paths.register[currentRole.key] : paths.login
+
+    const isAdmin = currentRole.key === 'admin'
     
     const toVerification = (): void => {
         navigate(paths.verification.phone, { state: form })
@@ -56,6 +58,7 @@ const FormBody: FC<FormBodyProps> = ({ currentRole, pagename }) => {
                 toVerification={toVerification}
                 toRegister={toRegister}
                 emptyForm={desabled}
+                isAdmin={isAdmin}
             />
         </form>
   )

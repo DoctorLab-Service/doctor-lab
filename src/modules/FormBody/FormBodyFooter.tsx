@@ -4,7 +4,7 @@ import { FC } from 'react'
 import { FormBodyFooterProps } from 'types/props'
 import { useTranslate } from 'utils/languages'
 
-const FormBodyFooter: FC<FormBodyFooterProps> = ({ paths, pathWithRole, pagename, onClick, toVerification, toRegister, emptyForm }) => {
+const FormBodyFooter: FC<FormBodyFooterProps> = ({ paths, pathWithRole, pagename, onClick, toVerification, toRegister, emptyForm, isAdmin }) => {
     const { translation: {
         login, forgot, changePassword, register, support, verification
     } } = useTranslate('auth', [
@@ -46,6 +46,7 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ paths, pathWithRole, pagename
                         link={pathWithRole}
                         size='medium'
                         text={login.links.register}
+                        disabled={isAdmin}
                         />
                     <Button
                         link={paths.forgot.password}

@@ -41,6 +41,7 @@ export interface FormBodyHeaderProps {
 
 export interface FormBodyFooterProps {
     paths?: any
+    isAdmin?: boolean
     emptyForm?: boolean
     pagename?: FormType
     pathWithRole?: string

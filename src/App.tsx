@@ -5,12 +5,15 @@ import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
 
 import 'utils/languages/i18next'
 import 'styles/index.sass'
+import { useEffect } from 'react';
 
 const App = (props) => {
     const { paths } = usePaths()
     const { darkMode, toggleTheme } = useDarkMode()
     const { device, orientation } = useDevice()
-
+    useEffect(() => {
+        window.scrollTo(0,1)
+    }, [])
     return (
         <div className='app' data-device={device} data-orient={orientation} >
             <Routes>

@@ -15,6 +15,8 @@ body[data-load="true"] *
     -o-transition: none !important
 
 body
+    height: 100vh
+    min-height: -webkit-fill-available
     background-color: var(--background-color)
     font-family: var(--font-family)
     font-size: 1em
@@ -61,10 +63,9 @@ textare:-webkit-autofill:focus
     -ms-background-clip: text
 
 
-.app
+#root, .app
     width: 100%
-    height: 100vh
-    min-height: -webkit-fill-available
+    height: 100%
     overflow: hidden
 
 

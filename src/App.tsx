@@ -12,8 +12,7 @@ const App = (props) => {
     const { device, orientation } = useDevice()
 
     return (
-        <div className='app' data-device={device} data-orient={orientation}>
-            <span style={{color: 'rgba(0,0,0, .5)', fontSize: '12px', marginLeft: '20px'}}>{device}</span>
+        <div className='app' data-device={device} data-orient={orientation} >
             <Routes>
                 {/* LOGIN LINKS */}
                 <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >
@@ -56,6 +55,9 @@ const App = (props) => {
                 } />
 
             </Routes>
+
+            <span style={{ position: 'absolute', bottom: '20px', left: '20px', color: 'rgba(0,0,0, .5)', zIndex: '2', fontSize: '10px' }}>app_v1.0.02</span>
+
         </div>
     )
 }

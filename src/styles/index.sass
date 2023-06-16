@@ -1,6 +1,18 @@
 @import core/index
 
+html
+    height: -webkit-fill-available
+
+/* .load */
+body[data-load="true"] *
+    -webkit-transition: none !important
+    -moz-transition: none !important
+    -ms-transition: none !important
+    -o-transition: none !important
+
 body
+    height: 100vh
+    height: -webkit-fill-available
     background-color: var(--background-color)
     font-family: var(--font-family)
     font-size: 1em
@@ -47,12 +59,10 @@ textare:-webkit-autofill:focus
     -ms-background-clip: text
 
 
-.app
+#root, .app
     width: 100%
-    height: 100vh
+    height: 100%
     overflow: hidden
-
-
 
 .page
     width: 100%

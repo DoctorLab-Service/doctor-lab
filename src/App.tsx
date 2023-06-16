@@ -13,7 +13,6 @@ const App = (props) => {
 
     return (
         <div className='app' data-device={device} data-orient={orientation}>
-            <span style={{color: 'rgba(0,0,0, .5)', fontSize: '12px', marginLeft: '20px'}}>{device}</span>
             <Routes>
                 {/* LOGIN LINKS */}
                 <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >

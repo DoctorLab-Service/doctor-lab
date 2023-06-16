@@ -7,6 +7,8 @@ import reportWebVitals from './reportWebVitals'
 import { HelmetProvider } from 'react-helmet-async'
 import { Title } from 'components'
 
+import 'utils/reset-transition'
+
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

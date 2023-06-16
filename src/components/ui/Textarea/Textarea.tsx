@@ -3,7 +3,6 @@ import React, { FC, ReactNode, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { TextareaProps } from 'types/props'
 import { InputStatus } from 'types/core'
-import { useValidation } from 'hooks'
 
 const Textarea: FC<TextareaProps> = ({ children, id, image, validate, className, autoComplete,  name, placeholder, value, ...args }) => {
     let StatusSVG: ReactNode

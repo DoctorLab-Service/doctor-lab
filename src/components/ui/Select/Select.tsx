@@ -23,7 +23,7 @@ const Select: FC = () => {
     const [isOpen, setIsOpen] = useState < boolean > (true)
     const [hideList, setHideList] = useState < boolean > (true)
     const [value, setValue] = useState < string > ('EN')
-    const [options, setOptions] = useState < SelectOptions[] > ([...optionsMock])
+    const [options, setOptions] = useState < SelectOptions[] > ([])
 
     const inputStyles = (key) => classNames(
         'select-input',
@@ -32,6 +32,8 @@ const Select: FC = () => {
 
 
     useEffect(() => {
+        setOptions(optionsMock)
+
         // Hide Content list
         !isOpen && setTimeout(() => {
             setHideList(false)

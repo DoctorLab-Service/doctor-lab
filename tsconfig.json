@@ -27,7 +27,8 @@
       "src/pages",
       "src/types",
       "src/styles",
-      "src/utils"
+      "src/utils",
+      "src/__generated__"
     ],
     "declaration": true,
     "removeComments": true,

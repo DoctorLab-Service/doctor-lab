@@ -1,26 +1,29 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
+import { ApolloProvider } from '@apollo/client'
+import { Title } from 'components'
 import App from 'App'
 
 import reportWebVitals from './reportWebVitals'
-import { HelmetProvider } from 'react-helmet-async'
-import { Title } from 'components'
 
+import client from 'core/graphql/apolloClient'
 import 'utils/reset-transition'
-
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 )
 root.render(
     <StrictMode>
-        <Router>
-            <HelmetProvider>
-                <Title />
-                <App />
-            </HelmetProvider>
-        </Router>  
+        <ApolloProvider client={client}>
+            <Router>
+                <HelmetProvider>
+                    <Title />
+                    <App />
+                </HelmetProvider>
+            </Router>  
+        </ApolloProvider>
     </StrictMode>
 );
 

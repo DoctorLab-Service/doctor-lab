@@ -9,6 +9,7 @@ const VerifiactionFields: FC<FieldsProps> = ({ placeholders, setForm }) => {
         code: '',
     })
 
+
     useEffect(() => {
         setForm(form)
     }, [form, setForm])

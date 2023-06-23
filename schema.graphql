@@ -1,0 +1,453 @@
+"""Exposes a URL that specifies the behavior of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behavior of this scalar."""
+  url: String!
+) on SCALAR
+
+"""
+Direct the client to resolve this field locally, either from the cache or local resolvers.
+"""
+directive @client(
+  """
+  When true, the client will never use the cache for this value. See
+  https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
+  """
+  always: Boolean
+) on FIELD | FRAGMENT_DEFINITION | INLINE_FRAGMENT
+
+"""
+Export this locally resolved field as a variable to be used in the remainder of this query. See
+https://www.apollographql.com/docs/react/essentials/local-state/#using-client-fields-as-variables
+"""
+directive @export(
+  """The variable name to export this field as."""
+  as: String!
+) on FIELD
+
+"""
+Specify a custom store key for this result. See
+https://www.apollographql.com/docs/react/advanced/caching/#the-connection-directive
+"""
+directive @connection(
+  """Specify the store key."""
+  key: String!
+
+  """
+  An array of query argument names to include in the generated custom store key.
+  """
+  filter: [String!]
+) on FIELD
+
+input AnswerToHelpMessageInput {
+  id: Float!
+  title: String!
+  text: String!
+}
+
+type AnswerToHelpMessageOutput {
+  ok: Boolean!
+  message: HelpAnswer
+}
+
+input ChangeEmailInput {
+  email: String!
+  reEmail: String!
+}
+
+type ChangeOutput {
+  ok: Boolean!
+}
+
+type ChangeOutputCode {
+  ok: Boolean!
+}
+
+input ChangePasswordInput {
+  password: String!
+  rePassword: String!
+}
+
+input ChangePhoneInput {
+  phone: String!
+}
+
+input CloseHelpMessageInput {
+  id: Float!
+}
+
+type CloseHelpMessageOutput {
+  ok: Boolean!
+  message: HelpMessage
+}
+
+input CreateAccountInput {
+  fullname: String!
+  phone: String!
+  email: String!
+  password: String!
+  country: String
+  state: String
+  address: String
+  experience: String
+  facebookId: String
+  googleId: String
+  language: ELanguage
+  gender: EGender
+  rePassword: String!
+  role: EDefaultRoles!
+}
+
+type CreateAccountOutput {
+  ok: Boolean!
+  accessToken: String
+  user: User
+}
+
+input CreateHelpMessageInput {
+  fullname: String!
+  email: String!
+  title: String!
+  text: String!
+}
+
+type CreateHelpMessageOutput {
+  ok: Boolean!
+  message: HelpMessage
+}
+
+input CreateRoleInput {
+  type: ERolesType
+  role: String!
+  description: String!
+}
+
+type CreateRoleOutput {
+  ok: Boolean!
+  role: Role
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type DeleteAccountOutput {
+  ok: Boolean!
+}
+
+input DeleteFilesInput {
+  id: Float!
+}
+
+input DeleteHelpMessageInput {
+  id: Float!
+}
+
+type DeleteHelpMessageOutput {
+  ok: Boolean!
+}
+
+input DeleteRoleInput {
+  id: Float!
+}
+
+type DeleteRoleOutput {
+  ok: Boolean!
+}
+
+input DeleteUserRoleInput {
+  role: String!
+  userId: Float!
+}
+
+type DeleteUserRoleOutput {
+  ok: Boolean!
+}
+
+enum EDefaultRoles {
+  patient
+  doctor
+  dentist
+  admin
+}
+
+enum EGender {
+  NotChosen
+  Male
+  Female
+}
+
+enum ELanguage {
+  RU
+  EN
+}
+
+enum ERolesType {
+  system
+  custom
+}
+
+type FindAllHelpMessagesOutput {
+  ok: Boolean!
+  messages: [HelpMessage!]!
+}
+
+type FindAllRolesOutput {
+  ok: Boolean!
+  roles: [Role!]
+}
+
+type FindAllUsersOutput {
+  ok: Boolean!
+  users: [User!]
+}
+
+input FindByEmailInput {
+  email: String!
+}
+
+input FindByIdInput {
+  id: Float!
+}
+
+type FindByOutput {
+  ok: Boolean!
+  user: User
+}
+
+input FindByPhoneInput {
+  phone: String!
+}
+
+input FindHelpMessageByIdInput {
+  id: Float!
+}
+
+type FindHelpMessageByIdOutput {
+  ok: Boolean!
+  message: HelpMessage
+}
+
+type HelpAnswer {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _v: Float!
+  message: User!
+  user: User
+  title: String!
+  text: String!
+}
+
+type HelpMessage {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _v: Float!
+  fullname: String!
+  email: String!
+  title: String!
+  text: String!
+  read: Boolean!
+  closed: Boolean!
+  user: User
+  answers: [HelpAnswer!]!
+}
+
+input LoginInput {
+  password: String!
+  phone: String
+  email: String
+  facebookId: String
+  googleId: String
+  role: EDefaultRoles!
+}
+
+type LoginOutput {
+  ok: Boolean!
+  accessToken: String
+  user: User
+}
+
+type LogoutOutput {
+  ok: Boolean!
+}
+
+type Mutation {
+  uploadFile(file: Upload!): UploadFilesOutput!
+  uploadFiles(files: [Upload!]!): UploadFilesOutput!
+  deleteFiles(input: DeleteFilesInput!): UploadFilesOutput!
+  createAccount(input: CreateAccountInput!): CreateAccountOutput!
+  updateAccount(input: UpdateAccountInput!, file: Upload): UpdateAccountOutput!
+  deleteAccount: DeleteAccountOutput!
+  changeEmail(input: ChangeEmailInput!): ChangeOutput!
+  changePassword(input: ChangePasswordInput!): ChangeOutput!
+  changePhone(input: ChangePhoneInput!): ChangeOutput!
+  createRole(input: CreateRoleInput!): CreateRoleOutput!
+  updateRole(input: UpdateRoleInput!): UpdateRoleOutput!
+  deleteRole(input: DeleteRoleInput!): DeleteRoleOutput!
+  setUserRole(input: SetUserRoleInput!): SetUserRoleOutput!
+  deleteUserRole(input: DeleteUserRoleInput!): DeleteUserRoleOutput!
+  passwordRecoveryCode(input: PasswordRecoveryCodeInput!): RecoveryOutput!
+  changePasswordCode: ChangeOutputCode!
+  changeEmailCode: ChangeOutputCode!
+  changePhoneCode: ChangeOutputCode!
+  verificationEmail(input: VerificationInput!): VerificationOutput!
+  verificationPhone(input: VerificationInput!): VerificationOutput!
+  verificationPasswordRecovery(input: VerificationInput!): VerificationOutput!
+  verificationChangePassword(input: VerificationInput!): VerificationOutput!
+  verificationChangeEmail(input: VerificationInput!): VerificationOutput!
+  verificationChangePhone(input: VerificationInput!): VerificationOutput!
+  login(input: LoginInput!): LoginOutput!
+  logout: LogoutOutput!
+  refreshToken: RefreshTokenOutput!
+  createHelpMessage(input: CreateHelpMessageInput!): CreateHelpMessageOutput!
+  deleteHelpMessage(input: DeleteHelpMessageInput!): DeleteHelpMessageOutput!
+  readHelpMessage(input: ReadHelpMessageInput!): ReadHelpMessageOutput!
+  answerToHelpMessage(input: AnswerToHelpMessageInput!): AnswerToHelpMessageOutput!
+  closeHelpMessage(input: CloseHelpMessageInput!): CloseHelpMessageOutput!
+}
+
+type MyAccountOutput {
+  ok: Boolean!
+  user: User
+}
+
+input PasswordRecoveryCodeInput {
+  phone: String
+  email: String
+}
+
+type Query {
+  myAccount: MyAccountOutput!
+  findAllUsers: FindAllUsersOutput!
+  findById(input: FindByIdInput!): FindByOutput!
+  findByPhone(input: FindByPhoneInput!): FindByOutput!
+  findByEmail(input: FindByEmailInput!): FindByOutput!
+  findAllRoles: FindAllRolesOutput!
+  findAllHelpMessages: FindAllHelpMessagesOutput!
+  findHelpMessageById(input: FindHelpMessageByIdInput!): FindHelpMessageByIdOutput!
+}
+
+input ReadHelpMessageInput {
+  id: Float!
+}
+
+type ReadHelpMessageOutput {
+  ok: Boolean!
+  message: HelpMessage
+}
+
+type RecoveryOutput {
+  ok: Boolean!
+}
+
+type RefreshTokenOutput {
+  ok: Boolean!
+  accessToken: String
+  user: User
+}
+
+type Role {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _v: Float!
+  role: String!
+  roleKey: String!
+  description: String!
+  type: ERolesType!
+}
+
+input SetUserRoleInput {
+  role: String!
+  userId: Float!
+}
+
+type SetUserRoleOutput {
+  ok: Boolean!
+  user: User
+  role: Role
+}
+
+input UpdateAccountInput {
+  fullname: String
+  birthdate: DateTime
+  country: String
+  state: String
+  address: String
+  experience: String
+  language: ELanguage
+  gender: EGender
+}
+
+type UpdateAccountOutput {
+  ok: Boolean!
+  user: User
+}
+
+input UpdateRoleInput {
+  id: Float!
+  role: String
+  description: String
+  type: ERolesType
+}
+
+type UpdateRoleOutput {
+  ok: Boolean!
+  role: Role
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type UploadFilesOutput {
+  ok: Boolean!
+}
+
+type User {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _v: Float!
+  avatar: String
+  fullname: String!
+  birthdate: DateTime
+  country: String
+  state: String
+  address: String
+  phone: String!
+  email: String!
+  experience: String!
+  password: String!
+  verifiedPhone: Boolean!
+  verifiedEmail: Boolean!
+  facebookId: String!
+  googleId: String!
+  language: ELanguage!
+  gender: EGender!
+  roles: [UserRoles!]!
+  createdRoles: [Role!]!
+  setRoles: [UserRoles!]!
+  helpMessage: [HelpMessage!]!
+}
+
+type UserRoles {
+  id: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _v: Float!
+  user: User!
+  role: Role!
+  type: ERolesType!
+  setTheRole: User
+}
+
+input VerificationInput {
+  code: String!
+}
+
+type VerificationOutput {
+  ok: Boolean!
+  token: String
+}

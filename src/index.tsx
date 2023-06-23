@@ -8,7 +8,7 @@ import App from 'App'
 
 import reportWebVitals from './reportWebVitals'
 
-import client from 'core/graphql/apolloClient'
+import { client } from 'core/graphql'
 import 'utils/reset-transition'
 
 const root = ReactDOM.createRoot(

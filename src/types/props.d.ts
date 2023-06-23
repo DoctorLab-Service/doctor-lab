@@ -1,4 +1,4 @@
-import { CurrentRole, RolesList, SocialProviders, Validate } from "types"
+import { CurrentRole, Mutations, RolesList, SocialProviders, Validate } from "types"
 import {
     ButtonSize,
     FormType,
@@ -44,10 +44,11 @@ export interface FormBodyFooterProps {
     isAdmin?: boolean
     emptyForm?: boolean
     pagename?: FormType
+    mutations: Mutations
     pathWithRole?: string
     toRegister?: () => void
     toVerification?: () => void
-    onClick?: (e: MouseEventHandler<HTMLButtonElement>) => void
+    onClick?: (e: MouseEventHandler<HTMLButtonElement>, request?: any) => void
 }
 export interface FormBodyProps {
     currentRole?: CurrentRole
@@ -60,6 +61,9 @@ export interface FormHeaderProps {
     changeRole?: (idx: number) => void
 
 }
+
+export interface FormFooterProps { }
+
 export interface SocialButtonProps {
     text?: string
     scope?: string

@@ -28,6 +28,7 @@ const InputGroup: FC<InputGroupProps> = ({ pagename, setForm, setValidate }) => 
                 isLogin && <LoginFields
                     placeholders={inputs}
                     setForm={setForm}
+                    setValidate={setValidate}
                 />
             }
             { 

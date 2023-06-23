@@ -2,17 +2,21 @@ import { useEffect, useState } from 'react'
 
 import { useValidation } from 'hooks'
 import { Form, UseForm } from 'types'
+import { Mutations } from './Mutations'
 
 
 export const useForm = (initialState: Record<string, any> = {}): UseForm => {
+
     const [form, setForm] = useState<Record<string, any>>(initialState)
-
+    
+    
+    // Validation
     const { validationInput, validate, isEmpty, setValidate, setForm: setInitialForm } = useValidation()
-
     useEffect(() => {
         setInitialForm(form)
     }, [form, setInitialForm])
-
+    
+    // Default form actions
     const onFocus = (e) => {
         console.log(e.target.focus)
     }
@@ -29,9 +33,13 @@ export const useForm = (initialState: Record<string, any> = {}): UseForm => {
         }))
     }
 
-    const onSubmit = (e) => {
+    const onSubmit = (e, request: any): void => {
         e.preventDefault()
         console.log(form)
+        if (request && !emptyForm(form)) {
+            request()
+            console.log("REQUEST IS COMPLITED")
+        }
     }
 
     const emptyForm = (form: Form): boolean => {
@@ -60,6 +68,7 @@ export const useForm = (initialState: Record<string, any> = {}): UseForm => {
         validate,
         setValidate,
         clearValidate,
-        emptyForm: emptyForm(form)
+        emptyForm: emptyForm(form),
+        mutations: Mutations(form),
     }
 }

@@ -1,11 +1,12 @@
 import { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
-    schema: '<URL_OF_YOUR_GRAPHQL_API>',
-    documents: ['src/**/*.tsx', 'src/**/ *.graphql'],
+    schema: `http://localhost:8000/auth`,
+    // schema: 'https://doctor-lab.onrender.com/auth',
+    documents: ['src/**/*.tsx', 'src/**/ *.graphql', 'src/**/ *.gql'],
     generates: {
-        './src/__generated__/': {
-            preset: 'client',
+        'src/types/api.d.ts': {
+            // preset: 'client',
             plugins: [
                 'typescript',
                 'typescript-operations',
@@ -14,9 +15,9 @@ const config: CodegenConfig = {
             presetConfig: {
                 gqlTagName: 'gql',
             },
-            // config: {
-            //     gqlImport: 'graphql.macro#gql'
-            // },
+            config: {
+                gqlImport: 'graphql.macro#gql'
+            },
         }
     },
     ignoreNoDocuments: true,

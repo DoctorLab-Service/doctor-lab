@@ -1,43 +1,73 @@
-import { ApolloClient, HttpLink, InMemoryCache, ApolloLink, Operation, NextLink, split, NormalizedCacheObject, concat, from } from "@apollo/client"
-// import { WebSocketLink } from '@apollo/client/link/ws'
-import { getMainDefinition } from "@apollo/client/utilities"
-import { onError } from '@apollo/client/link/error'
-import { localStorageKey } from "core"
-import { toast } from "react-toastify"
-
-
-// GraphQL Server
-const uri: string = `https://${process.env.REACT_APP_SERVER_HOST}${process.env.REACT_APP_SERVER_GRAPHQL_ENDPOINT}`
-
-// const PROTOCOL_WS = window.location.protocol === 'https:' ? 'wss' : 'ws'
+// 
 // const wsUri: string = `${PROTOCOL_WS}://${process.env.REACT_APP_SERVER_HOST}${process.env.REACT_APP_SERVER_GRAPHQL_SUBSCRIPTION_ENDPOINT}`
+// Core
+import {
+    ApolloClient,
+    ApolloLink,
+    from,
+    HttpLink,
+    InMemoryCache,
+    makeVar,
+    NextLink,
+    NormalizedCacheObject,
+    Operation,
+    ReactiveVar,
+    split,
+    concat,
+} from '@apollo/client'
+import { WebSocketLink } from '@apollo/client/link/ws'
+import { getMainDefinition } from '@apollo/client/utilities'
+import { onError } from '@apollo/client/link/error'
+import { toast } from 'react-toastify'
+import { localStorageKey } from 'core/localstorage'
+import { paths } from 'core/routes'
+import { getPagename } from 'hooks/usePaths'
+import { getLanguage, getToken } from './helpers'
 
-/** 
-   * AUTH \
-   * Auth config, end set in context
+
+/**
+ * isAuth /
+ * return  true or false, by localStorage.getItem('jwt')
  */
-const getToken = (): string | null => {
-    // Get item from  local storage
-    const token = localStorage.getItem(localStorageKey.token)
-    if (!token) return null
-    return token
-}
+export const isAuth: ReactiveVar<boolean> = makeVar<boolean>(!!localStorage.getItem(localStorageKey.token))
+
+// const uri = `https://${process.env.REACT_APP_SERVER_HOST}${process.env.REACT_APP_SERVER_GRAPHQL_ENDPOINT}`
+const uri = `http://localhost:8000/auth`
+// const PROTOCOL_WS = window.location.protocol === 'https:' ? 'wss' : 'ws'
+// const wsUri = `${PROTOCOL_WS}://${process.env.REACT_APP_SERVER_HOST}${process.env.REACT_APP_SERVER_GRAPHQL_SUBSCRIPTION_ENDPOINT}`
+
+
+
 const authLink: ApolloLink = new ApolloLink((_operation: Operation, _forward: NextLink) => {
-    _operation.setContext(({ headers }) => ({
-        headers: {
-          "X-JWT": getToken(), // however you get your token
-          ...headers
+    const pagename = getPagename(paths())
+
+    const isLogin = pagename === 'login'
+    const isRegister = pagename === 'register'
+
+    _operation.setContext(({ headers }) => {
+        const customHeaders = isLogin || isRegister 
+            ? {
+                language: getLanguage(),
+                ...headers
+            }
+            : {
+                "x-jwt": getToken(), // however you get your token
+                language: getLanguage(),
+                ...headers
+            }
+        return {
+            headers: customHeaders
         }
-    }))
+})
     return _forward(_operation)
 })
-
 
 /**
  * APOLLO: HttpLink \
  * Create HttpLink
  */
 const httpLink: HttpLink = new HttpLink({ uri })
+
 
 
 /**
@@ -47,26 +77,24 @@ const httpLink: HttpLink = new HttpLink({ uri })
 //     uri: wsUri,
 //     options: {
 //         connectionParams: {
-//             [localStorageKey.token]: getToken()
+//             'x-jwt': getToken()
 //         },
 //         reconnect: true
 //     }
 // })
 
-
 /**
  * Combine WSLink and httpLink
  * like filter for backend
  */
-const combineLinks: ApolloLink = split(
-    ({ query }) => {
-        const { kind, operation }: any = getMainDefinition(query)
-        return kind === 'OperationDefinition' && operation === 'subscription'
-    },
-    // wsLink,
-    httpLink
-)
-
+// const combineLinks: ApolloLink = split(
+//     ({ query }) => {
+//         const { kind, operation }: any = getMainDefinition(query)
+//         return kind === 'OperationDefinition' && operation === 'subscription'
+//     },
+//     wsLink,
+//     httpLink
+// )
 
 /**
  * ErrorLink
@@ -75,8 +103,8 @@ const combineLinks: ApolloLink = split(
  */
 const errorLink: ApolloLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
-        graphQLErrors.map(({ message }) =>
-            toast.error(`Unexpected error: ${message}`)
+        graphQLErrors.map(({ message, extensions: { exception } = {} }) => 
+            toast.error(`Unexpected error: ${exception}`)
         )
     }
     if (networkError) {
@@ -95,7 +123,8 @@ const errorLink: ApolloLink = onError(({ graphQLErrors, networkError }) => {
  */
 const link: ApolloLink = from([
     errorLink,
-    concat(authLink, combineLinks)
+    concat(authLink, httpLink)
+    // concat(authLink, combineLinks)
 ])
 
 

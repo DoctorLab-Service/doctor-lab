@@ -12,13 +12,7 @@ interface SelectOptions {
 
 
 const Select: FC = () => {
-    const optionsMock = [
-        { value: 'EN', type: 'radio', disabled: false, checked: false, },
-        { value: 'RU', type: 'radio', disabled: false, checked: false, },
-        { value: 'KO', type: 'radio', disabled: false, checked: false, },
-        { value: 'AR', type: 'radio', disabled: false, checked: false, },
-        { value: 'ZH', type: 'radio', disabled: true, checked: false, },
-    ]
+    
 
     const [isOpen, setIsOpen] = useState < boolean > (true)
     const [hideList, setHideList] = useState < boolean > (true)
@@ -30,8 +24,15 @@ const Select: FC = () => {
         key.checked && 'select-input-checked'
     )
 
-
     useEffect(() => {
+        const optionsMock = [
+            { value: 'EN', type: 'radio', disabled: false, checked: false, },
+            { value: 'RU', type: 'radio', disabled: false, checked: false, },
+            { value: 'KO', type: 'radio', disabled: false, checked: false, },
+            { value: 'AR', type: 'radio', disabled: false, checked: false, },
+            { value: 'ZH', type: 'radio', disabled: true, checked: false, },
+        ]
+
         setOptions(optionsMock)
 
         // Hide Content list

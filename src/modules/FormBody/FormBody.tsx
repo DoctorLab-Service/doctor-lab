@@ -7,34 +7,44 @@ import FormBodyHeader from './FormBodyHeader'
 
 
 const FormBody: FC<FormBodyProps> = ({ currentRole, pagename }) => {
-    const [desabled, setDesabled] = useState<boolean>(true)
-
+    // Custom hooks
     const { isEmpty } = useValidation()
     const { paths, navigate, state } = usePaths()
-    const { onSubmit, form, setForm, emptyForm, validate, setValidate } = useForm({})
+    const { onSubmit, form, setForm, emptyForm, validate, setValidate, mutations } = useForm({})
+    const [desabled, setDesabled] = useState<boolean>(true)
 
+    // Set path with role
     const pathWithRole = currentRole.key === 'doctor' || currentRole.key === 'dentist' 
     ? paths.register.doctor[currentRole.key] 
     : currentRole.key !== 'admin' ? paths.register[currentRole.key] : paths.login
 
     const isAdmin = currentRole.key === 'admin'
     
+
+    // Set form state when register  and redirect to other path
     const toVerification = (): void => {
-        navigate(paths.verification.phone, { state: form })
+        navigate(paths.verification.phone, { state: { ...form, validate: !isEmpty(validate) ? validate : {} } })
+
     }
     const toRegister = (): void => {
         navigate(pathWithRole, { state })
     }
+
+
     useEffect(() => {
+        // Set disabled button if validate
         if(!isEmpty(validate)) {
             const statusFalse: boolean[] = []
             for(let key in validate) {
                 validate[key].status === false && (statusFalse.push(validate[key].status))
             }
             setDesabled((statusFalse.length || emptyForm) ? true : false)
-        }
-
+        } 
+        setDesabled(emptyForm ? true : false)
     }, [emptyForm, isEmpty, validate])
+
+
+    
     
     return (
         <form className='form-body'>
@@ -48,7 +58,7 @@ const FormBody: FC<FormBodyProps> = ({ currentRole, pagename }) => {
                 pagename={pagename}
                 setForm={setForm}
                 setValidate={setValidate}
-             />
+                />
 
             <FormBodyFooter
                 paths={paths}
@@ -59,6 +69,7 @@ const FormBody: FC<FormBodyProps> = ({ currentRole, pagename }) => {
                 toRegister={toRegister}
                 emptyForm={desabled}
                 isAdmin={isAdmin}
+                mutations={mutations}
             />
         </form>
   )

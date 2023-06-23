@@ -13,7 +13,8 @@ export const useValidation = (): UseValidation => {
     ])
 
     // REGEXP
-    const REGEX_MAIL = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
+    const REGEX_MAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    // const REGEX_MAIL = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/
     const REGEX_PHONE = /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/
     const REGEX_PASSWORD = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
     const REGEX_ONLY_NUMBER = /^\d+$/
@@ -61,23 +62,38 @@ export const useValidation = (): UseValidation => {
             /*
                 Validate Rules
             */
+            // Validate Login to string
+            if (inputName === 'login') {
+                // Validate Email
+                isEmail(inputValue) && validateInput(isEmail(inputValue), email.format)
+
+                // Validate Phone
+                isPhone(inputValue) && validateInput(isPhone(inputValue), phone.format)
+                
+                // Validate all values if not Phone
+                !isPhone(inputValue) && validateInput(isEmail(inputValue), email.format)
+            }
+
             // Validate Fullname to string
             if (inputName === 'fullname') {
                 validateInput((inputValue.length >= 6 && inputValue.length <= 64), fullname.length)
             } 
+
             // Validate Email
             if (inputName === 'email') {
-                validateInput(REGEX_MAIL.test(String(inputValue)), email.format)
+                validateInput(isEmail(inputValue), email.format)
             }
+
             // Validate Phone
             if (inputName === 'phone') {
-                validateInput(REGEX_PHONE.test(String(inputValue)), phone.format)
+                validateInput(isPhone(inputValue), phone.format)
             }
 
             // Validate Password to length
             if (inputName === 'password' && (validateForm && !validateForm.confirmPassword)) {
                 validateInput((inputValue.length >= 6 && inputValue.length <= 64), password.length)
-            } 
+            }
+            
             // Validate Password to Equal if exist confirmPassword
             if (inputName === 'password' && (validateForm && !!validateForm.confirmPassword)) {
                 validateInput((validateForm && validateForm.confirmPassword === inputValue), password.equal, 'confirmPassword')

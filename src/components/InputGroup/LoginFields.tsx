@@ -4,16 +4,17 @@ import { useForm, useValidation } from 'hooks'
 import { FieldsProps } from 'types/props'
 import { PhoneSVG, EmailSVG, PasswordSVG } from 'assets/icons'
 
-const LoginFields: FC<FieldsProps> = ({ placeholders, setForm }) => {
+const LoginFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) => {
     const { isPhone } = useValidation()
-    const { onChange, onBlur, form } = useForm({
+    const { onChange, form, validate } = useForm({
         login: '',
         password: '',
     })
 
     useEffect(() => {
         setForm(form)
-    }, [form, setForm])
+        setValidate(validate)
+    }, [form, setForm, setValidate, validate])
 
     return (
         <>
@@ -23,7 +24,7 @@ const LoginFields: FC<FieldsProps> = ({ placeholders, setForm }) => {
                 image={isPhone(form.login) ? <PhoneSVG className='input-icon' /> : <EmailSVG className='input-icon' />}
                 placeholder={placeholders.login}
                 value={form.login ? form.login : ''}
-                onBlur={onBlur}
+                validate={validate}
                 onChange={onChange}
                 />
             <Input
@@ -32,7 +33,7 @@ const LoginFields: FC<FieldsProps> = ({ placeholders, setForm }) => {
                 image={<PasswordSVG className='input-icon' />}
                 placeholder={placeholders.password}
                 value={form.password ? form.password : ''}
-                onBlur={onBlur}
+                validate={validate}
                 onChange={onChange}
                 />
         </>

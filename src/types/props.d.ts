@@ -8,7 +8,10 @@ import {
     InputAutoComplete,
 } from "./core"
 
-// MODULES
+/* 
+    MODULES
+*/
+
 export interface FormProps {
     darkMode?: boolean
 }
@@ -32,7 +35,20 @@ export interface ContentProps {
     children: ReactNode
 }
 
-//  COMPONENTS
+/*
+    COMPONENTS
+*/
+export interface TitleProps { }
+export interface FooterProps { }
+export interface FormFooterProps { }
+export interface MergingTextProps { }
+export interface ToggleLanguageProps { }
+export interface ToggleThemeProps extends DefaultProps { }
+
+export interface LoaderProps {
+    className?: string
+}
+
 export interface FormBodyHeaderProps {
     pagename: FormType
     currentRole?: CurrentRole
@@ -61,8 +77,6 @@ export interface FormHeaderProps {
     changeRole?: (idx: number) => void
 
 }
-
-export interface FormFooterProps { }
 
 export interface SocialButtonProps {
     text?: string
@@ -101,10 +115,6 @@ export interface SupportLinkProps {
     size?: ButtonSize,
     className?: string,
 }
-
-export interface ToggleThemeProps extends DefaultProps { }
-
-export interface ToggleLanguageProps {}
 
 export interface LanguagesOptions {
     value: string
@@ -170,6 +180,7 @@ export interface ButtonProps {
     circle?: boolean
     button?: boolean
     noSize?: boolean
+    loading?: boolean
     noReset?: boolean
     fullSize?: boolean
     disabled?: boolean
@@ -180,7 +191,6 @@ export interface ButtonProps {
     variant?: ButtonVariant
     onClick?: (e: MouseEventHandler<HTMLButtonElement>) => void
 }
-
 
 
 //  PAGES

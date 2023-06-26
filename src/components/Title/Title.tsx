@@ -1,8 +1,10 @@
 import { usePaths, useRoles } from 'hooks'
+import { FC } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { TitleProps } from 'types/props'
 import { useTranslate } from 'utils/languages'
 
-const Title = () => {
+const Title: FC<TitleProps> = () => {
     const { translation: {
         login, forgot, changePassword, register, support, verification
     } } = useTranslate('auth', [

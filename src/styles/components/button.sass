@@ -25,6 +25,34 @@
     height: 100%
     width: 100%
 
+/* Main colort params */
+.primary,
+.success,
+.error,
+.warning
+    /* Loader */
+    .link-loader,
+    .btn-loader
+        .loader-icon
+            &::before
+                border-color: var(--white) !important
+
+/* Loader */
+.link-loader,
+.btn-loader
+    width: 32px
+    .loader-icon
+        &::before
+            width: 16px
+            height: 16px
+            border-width: 2px !important
+        &::after
+            width: 16px
+            height: 16px
+            border-width: 1px !important
+
+
+/* Icons */
 .btn-icon,
 .link-icon
     display: flex

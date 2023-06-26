@@ -37,7 +37,7 @@ const RegisterFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate })
         setValidate(validation) 
 
 
-    }, [])
+    }, [form, isEmpty, navigate, pathname, setForm, setLocalForm, setValidate, state, validate])
 
 
     return (

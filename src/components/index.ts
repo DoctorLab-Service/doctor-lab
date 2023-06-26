@@ -9,4 +9,7 @@ export { Footer } from './Footer'
 export { Header } from './Header'
 export { Support } from './Support'
 export { Title } from './Title'
+export { Loader } from './Loader'
+export { VersionApp } from './VersionApp'
+
 

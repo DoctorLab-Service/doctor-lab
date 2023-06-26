@@ -216,7 +216,7 @@ export const Mutations = (form: Form): IMutations => {
         ? passwordRecoveryCodeLoading : isSupport
         ? createHelpMessageLoading : isVerification
         ? verificationPhoneLoading : isChangePassword
-        && changePasswordLoading 
+        ? changePasswordLoading : false
 
     return {
         mutation: {

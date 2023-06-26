@@ -18,7 +18,7 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onCli
     ])
     const { paths } = usePaths()
 
-    const { mutation } = mutations
+    const { mutation, loading } = mutations
 
     const isLogin = pagename === 'login'
     const isRegister = pagename === 'register'
@@ -93,10 +93,11 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onCli
                 size={!isLogin ? 'medium' : undefined}
                 type='button'
                 fullSize
+                loading={loading}
                 disabled={emptyForm}
                 onClick={isRegister
                     ? emptyForm ? undefined : handleClick
-                    : (isLogin || isChangePassword || isForgot) && emptyForm ? undefined : handleClick
+                    : ((isLogin || isChangePassword || isForgot) && emptyForm) || loading ? undefined : handleClick
                 }
             />
 

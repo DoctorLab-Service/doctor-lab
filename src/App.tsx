@@ -1,14 +1,17 @@
 
+import { useState } from 'react'
 import { useAuth, useDarkMode, useDevice, usePaths } from 'hooks'
 import { Link, Route, Routes } from 'react-router-dom'
 import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
+import { VersionApp } from 'components'
+import packageJson from '../package.json'
 
 import 'utils/languages/i18next'
 import 'styles/index.sass'
-import { useState } from 'react'
 
 const App = (props) => {
-    const [isChangePassword, setIsChangePassword] = useState<boolean>(false) 
+    const [isChangePassword, setIsChangePassword] = useState<boolean>(false)
+    const { name, version } = packageJson
     // const { isAuth, redirectToApp } = useAuth()
     
     const { paths, state } = usePaths()
@@ -77,7 +80,8 @@ const App = (props) => {
                     // : redirectToApp()
 
             } */}
-            <span style={{ position: 'absolute', bottom: '20px', left: '20px', color: 'rgba(0,0,0, .5)', zIndex: '2', fontSize: '10px' }}>app_v1.0.02</span>
+
+            <VersionApp version={`${name}_v${version}`} />
     
         </div>
     )

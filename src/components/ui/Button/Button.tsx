@@ -3,8 +3,9 @@ import classNames from 'classnames'
 import { Link } from 'react-router-dom'
 import { ButtonProps } from 'types/props'
 import { useDarkMode } from 'hooks'
+import { Loader } from 'components'
 
-const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, variant, onClick, children, noReset, link, circle, button, noSize, disabled, ...args }) => {
+const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, variant, onClick, children, loading, noReset, link, circle, button, noSize, disabled, ...args }) => {
     const { resetTransition } = useDarkMode()
 
 
@@ -45,7 +46,10 @@ const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, va
                         onClick={(e) => clickLink(e)}
                         {...args}
                     >
-                        <span className={classesText}>{children ? children : text}</span>
+                        <span className={classesText}>
+                            { loading && <Loader className='link-loader' /> }
+                            {children ? children : text}
+                        </span>
                     </Link>
                     : <button
                         id={id}
@@ -53,8 +57,11 @@ const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, va
                         className={classes}
                         onClick={(e) => clickHandler(e)}
                         {...args}
-                        >
-                        <span className={classesText}>{ children ? children : text }</span>
+                    >
+                        <span className={classesText}>
+                            { loading && <Loader className='btn-loader' /> }
+                            { children ? children : text }
+                        </span>
                     </button>
             }
         </>
@@ -71,6 +78,7 @@ Button.defaultProps = {
     noReset: false,
     circle: false,
     noSize: false,
+    loading: false,
     link: undefined,
 }
 

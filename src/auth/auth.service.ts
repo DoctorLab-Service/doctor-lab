@@ -7,6 +7,7 @@ import { LanguageService } from 'src/language/language.service'
 import { User } from 'src/users/entities'
 import { checkPassword } from 'src/users/helpers'
 import { LoginInput, LoginOutput, LogoutInput, LogoutOutput, RefreshTokenInput, RefreshTokenOutput } from './dtos'
+import { CheckSocialInput, CheckSocialOutput } from './dtos/check-social.dto'
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,34 @@ export class AuthService {
         private readonly token: TokenService,
         private readonly languageService: LanguageService,
     ) {}
+
+    async checkSocial(body: CheckSocialInput): Promise<CheckSocialOutput> {
+        let user: User
+
+        if (body.id) {
+            if (body.provider === 'facebook' || body.provider === 'google') {
+                user = await this.users.findOne({ where: { [`${body.provider}Id`]: body.id } })
+                if (user) {
+                    // Generate and save token
+                    const tokens = await this.token.generateTokens({ id: user.id })
+                    if (!tokens.accessToken.length || !tokens.refreshToken.length) {
+                        throw new ValidationException({
+                            create: await this.languageService.setError(['token', 'notCreated']),
+                        })
+                    }
+
+                    await this.token.saveTokens(user.id, tokens)
+
+                    return { ok: Boolean(user), ...tokens, user }
+                }
+                return { ok: false }
+            }
+
+            return { ok: false }
+        }
+
+        return { ok: false }
+    }
 
     async login(body: LoginInput): Promise<LoginOutput> {
         let user: User

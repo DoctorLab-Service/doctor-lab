@@ -4,7 +4,7 @@ import { EDefaultRoles } from 'src/roles/roles.enums'
 import { User } from 'src/users/entities'
 
 @InputType()
-export class NoRequiredInput extends PartialType(PickType(User, ['phone', 'email', 'facebookId', 'googleId'])) {}
+export class NoRequiredInput extends PartialType(PickType(User, ['phone', 'email'])) {}
 
 @InputType()
 export class RequiredInput extends PickType(User, ['password']) {}

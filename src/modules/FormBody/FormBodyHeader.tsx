@@ -1,9 +1,10 @@
+import { usePaths, useRoles } from "hooks"
 import { FC } from "react"
 import { Roles } from "types/core"
 import { FormBodyHeaderProps } from "types/props"
 import { useTranslate } from "utils/languages"
 
-const FormBodyHeader: FC<FormBodyHeaderProps> = ({ pagename, currentRole, formState }) => {
+const FormBodyHeader: FC<FormBodyHeaderProps> = ({ formState }) => {
     const { translation: {
         login, forgot, changePassword, register, support, verification
     } } = useTranslate('auth', [
@@ -15,6 +16,9 @@ const FormBodyHeader: FC<FormBodyHeaderProps> = ({ pagename, currentRole, formSt
             ['verification', true]
         ])
 
+    const { pagename } = usePaths()
+    const { currentRole } = useRoles()
+    
     const isLogin = pagename === 'login'
     const isRegister = pagename === 'register'
     const isForgot = pagename === 'forgot'

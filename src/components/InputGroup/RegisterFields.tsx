@@ -8,11 +8,11 @@ const RegisterFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate })
     const { isEmpty } = useValidation()
     const { pathname, state, navigate } = usePaths()
     const { onChange, onBlur, form, validate, setForm: setLocalForm } = useForm({
-        fullname: state && state.fullname ? state.fullname : '',
-        email: state && state.email ? state.email : '',
-        phone: state && state.phone ? state.phone : '',
-        password: state && state.password ? state.password : '',
-        confirmPassword: state && state.confirmPassword ? state.confirmPassword : '', 
+        fullname: state?.fields?.fullname ? state.fields.fullname : '',
+        email: state?.fields?.email ? state.fields.email : '',
+        phone: state?.fields?.phone ? state.fields.phone : '',
+        password: state?.fields?.password ? state.fields.password : '',
+        confirmPassword: state?.fields?.confirmPassword ? state.fields.confirmPassword : '', 
     })
     const [validateInput, setValidateInput] = useState({})
 
@@ -31,7 +31,7 @@ const RegisterFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate })
             }
         }
         setForm(form)
-        const validation = isEmpty(validate) ? state && state.validate ? state.validate : validate : validate
+        const validation = isEmpty(validate) ? state?.validate ? state.validate : validate : validate
         
         setValidateInput(validation) // set validation from state
         setValidate(validation) 

@@ -1,28 +1,77 @@
+import { useMutation } from '@apollo/client'
 import { FacebookSVG, GoogleSVG } from 'assets/icons'
 import { Button } from 'components/ui'
-import { FC } from 'react'
+import { getGraphQLErrors } from 'core/graphql'
+import { FC, useState } from 'react'
+import { toast } from 'react-toastify'
 import { LoginSocialFacebook, LoginSocialGoogle, IResolveParams } from 'reactjs-social-login'
+import { CheckSocialOutput, CheckSocialInput } from 'types/api'
 import { SocialButtonProps } from 'types/props'
+import { MUTATION_CHECK_SOCIAL } from './graphql'
+import { SocialResponseData } from 'types'
+import { useAuth, usePaths, useRoles } from 'hooks'
 
 
-const SocialButton: FC<SocialButtonProps> = ({ redirect_uri, circle,  children, className, onLogoutSuccess, onLoginStart, scope, provider, icon, text }) => {
+const SocialButton: FC<SocialButtonProps> = ({ redirect_uri, circle,  children, onLogoutSuccess, onLoginStart, scope, provider, icon, text }) => {
+    const [social, setSocial] = useState<SocialResponseData>({
+        email: '',
+        fullname: '',
+    })
     // Default Scopes
     const facebookScope = 'id,first_name,last_name,middle_name,name,name_format,picture,short_name,email,gender'
     const googleScope = 'openid profile email'
-
+    
     const facebookBool = provider === 'facebook'
     const googleBool = provider === 'google'
-
+    
     // Set Component
     const Component = facebookBool ? LoginSocialFacebook : googleBool && LoginSocialGoogle
     const Icon = facebookBool ? FacebookSVG : googleBool && GoogleSVG
+    
+    // Auth
+    const { authentication } = useAuth()
+    const { navigate } = usePaths()
+    const { pathWithRole } = useRoles()
+
+    // Mutation
+    const [ _checkSocial ] = useMutation<CheckSocialOutput, CheckSocialInput>(MUTATION_CHECK_SOCIAL, {
+        onCompleted(data) {
+            const { ok, accessToken } = data['checkSocial']
+            if (ok) {
+                authentication(accessToken || '')
+                console.log('Hello username, you login successfully')
+                return
+            }
+            navigate(pathWithRole, { state: { fields: {...social } }})
+
+        },
+        onError(err) {
+            const errors = getGraphQLErrors(err)
+            if (err.graphQLErrors[0]) {
+                console.log('err.graphQLErrors[0]', errors)
+                toast.error(errors)
+            } else {
+                console.log('errors', errors)
+            }
+        },
+    })
 
     // Methods
     const onResolve = ({ provider, data }: IResolveParams) => {
-        console.log('provider', provider)
-        console.log('data', data)
-        // setProvider(provider)
-        // setProfile(data)
+        const socialId = provider === 'facebook' ? data.id : provider === 'google' && data.sub 
+        setSocial({
+            provider: `${provider}Id`,
+            [`${provider}Id`]: socialId,
+            email: data.email,
+            fullname: data.name,
+        })
+
+        _checkSocial({
+            variables: {
+                id: socialId,
+                provider: provider
+            }
+        })
     }
     const onReject = err => {
         console.log(err)

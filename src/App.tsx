@@ -54,7 +54,7 @@ const App = (props) => {
                         {/* VERIFICATION LINKS */}
                         {
                             // Verification phone when create account
-                            (state && state.phone) && <Route
+                            (state?.fields?.phone) && <Route
                                 path={paths.verification.phone}
                                 element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />}
                             />

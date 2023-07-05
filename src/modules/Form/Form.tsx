@@ -6,7 +6,7 @@ import FormHeader from './FormHeader'
 import { FormBody } from 'modules'
 
 const Form: FC<FormProps> = ({ darkMode }) => {
-    const { roles, changeRole, currentRole } = useRoles()
+    const { roles, changeRole } = useRoles()
     const { pagename } = usePaths()
 
     const isLogin = pagename === 'login'
@@ -24,7 +24,7 @@ const Form: FC<FormProps> = ({ darkMode }) => {
                         />
                 }
 
-                <FormBody currentRole={currentRole} pagename={pagename} />
+                <FormBody />
 
 
                 {

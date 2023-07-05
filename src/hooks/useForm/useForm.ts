@@ -35,10 +35,9 @@ export const useForm = (initialState: Record<string, any> = {}): UseForm => {
 
     const onSubmit = (e, request: any): void => {
         e.preventDefault()
-        console.log(form)
+        setForm({...form})
         if (request && !emptyForm(form)) {
             request()
-            console.log("REQUEST IS COMPLITED")
         }
     }
 

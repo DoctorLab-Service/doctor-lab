@@ -8,6 +8,8 @@ export const MUTATION_CREATE_ACCOUNT = gql`
         $password: String!,
         $rePassword: String!,
         $role: EDefaultRoles!
+        $googleId: String
+        $facebookId: String
     ) {
         createAccount(
             input: {
@@ -17,6 +19,8 @@ export const MUTATION_CREATE_ACCOUNT = gql`
                 password: $password,
                 rePassword: $rePassword,
                 role: $role,
+                googleId: $googleId,
+                facebookId: $facebookId,
             }
         ) {
             ok

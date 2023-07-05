@@ -1,0 +1,1 @@
+export { MUTATION_CHECK_SOCIAL } from './checkSocial'

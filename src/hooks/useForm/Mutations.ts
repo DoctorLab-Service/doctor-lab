@@ -44,7 +44,6 @@ export const Mutations = (form: Form): IMutations => {
     // Login Mutationv 
     const [_login, { loading: loginLoading }] = useMutation<LoginOutput, LoginInput>(MUTATION_LOGIN, {
         onCompleted(data) {
-            // console.log(data)
             const {ok, accessToken} = data['login']
             if (ok && accessToken) {
                 authentication(accessToken || '')
@@ -66,8 +65,6 @@ export const Mutations = (form: Form): IMutations => {
             email: isEmail(form.login) ? form.login : isPhone(form.login) ? undefined : form.login,
             phone: isPhone(form.login) ? form.login : undefined,
             password: form.password,
-            facebookId: form.facebookId, 
-            googleId: form.googleId,
             role: currentRole.key
         }
     })
@@ -77,9 +74,8 @@ export const Mutations = (form: Form): IMutations => {
         onCompleted(data) {
             const { ok, accessToken } = data['createAccount']
             if (ok && accessToken) {
-                // console.log(data)
                 setToken(accessToken)
-                navigate(pathname, { state: { ...state, accessToken } })
+                navigate(pathname, { state: { fields: { ...state }, accessToken } })
 
             }
             return
@@ -98,6 +94,7 @@ export const Mutations = (form: Form): IMutations => {
             phone: form ? form.phone : '',
             password: form ? form.password : '',
             rePassword: form ? form.confirmPassword : '',
+            [state?.fields?.provider]: state?.fields[state.fields.provider],
             role: currentRole.key,
         }
     })
@@ -123,14 +120,12 @@ export const Mutations = (form: Form): IMutations => {
             email: form && form.email,
         }
     })
-
     
     // CreateHelpMessage Mutation
     const [_createHelpMessage, { loading: createHelpMessageLoading, }] = useMutation<CreateHelpMessageOutput, CreateHelpMessageInput>(MUTATION_CREATE_HELP_MESSAGE, {
         onCompleted(data) {
             const { ok } = data['createHelpMessage']
             if (ok) {
-                // console.log(data)
                 console.log('Your message has been successfully sent')
             }
             return
@@ -155,7 +150,6 @@ export const Mutations = (form: Form): IMutations => {
     const [_verificationPhone, { loading: verificationPhoneLoading, }] = useMutation<VerificationOutput, VerificationInput>(MUTATION_VERIFICATION_PHONE, {
         onCompleted(data) {
             const { ok } = data['verificationPhone']
-            // console.log(data)
             if (ok) {
                 console.log('You have successfully verified your phone number')
                 setTimeout(() => authentication(token || ''),3000)
@@ -180,7 +174,6 @@ export const Mutations = (form: Form): IMutations => {
     // ChangePassword Mutation
     const [_changePassword, { loading: changePasswordLoading, }] = useMutation<ChangeOutput, ChangePasswordInput>(MUTATION_CHANGE_PASSWORD, {
         onCompleted(data) {
-            // console.log(data)
             const { ok } = data['changePassword']
             if (ok) {
                 console.log('Your password is changed')

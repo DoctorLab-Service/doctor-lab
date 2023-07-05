@@ -4,8 +4,6 @@ export const MUTATION_LOGIN = gql`
     mutation Login(
         $email: String
         $phone: String
-        $googleId: String
-        $facebookId: String
         $password: String!
         $role: EDefaultRoles!
     ) {
@@ -13,8 +11,6 @@ export const MUTATION_LOGIN = gql`
             email: $email,
             password: $password,
             phone: $phone,
-            facebookId: $facebookId,
-            googleId: $googleId,
             role: $role,
     })  {
             ok

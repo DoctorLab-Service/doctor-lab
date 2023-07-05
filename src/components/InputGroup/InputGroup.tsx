@@ -7,12 +7,15 @@ import LoginFields from "./LoginFields"
 import RegisterFields from "./RegisterFields"
 import SupportFields from "./SupportFields"
 import VerifiactionFields from "./VerifiactionFields"
+import { usePaths } from "hooks"
 
 
-const InputGroup: FC<InputGroupProps> = ({ pagename, setForm, setValidate }) => {
+const InputGroup: FC<InputGroupProps> = ({ setForm, setValidate }) => {
     const { translation: {
         core: { inputs }
     } } = useTranslate('auth', [['core', true]])
+
+    const { pagename } = usePaths()
 
 
     const isLogin = pagename === 'login'

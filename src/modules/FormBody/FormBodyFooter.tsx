@@ -1,11 +1,11 @@
 import { Button } from 'components/ui'
-import { usePaths } from 'hooks'
+import { usePaths, useRoles } from 'hooks'
 
 import { FC } from 'react'
 import { FormBodyFooterProps } from 'types/props'
 import { useTranslate } from 'utils/languages'
 
-const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onClick, toRegister, toVerification, emptyForm, isAdmin, mutations }) => {
+const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, toVerification, emptyForm, isAdmin, mutations }) => {
     const { translation: {
         login, forgot, changePassword, register, support, verification
     } } = useTranslate('auth', [
@@ -16,7 +16,8 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ pathWithRole, pagename, onCli
         ['support', true],
         ['verification', true]
     ])
-    const { paths } = usePaths()
+    const { paths, pagename, state } = usePaths()
+    const { pathWithRole } = useRoles()
 
     const { mutation, loading } = mutations
 

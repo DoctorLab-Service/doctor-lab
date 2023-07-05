@@ -50,8 +50,6 @@ export interface LoaderProps {
 }
 
 export interface FormBodyHeaderProps {
-    pagename: FormType
-    currentRole?: CurrentRole
     formState: Form
 }
 
@@ -59,17 +57,12 @@ export interface FormBodyFooterProps {
     paths?: any
     isAdmin?: boolean
     emptyForm?: boolean
-    pagename?: FormType
     mutations: Mutations
-    pathWithRole?: string
     toRegister?: () => void
     toVerification?: () => void
     onClick?: (e: MouseEventHandler<HTMLButtonElement>, request?: any) => void
 }
-export interface FormBodyProps {
-    currentRole?: CurrentRole
-    pagename?: FormType
-}
+export interface FormBodyProps {}
 
 export interface FormHeaderProps {
     darkMode?: boolean
@@ -129,7 +122,6 @@ export interface FieldsProps {
 }
 
 export interface InputGroupProps {
-    pagename?: FormType
     setForm?: Dispatch<SetStateAction<Record<string, Form>>>
     setValidate?: Dispatch<SetStateAction<Record<string, any>>>
 }

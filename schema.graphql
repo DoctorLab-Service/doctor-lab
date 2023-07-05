@@ -71,6 +71,17 @@ input ChangePhoneInput {
   phone: String!
 }
 
+input CheckSocialInput {
+  id: String!
+  provider: String!
+}
+
+type CheckSocialOutput {
+  ok: Boolean!
+  accessToken: String
+  user: User
+}
+
 input CloseHelpMessageInput {
   id: Float!
 }
@@ -258,8 +269,6 @@ input LoginInput {
   password: String!
   phone: String
   email: String
-  facebookId: String
-  googleId: String
   role: EDefaultRoles!
 }
 
@@ -298,6 +307,7 @@ type Mutation {
   verificationChangePassword(input: VerificationInput!): VerificationOutput!
   verificationChangeEmail(input: VerificationInput!): VerificationOutput!
   verificationChangePhone(input: VerificationInput!): VerificationOutput!
+  checkSocial(input: CheckSocialInput!): CheckSocialOutput!
   login(input: LoginInput!): LoginOutput!
   logout: LogoutOutput!
   refreshToken: RefreshTokenOutput!

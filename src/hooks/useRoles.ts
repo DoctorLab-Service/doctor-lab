@@ -4,6 +4,7 @@ import { localStorageKey } from "core/localstorage"
 import { RolesList, UseRoles } from "types"
 import { useTranslate } from "utils/languages"
 import { Roles } from "types/core"
+import { usePaths } from "hooks"
 
 const rolesMock = [
     {
@@ -43,6 +44,8 @@ export const useRoles = (): UseRoles => {
     const [currentRoleKey, setCurrentRoleKey] = useState<Roles>('doctor')
     const [currentRoleValue, setCurrentRoleValue] = useState<string>(rolesValue.doctor)
     const [roles, setRoles] = useState<RolesList[]>(rolesMock)
+
+    const { paths } = usePaths()
 
     useMemo(() => {
         // Get Role id from localstorage
@@ -103,14 +106,21 @@ export const useRoles = (): UseRoles => {
         setChangedId(idx)
         setChange(true)
     }
+    const currentRole = {
+        key: currentRoleKey,
+        value: currentRoleValue,
+    }
+
+    // Path with filtred by role
+    const pathWithRole: string = currentRole.key === 'doctor' || currentRole.key === 'dentist'
+        ? paths.register.doctor[currentRole.key]
+        : currentRole.key !== 'admin' ? paths.register[currentRole.key] : paths.login
 
     return {
         roles,
-        currentRole: {
-            key: currentRoleKey,
-            value: currentRoleValue,
-        },
+        currentRole,
         currentRoleId,
+        pathWithRole,
         changeRole,
     }
 }

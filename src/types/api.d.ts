@@ -53,6 +53,18 @@ export type ChangePhoneInput = {
   phone: Scalars['String']['input'];
 };
 
+export type CheckSocialInput = {
+  id: Scalars['String']['input'];
+  provider: Scalars['String']['input'];
+};
+
+export type CheckSocialOutput = {
+  __typename?: 'CheckSocialOutput';
+  accessToken?: Maybe<Scalars['String']['output']>;
+  ok: Scalars['Boolean']['output'];
+  user?: Maybe<User>;
+};
+
 export type CloseHelpMessageInput = {
   id: Scalars['Float']['input'];
 };
@@ -248,8 +260,6 @@ export type HelpMessage = {
 
 export type LoginInput = {
   email?: InputMaybe<Scalars['String']['input']>;
-  facebookId?: InputMaybe<Scalars['String']['input']>;
-  googleId?: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
   phone?: InputMaybe<Scalars['String']['input']>;
   role: EDefaultRoles;
@@ -276,6 +286,7 @@ export type Mutation = {
   changePasswordCode: ChangeOutputCode;
   changePhone: ChangeOutput;
   changePhoneCode: ChangeOutputCode;
+  checkSocial: CheckSocialOutput;
   closeHelpMessage: CloseHelpMessageOutput;
   createAccount: CreateAccountOutput;
   createHelpMessage: CreateHelpMessageOutput;
@@ -321,6 +332,11 @@ export type MutationChangePasswordArgs = {
 
 export type MutationChangePhoneArgs = {
   input: ChangePhoneInput;
+};
+
+
+export type MutationCheckSocialArgs = {
+  input: CheckSocialInput;
 };
 
 

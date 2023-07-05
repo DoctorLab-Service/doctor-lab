@@ -27,6 +27,14 @@ export interface CurrentRole {
     key: Roles
     value: string
 }
+// COMPONENTS
+export interface SocialResponseData {
+    provider?: string
+    facebookId?: string
+    googleId?: string
+    email: string
+    fullname: string
+}
 
 // HOOKS
 export interface UseAuth {
@@ -57,6 +65,7 @@ export interface UseForm {
 export interface UseRoles {
     roles: RolesList[]
     currentRoleId: number
+    pathWithRole: string
     currentRole: CurrentRole
     changeRole: (idx: number) => void
 }

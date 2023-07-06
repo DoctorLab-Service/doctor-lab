@@ -3,7 +3,7 @@ import { localStorageKey } from "core"
 /**
  * Get GraphQL Errors
  */
-export const getGraphQLErrors = err => {
+export const getGraphQLErrors = (err) => {
     const errors = err
         && err.graphQLErrors
         && err.graphQLErrors[0]

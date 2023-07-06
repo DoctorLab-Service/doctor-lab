@@ -103,13 +103,15 @@ const httpLink: HttpLink = new HttpLink({ uri })
  */
 const errorLink: ApolloLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
-        graphQLErrors.map(({ message, extensions: { exception } = {} }) => 
-            toast.error(`Unexpected error: ${exception}`)
-        )
+        graphQLErrors.map(({ message, extensions: { exception } = {} }) => {
+            // toast.error(`Unexpected error: ${exception}`)
+            // console.log('Unexpected error:', exception)
+            return 
+        })
     }
     if (networkError) {
         // Show error if user networ or connection  with  server will down
-        toast.error(`Network error: ${networkError}`)
+        // toast.error(`Network error: ${networkError}`)
     }
 })
 

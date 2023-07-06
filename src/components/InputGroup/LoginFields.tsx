@@ -3,6 +3,8 @@ import { Input } from 'components/ui'
 import { useForm, useValidation } from 'hooks'
 import { FieldsProps } from 'types/props'
 import { PhoneSVG, EmailSVG, PasswordSVG } from 'assets/icons'
+import { toast } from 'react-toastify'
+
 
 const LoginFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) => {
     const { isPhone } = useValidation()

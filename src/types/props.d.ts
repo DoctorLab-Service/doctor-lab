@@ -42,6 +42,7 @@ export interface TitleProps { }
 export interface FooterProps { }
 export interface FormFooterProps { }
 export interface MergingTextProps { }
+export interface NotificationsProps { }
 export interface ToggleLanguageProps { }
 export interface ToggleThemeProps extends DefaultProps { }
 
@@ -59,7 +60,6 @@ export interface FormBodyFooterProps {
     emptyForm?: boolean
     mutations: Mutations
     toRegister?: () => void
-    toVerification?: () => void
     onClick?: (e: MouseEventHandler<HTMLButtonElement>, request?: any) => void
 }
 export interface FormBodyProps {}

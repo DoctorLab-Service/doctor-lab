@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { FormBodyFooterProps } from 'types/props'
 import { useTranslate } from 'utils/languages'
 
-const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, toVerification, emptyForm, isAdmin, mutations }) => {
+const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, emptyForm, isAdmin, mutations }) => {
     const { translation: {
         login, forgot, changePassword, register, support, verification
     } } = useTranslate('auth', [
@@ -16,9 +16,8 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, toVerifi
         ['support', true],
         ['verification', true]
     ])
-    const { paths, pagename, state } = usePaths()
+    const { paths, pagename } = usePaths()
     const { pathWithRole } = useRoles()
-
     const { mutation, loading } = mutations
 
     const isLogin = pagename === 'login'
@@ -49,8 +48,6 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, toVerifi
         } 
         if (isRegister) {
             onClick(e, mutation._createAccount)
-            console.log('A verification code has been sent to your phone number')
-            setTimeout(() => toVerification(), 3000)
         }
         if (isVerification) {
             onClick(e, mutation._verificationPhone)
@@ -66,8 +63,6 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, toVerifi
         }
         onClick(e)
     }
-
-
 
     return (
         <footer className='form-body-footer'>

@@ -1,14 +1,14 @@
-import { StrictMode } from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter as Router } from 'react-router-dom'
-import { HelmetProvider } from 'react-helmet-async'
-import { ApolloProvider } from '@apollo/client'
-import { Title } from 'components'
 import App from 'App'
+import { Notifications, Title } from 'components'
+import { StrictMode } from 'react'
+import { client } from 'core/graphql'
+import ReactDOM from 'react-dom/client'
+import { ApolloProvider } from '@apollo/client'
+import { HelmetProvider } from 'react-helmet-async'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import reportWebVitals from './reportWebVitals'
 
-import { client } from 'core/graphql'
 import 'utils/reset-transition'
 
 const root = ReactDOM.createRoot(
@@ -21,6 +21,7 @@ root.render(
                 <HelmetProvider>
                     <Title />
                     <App />
+                    <Notifications />
                 </HelmetProvider>
             </Router>  
         </ApolloProvider>

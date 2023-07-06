@@ -25,20 +25,47 @@ import { Form, Mutations as IMutations } from "types"
 import { useAuth, usePaths, useRoles, useValidation } from "hooks"
 import { getGraphQLErrors } from "core/graphql"
 import { toast } from "react-toastify"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 
 
-export const Mutations = (form: Form): IMutations => {
+export const Mutations = (form: Form, validate: any = {}): IMutations => {
+    const [ provider, setProvider ] = useState('')
     const [token, setToken] = useState(undefined)
     const { currentRole } = useRoles()
-    const { pagename, pathname, navigate, state } = usePaths()
+    const { paths, pagename, pathname, navigate, state } = usePaths()
     
+
+    useEffect(() => {
+        setProvider(state && state.fields && state.fields.provider ? state.fields.provider : 'facebookId')
+    }, [state])
+
     const { authentication } = useAuth()
 
     // Validation
     const { isEmail, isPhone } = useValidation()
 
+    // Set Errors on state and toast it
+    const setErrors = (errors: any) => {
+        const isLogin = pagename === 'login'
+        const key = isLogin &&
+            (Object.keys(errors)[0] === 'email' || Object.keys(errors)[0] === 'phone')
+                ? 'login' 
+                : Object.keys(errors)[0]
+        navigate(pathname, {
+            state: {
+                ...state,
+                errors: {
+                    [key]: {
+                        status: false,
+                        message: errors[Object.keys(errors)[0]]
+                    }
+                }
+            }
+        })
+
+        toast.error(errors[Object.keys(errors)[0]])
+    } 
 
     // MUTATIONS
     // Login Mutationv 
@@ -55,8 +82,7 @@ export const Mutations = (form: Form): IMutations => {
         onError(err) {
             const errors = getGraphQLErrors(err)
             if (err.graphQLErrors[0]) {
-                console.log('err.graphQLErrors[0]', errors)
-                toast.error(errors)
+                setErrors(errors)
             } else {
                 console.log('errors', errors)
             }
@@ -75,14 +101,29 @@ export const Mutations = (form: Form): IMutations => {
             const { ok, accessToken } = data['createAccount']
             if (ok && accessToken) {
                 setToken(accessToken)
-                navigate(pathname, { state: { fields: { ...state }, accessToken } })
+                // navigate(pathname, { state: { fields: { ...state }, accessToken } })
+
+                toast.success('A verification code has been sent to your phone number')
+
+                navigate(paths.verification.phone, {
+                    state: {
+                        fields: {
+                            ...form,
+                            ...state,
+                        },
+                        validate: validate,
+                        accessToken,
+                    }
+                })
 
             }
             return
         },
         onError(err) {
             const errors = getGraphQLErrors(err)
+            console.log(err)
             if (err.graphQLErrors[0]) {
+                setErrors(errors)
                 console.log('err.graphQLErrors[0]', errors)
             } else {
                 console.log('errors', errors)
@@ -94,7 +135,7 @@ export const Mutations = (form: Form): IMutations => {
             phone: form ? form.phone : '',
             password: form ? form.password : '',
             rePassword: form ? form.confirmPassword : '',
-            [state?.fields?.provider]: state?.fields[state.fields.provider],
+            [provider]: state && state.fields ? state?.fields[provider] : undefined,
             role: currentRole.key,
         }
     })

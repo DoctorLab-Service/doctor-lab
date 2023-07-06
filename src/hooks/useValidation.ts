@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react'
+import { usePaths } from 'hooks'
+import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-toastify'
 import { Form, UseValidation } from 'types'
 import { useTranslate } from 'utils/languages'
 
 
 export const useValidation = (): UseValidation => {
+    const { navigate, state, pathname } = usePaths()
     const [validate, setValidate] = useState<Record<string, any>>({})
 
     const [form, setForm] = useState<Record<string, Form>>({})
@@ -49,12 +52,18 @@ export const useValidation = (): UseValidation => {
         }
 
        
-        const validateInput = (condition, invalidMessage, inputName: string = undefined) =>
-            condition ? statusInput(true, '', inputName) : statusInput(false, invalidMessage, inputName)
+        const validateInput = (condition, invalidMessage, inputName: string = undefined) => {
+            return condition 
+                ? statusInput(true, '', inputName)
+                : statusInput(false, invalidMessage, inputName)
+        }
 
+        // Validate Rules
         if (inputValue === '') {
             // Empty field
             statusInput(false, empty.field)
+            toast.error(empty.field)
+
         } else {
             // Not Empty
             statusInput(true)
@@ -91,21 +100,45 @@ export const useValidation = (): UseValidation => {
 
             // Validate Password to length
             if (inputName === 'password' && (validateForm && !validateForm.confirmPassword)) {
-                validateInput((inputValue.length >= 6 && inputValue.length <= 64), password.length)
+                validateInput(
+                    inputValue.length >= 6 && inputValue.length <= 64,
+                    password.length,
+                )
             }
             
             // Validate Password to Equal if exist confirmPassword
             if (inputName === 'password' && (validateForm && !!validateForm.confirmPassword)) {
-                validateInput((validateForm && validateForm.confirmPassword === inputValue), password.equal, 'confirmPassword')
-                validateInput((inputValue.length >= 6 && inputValue.length <= 64), password.length)
+                validateInput(
+                    validateForm && validateForm.confirmPassword === inputValue,
+                    password.equal,
+                    'confirmPassword'
+                )
+                validateInput(
+                    (inputValue.length >= 6 && inputValue.length <= 64),
+                    password.length,
+                )
             }
             // Validate Confirm password to Equal
             if(inputName === 'confirmPassword') {
-                validateInput((validateForm && validateForm.password === inputValue), password.equal)
+                validateInput(
+                    validateForm && validateForm.password === inputValue,
+                    password.equal,
+                )
             }
 
         }
     }
+
+    // Errors from server
+    useEffect(() => {
+        if (state && state.errors && !isEmpty(state.errors)) {
+            setValidate({
+                ...validate,
+                ...state.errors
+            })
+            navigate(pathname, { state: null })
+        }
+    }, [navigate, pathname, state, validate])
 
     // Validation Input
     const validationInput = (e: any) => { 

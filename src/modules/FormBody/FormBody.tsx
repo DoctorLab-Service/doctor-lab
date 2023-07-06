@@ -9,7 +9,7 @@ import FormBodyHeader from './FormBodyHeader'
 const FormBody: FC<FormBodyProps> = () => {
     // Custom hooks
     const { isEmpty } = useValidation()
-    const { paths, navigate, state } = usePaths()
+    const { paths, navigate, state, pathname } = usePaths()
     const { onSubmit, form, setForm, emptyForm, validate, setValidate, mutations } = useForm({})
     const [desabled, setDesabled] = useState<boolean>(true)
 
@@ -19,35 +19,25 @@ const FormBody: FC<FormBodyProps> = () => {
     
 
     // Set form state when register  and redirect to other path
-    const toVerification = (): void => {
-        navigate(paths.verification.phone, { 
-            state: { fields: {
-                ...form,
-                ...state,
-            },
-            validate: !isEmpty(validate) ? validate : {} 
-        }})
-
-    }
     const toRegister = (): void => {
         navigate(pathWithRole, { state })
     }
 
 
     useEffect(() => {
+        const statusFalse: boolean[] = []
+
         // Set disabled button if validate
         if(!isEmpty(validate)) {
-            const statusFalse: boolean[] = []
             for(let key in validate) {
                 validate[key].status === false && (statusFalse.push(validate[key].status))
             }
-            setDesabled((statusFalse.length || emptyForm) ? true : false)
         } 
-        setDesabled(emptyForm ? true : false)
-    }, [emptyForm, isEmpty, validate])
+        setDesabled((statusFalse.length || emptyForm) ? true : false)
+        // console.log('validate', validate)
 
+    }, [emptyForm, isEmpty, navigate, pathname, setValidate, state, validate])
 
-    
     
     return (
         <form className='form-body'>
@@ -63,7 +53,6 @@ const FormBody: FC<FormBodyProps> = () => {
             <FormBodyFooter
                 paths={paths}
                 onClick={onSubmit}
-                toVerification={toVerification}
                 toRegister={toRegister}
                 emptyForm={desabled}
                 isAdmin={isAdmin}

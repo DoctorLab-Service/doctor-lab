@@ -57,7 +57,6 @@ export interface UseForm {
     onFocus: (e: any) => void,
     onSubmit: (e: any, request?: any) => void,
     onChange: (e: any) => void,
-    clearValidate: () => void
     setForm: Dispatch<SetStateAction<Record<string, any>>>
     setValidate: Dispatch<SetStateAction<Record<string, any>>>,
 }
@@ -98,7 +97,7 @@ export interface UseValidation {
     isNumber: (value: string) => boolean
     isPassword: (value: string) => boolean
     isOnlyNumber: (value: string) => boolean
-    validationInput: (e: any, form: Form) => void
+    validationInput: (e: any) => void
     setForm: Dispatch<SetStateAction<Record<string, Form>>>
     setValidate: Dispatch<SetStateAction<Record<string, any>>>
 } 

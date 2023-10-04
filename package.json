@@ -6,8 +6,8 @@
     "private": true,
     "license": "UNLICENSED",
     "engines": {
-        "npm": ">=9.0.0 < 9.2.0",
-        "node": ">=18.0.0 < 20.8.0"
+        "npm": ">=9.0.0 <= 10.1.0",
+        "node": ">=18.0.0 <= 20.9.0"
     },
     "scripts": {
         "prebuild": "rm -rf dist && npm cache clean --force",

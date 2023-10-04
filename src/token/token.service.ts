@@ -64,7 +64,7 @@ export class TokenService {
      * @param tokens  { accessToken, refreshToken, recoveryToken }
      * @returns token
      */
-    async saveTokens(id, tokens): Promise<Token | Token[]> {
+    async saveTokens(id, tokens: any): Promise<Token | Token[]> {
         const tokenData = await this.token.findOne({ where: { user: { id } } })
         if (tokenData) {
             tokenData.accessToken = tokens.accessToken || null

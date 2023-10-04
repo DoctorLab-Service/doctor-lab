@@ -168,14 +168,4 @@ export class User extends CoreEntity {
             }
         }
     }
-
-    // async checkPassword(aPassword: string): Promise<boolean> {
-    //     try {
-    //         const statusCompare: boolean = await bcrypt.compare(aPassword, this.password)
-    //         return statusCompare
-    //     } catch (error) {
-    //         console.log(error)
-    //         throw new InternalServerErrorException()
-    //     }
-    // }
 }

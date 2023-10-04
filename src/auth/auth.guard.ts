@@ -8,7 +8,12 @@ export class AuthGuard implements CanActivate {
     // if user into the req, then return treu if not exist to return  false
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const gqlContext = GqlExecutionContext.create(context).getContext()
-        const user = gqlContext.req['user']
+        let user = gqlContext.req['user']
+
+        if (user === undefined) {
+            user = gqlContext.req['recovery_user']
+        }
+
         if (!user) return false
         if (!user.verifiedPhone) {
             // ? Info if dont verified user

@@ -24,9 +24,8 @@ export const verificationEmailMessage = (params: CustomMailParams): string => {
  * @param params { link: string }
  * @returns string
  */
-export const changeInfoMessage = (params: CustomMailParams, button: string): string => {
-    changeEmailInfoParams.button = button
-    return infoEmailMessage(changeEmailInfoParams, params)
+export const changeInfoMessage = (params: CustomMailParams, button: string, changeName?: string): string => {
+    return infoEmailMessage(changeEmailInfoParams(button, changeName), params)
 }
 
 /**

@@ -6,10 +6,16 @@ import { AuthService } from './auth.service'
 import { LoginInput, LoginOutput } from './dtos/login.dto'
 import { LogoutOutput } from './dtos/logout.dto'
 import { RefreshTokenOutput } from './dtos/refresh-token.dto'
+import { CheckSocialOutput, CheckSocialInput } from './dtos/check-social.dto'
 
 @Resolver()
 export class AuthResolver {
     constructor(private readonly authService: AuthService) {}
+
+    @Mutation(() => CheckSocialOutput)
+    async checkSocial(@Args('input') body: CheckSocialInput): Promise<CheckSocialOutput> {
+        return this.authService.checkSocial(body)
+    }
 
     @Mutation(() => LoginOutput)
     @UseInterceptors(new LenguageInterceptor(), new AccessTokenCookieInterceptor())

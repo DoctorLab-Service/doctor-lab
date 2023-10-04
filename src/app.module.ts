@@ -87,14 +87,8 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             playground: true,
             introspection: true,
             autoSchemaFile: true,
-<<<<<<< HEAD
             persistedQueries: false,
             cache: 'bounded',
-=======
-            playground: true,
-            introspection: true,
-            persistedQueries: false,
->>>>>>> server-auth
             context: ({ req, res }) => ({ req, res }),
             // formatError: (error: GraphQLError | any) => {
             //     const graphQLFormattedError: GraphQLFormattedError = {

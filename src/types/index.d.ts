@@ -38,16 +38,28 @@ export interface SocialResponseData {
 
 // HOOKS
 export interface UseAuth {
-    logout: () => void
-    readonly isAuth: boolean
-    authentication: (token: string) => void
     redirectToApp: any
+    logout: () => void
+    removeToken: () => void
+    readonly isAuth: boolean
+    setToken: (token: string) => void
+    authentication: (token: string) => void
 }
 
-export interface Mutations {
+export interface MutationsValue {
     mutation: any
     loading: boolean
 }
+export interface MutationsRequest {
+    [key: string]: MutationsValue
+}
+export interface Mutations {
+    mutations: {
+        [key: string]: MutationsValue
+    }
+    setErrors: (errors: any) => void
+}
+
 export interface UseForm {
     validate: any,
     mutations: Mutations
@@ -55,10 +67,10 @@ export interface UseForm {
     onBlur: (e: any) => void,
     form: Record<string, any>,
     onFocus: (e: any) => void,
-    onSubmit: (e: any, request?: any) => void,
     onChange: (e: any) => void,
+    resetForm: (e?: any) => void,
+    onSubmit: (e: any, request?: any) => void,
     setForm: Dispatch<SetStateAction<Record<string, any>>>
-    setValidate: Dispatch<SetStateAction<Record<string, any>>>,
 }
 
 export interface UseRoles {
@@ -69,13 +81,25 @@ export interface UseRoles {
     changeRole: (idx: number) => void
 }
 
+export interface Page {
+    pagename: FormType
+    isLogin: boolean
+    isRegister: boolean
+    isForgot: boolean
+    isSupport: boolean
+    isVerification: boolean
+    isChangePassword: boolean
+    isRecoveryPassword: boolean
+}
 export interface UsePaths {
-    state: any
+    page: Page
     paths: any
+    search: string
     pathname: string
     hostname: string
-    pagename: FormType
     navigate: NavigateFunction
+    state: ISetStateActionPayload
+    setState: (obj: ISetStateActionPayload) => any
 }
 
 export interface UseLanguage {
@@ -98,6 +122,5 @@ export interface UseValidation {
     isPassword: (value: string) => boolean
     isOnlyNumber: (value: string) => boolean
     validationInput: (e: any) => void
-    setForm: Dispatch<SetStateAction<Record<string, Form>>>
     setValidate: Dispatch<SetStateAction<Record<string, any>>>
 } 

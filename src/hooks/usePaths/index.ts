@@ -1,2 +1,2 @@
 export { usePaths } from './usePaths'
-export { getPagename } from './getPagename'
+export { getPage } from './getPage'

@@ -30,8 +30,9 @@ const SocialButton: FC<SocialButtonProps> = ({ redirect_uri, circle,  children, 
     
     // Auth
     const { authentication } = useAuth()
-    const { navigate } = usePaths()
+    const { navigate, setState } = usePaths()
     const { pathWithRole } = useRoles()
+
 
     // Mutation
     const [ _checkSocial ] = useMutation<CheckSocialOutput, CheckSocialInput>(MUTATION_CHECK_SOCIAL, {
@@ -42,7 +43,9 @@ const SocialButton: FC<SocialButtonProps> = ({ redirect_uri, circle,  children, 
                 console.log('Hello username, you login successfully')
                 return
             }
-            navigate(pathWithRole, { state: { fields: {...social } }})
+
+            setState({ fields: {...social } })
+            navigate(pathWithRole)
 
         },
         onError(err) {

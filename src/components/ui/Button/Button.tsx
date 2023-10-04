@@ -29,10 +29,7 @@ const Button: FC<ButtonProps> = ({ id, text, className, size, fullSize, type, va
         return onClick && onClick(e)
     }
     const clickLink = (e) => {
-        resetTransition(true)
-        setTimeout(() => {
-            resetTransition()
-        }, 100)
+        resetTransition()
         clickHandler(e)
     }
 

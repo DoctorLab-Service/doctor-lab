@@ -10,63 +10,21 @@ import VerifiactionFields from "./VerifiactionFields"
 import { usePaths } from "hooks"
 
 
-const InputGroup: FC<InputGroupProps> = ({ setForm, setValidate }) => {
-    const { translation: {
+const InputGroup: FC<InputGroupProps> = () => {
+    const { translation: { 
         core: { inputs }
     } } = useTranslate('auth', [['core', true]])
 
-    const { pagename } = usePaths()
-
-
-    const isLogin = pagename === 'login'
-    const isRegister = pagename === 'register'
-    const isForgot = pagename === 'forgot'
-    const isSupport = pagename === 'support'
-    const isVerification = pagename === 'verification'
-    const isChangePassword = pagename === 'changePassword'
+    const { page: { isLogin, isRegister, isForgot, isSupport, isVerification, isChangePassword } } = usePaths()
 
     return (
         <div className='input-group'>
-            { 
-                isLogin && <LoginFields
-                    placeholders={inputs}
-                    setForm={setForm}
-                    setValidate={setValidate}
-                />
-            }
-            { 
-                isRegister && <RegisterFields
-                    placeholders={inputs}
-                    setForm={setForm}
-                    setValidate={setValidate}
-                />
-            }
-            { 
-                isForgot && <ForgotFields
-                    placeholders={inputs}
-                    setForm={setForm}
-                    setValidate={setValidate}
-                />
-            }
-            { 
-                isSupport && <SupportFields
-                    placeholders={inputs}
-                    setForm={setForm}
-                />
-            }
-            { 
-                isVerification && <VerifiactionFields
-                    placeholders={inputs}
-                    setForm={setForm}
-                />
-            }
-            { 
-                isChangePassword && <ChangePasswordFields
-                    placeholders={inputs}
-                    setForm={setForm}
-                    setValidate={setValidate}
-                />
-            }
+            { isLogin && <LoginFields placeholders={inputs} /> }
+            { isRegister && <RegisterFields placeholders={inputs} /> }
+            { isForgot && <ForgotFields placeholders={inputs} /> }
+            { isSupport && <SupportFields placeholders={inputs} /> }
+            { isVerification && <VerifiactionFields placeholders={inputs} /> }
+            { isChangePassword && <ChangePasswordFields placeholders={inputs} /> }
            
         </div>
     )

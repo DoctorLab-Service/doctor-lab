@@ -7,10 +7,10 @@
                 "fullname": "Fullname",
                 "email": "E-Mail",
                 "phone": "Phone",
-                "code": "Your code from sms",
+                "code": "Your code from SMS",
                 "password": "Password",
                 "newPassword": "New password",
-                "confirmPassword": "Confirm password",
+                "rePassword": "Confirm password",
                 "subject": "Subject",
                 "supportMessage": "Write your question"
             }
@@ -28,7 +28,7 @@
             },
             "links": {
                 "forgot": "Forgot password?",
-                "register": "Have not account"
+                "register": "Don't have an account?"
             }
         },
         "register": {
@@ -43,7 +43,7 @@
                 "submit": "Create Account"
             },
             "links": {
-                "login": "I have an account"
+                "login": "Already have an account?"
             }
         },
         "forgot": {
@@ -53,14 +53,14 @@
                 "submit": "Submit"
             },
             "links": {
-                "back": "I remember the password"
+                "back": "Remembered the password?"
             }
         },
         "verification": {
             "title": "Verification",
-            "info": "A token has been sent to your email to confirm your mail. E-Mail confirmation will allow you to use it to log into your account.",
+            "info": "A token has been sent to your email to confirm your email. Email confirmation will allow you to use it to log into your account.",
             "infoGroup": [
-                "A verification code has been sent to your number",
+                "A verification code has been sent to your number.",
                 "Enter it to verify your number."
             ],
             "buttons": {
@@ -70,24 +70,48 @@
                 "back": "Change phone"
             }
         },
-        "changePassword": {
-            "title": "Change password",
-            "info": "After changing the password, you can \n use its login for your account.",
+        "recoveryPassword": {
+            "title": {
+                "default": "E-Mail Confirmation",
+                "failed": "Invalid code"
+
+            },
+            "info": {
+                "default": "To confirm your email address, please click the button.",
+                "failed": "Unfortunately, the verification code you entered is invalid. Please try again or contact us for assistance."
+            },
             "buttons": {
-                "submit": "Submit"
+                "submit": "Confirm"
             },
             "links": {
-                "back": "I remember the password"
+                "back": "Back to Home",
+                "cancel": "Cancel"
+            }
+        },
+        "changePassword": {
+            "title": "Change password",
+            "info": "After changing the password, you can use it to log into your account.",
+            "buttons": {
+                "submit": "Change password"
+            },
+            "links": {
+                "back": "Remembered the password?"
             }
         },
         "support": {
             "title": "Support",
-            "info": "You can enter the question to which you will get an answer in the specified email.",
+            "info": "You can enter a question to receive an answer in the specified email.",
             "buttons": {
                 "submit": "Submit"
             },
             "links": {
                 "cancel": "Cancel"
+            }
+        },
+        "error404": {
+            "info": "The page you are looking for might have been removed, its name changed, or is temporarily unavailable.",
+            "links": {
+                "back": "Back to Home"
             }
         }
     }

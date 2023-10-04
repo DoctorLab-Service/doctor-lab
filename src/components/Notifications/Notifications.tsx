@@ -11,8 +11,8 @@ import 'react-toastify/dist/ReactToastify.css'
 const Notifications: FC<NotificationsProps> = () => {
     return (
         <ToastContainer
-            position="top-left"
-            autoClose={5000}
+            position="top-center"
+            autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick

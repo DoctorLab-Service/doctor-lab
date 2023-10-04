@@ -15,11 +15,6 @@ export const MUTATION_LOGIN = gql`
     })  {
             ok
             accessToken
-            user {
-                id
-                email
-                phone
-            }
         }
     }
 `

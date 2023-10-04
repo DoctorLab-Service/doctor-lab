@@ -1,31 +1,29 @@
 import { usePaths, useRoles } from "hooks"
 import { FC } from "react"
+import { RootState, useAppSelector } from "store"
 import { Roles } from "types/core"
 import { FormBodyHeaderProps } from "types/props"
 import { useTranslate } from "utils/languages"
 
 const FormBodyHeader: FC<FormBodyHeaderProps> = ({ formState }) => {
     const { translation: {
-        login, forgot, changePassword, register, support, verification
+        login, forgot, changePassword, register, support, verification, recoveryPassword
     } } = useTranslate('auth', [
             ['login', true],
             ['forgot', true],
             ['changePassword', true],
             ['register', true],
             ['support', true],
-            ['verification', true]
+            ['verification', true],
+            ['recoveryPassword', true],
         ])
 
-    const { pagename } = usePaths()
+    const { page: { pagename, isLogin, isRegister, isForgot, isSupport, isVerification, isChangePassword, isRecoveryPassword } } = usePaths()
     const { currentRole } = useRoles()
-    
-    const isLogin = pagename === 'login'
-    const isRegister = pagename === 'register'
-    const isForgot = pagename === 'forgot'
-    const isSupport = pagename === 'support'
-    const isVerification = pagename === 'verification'
-    const isChangePassword = pagename === 'changePassword'
 
+    // Redux store
+    const confirmEmail = useAppSelector(({ form }: RootState) => form.confirmEmail)
+    
     const titleText = {
         login: (role: string | Roles) => `${login.title} ${role}`,
         forgot: forgot.title,
@@ -33,12 +31,14 @@ const FormBodyHeader: FC<FormBodyHeaderProps> = ({ formState }) => {
         register: (role: string | Roles) => `${register.title} ${role}`,
         support: support.title,
         verification: verification.title,
+        recoveryPassword: recoveryPassword.title[confirmEmail.status ? 'default' : 'failed'],
     }
     const bodyText = {
         forgot: forgot.info,
         changePassword: changePassword.info,
         support: support.info,
         verification: verification.info,
+        recoveryPassword: recoveryPassword.info[confirmEmail.status ? 'default' : 'failed'],
     }
 
     return (
@@ -49,7 +49,7 @@ const FormBodyHeader: FC<FormBodyHeaderProps> = ({ formState }) => {
                 }
             </h1>
             {
-                (isForgot || isChangePassword || isSupport || isVerification) 
+                (isForgot || isChangePassword || isSupport || isVerification || isRecoveryPassword) 
                 && <span className="form-body-text">{bodyText[pagename]}</span>
             }
             {

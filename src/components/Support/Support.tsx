@@ -14,10 +14,7 @@ const Support: FC<SupportLinkProps> = ({ path, text, className }) => {
         className,
     )
     const clickLink = () => {
-        resetTransition(true)
-        setTimeout(() => {
-            resetTransition()
-        }, 100)
+        resetTransition()
     }
     return (
         <Link to={path} className={classes} onClick={clickLink}>

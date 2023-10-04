@@ -29,7 +29,7 @@ const Textarea: FC<TextareaProps> = ({ children, id, image, validate, className,
     }
 
     useEffect(() => {
-        setStatus(validate && validate[id] ? validate.status ? 'success' : 'error' : undefined)
+        setStatus(validate && validate[id] ? validate[id].status ? 'success' : 'error' : undefined)
         
     }, [id, status, validate])
 
@@ -40,10 +40,9 @@ const Textarea: FC<TextareaProps> = ({ children, id, image, validate, className,
                 <textarea 
                     id={id}
                     className={fieldClasses}
-                    autoComplete={autoComplete}
                     name={name ? name : id}
                     placeholder={placeholder}
-                    defaultValue={value || children}   
+                    value={value || children}  
                     {...args}
                 ></textarea>
                 {status && StatusSVG }

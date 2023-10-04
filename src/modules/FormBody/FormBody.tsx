@@ -1,28 +1,26 @@
-import { FC, useEffect, useState } from 'react'
 import { InputGroup } from 'components'
-import { useForm, usePaths, useRoles, useValidation } from 'hooks'
 import { FormBodyProps } from 'types/props'
-import FormBodyFooter from './FormBodyFooter'
+import { FC, useEffect, useState } from 'react'
+import { useAppSelector, RootState, useAppDispatch } from 'store'
+import { useForm, usePaths, useRoles, useValidation } from 'hooks'
 import FormBodyHeader from './FormBodyHeader'
+import FormBodyFooter from './FormBodyFooter'
 
 
 const FormBody: FC<FormBodyProps> = () => {
+    const [desabled, setDesabled] = useState<boolean>(true)
+    
     // Custom hooks
     const { isEmpty } = useValidation()
-    const { paths, navigate, state, pathname } = usePaths()
-    const { onSubmit, form, setForm, emptyForm, validate, setValidate, mutations } = useForm({})
-    const [desabled, setDesabled] = useState<boolean>(true)
+    const { currentRole } = useRoles()
+    const { paths, page: { isRecoveryPassword, isChangePassword } } = usePaths()
+    const { onSubmit, emptyForm, validate, mutations: { mutations } } = useForm()
 
-    const { currentRole, pathWithRole } = useRoles()
+    // Redux Store
+    const dispatch = useAppDispatch()
+    const { forms: { register: registerState }, isChangePasswordForm, confirmEmail } = useAppSelector((({ form }: RootState) => form))
  
     const isAdmin = currentRole.key === 'admin'
-    
-
-    // Set form state when register  and redirect to other path
-    const toRegister = (): void => {
-        navigate(pathWithRole, { state })
-    }
-
 
     useEffect(() => {
         const statusFalse: boolean[] = []
@@ -33,37 +31,39 @@ const FormBody: FC<FormBodyProps> = () => {
                 validate[key].status === false && (statusFalse.push(validate[key].status))
             }
         } 
-        setDesabled((statusFalse.length || emptyForm) ? true : false)
-        // console.log('validate', validate)
 
-    }, [emptyForm, isEmpty, navigate, pathname, setValidate, state, validate])
+        // Set Diseble Button 
+        setDesabled((statusFalse.length || emptyForm) && !isRecoveryPassword ? true : false)
 
+    }, [dispatch, emptyForm, isChangePasswordForm, isEmpty, isRecoveryPassword, validate])
+
+    const FormTSX = (<form className='form-body'>
+        <FormBodyHeader formState={registerState.phone} />
+
+        <InputGroup />
+
+        <FormBodyFooter
+            paths={paths}
+            onClick={onSubmit}
+            emptyForm={desabled}
+            isAdmin={isAdmin}
+            mutations={mutations}
+        />
+    </form>)
     
     return (
-        <form className='form-body'>
-            <FormBodyHeader
-                formState={state?.fields?.phone}
-            />
-
-            <InputGroup
-                setForm={setForm}
-                setValidate={setValidate}
-                />
-
-            <FormBodyFooter
-                paths={paths}
-                onClick={onSubmit}
-                toRegister={toRegister}
-                emptyForm={desabled}
-                isAdmin={isAdmin}
-                mutations={mutations}
-            />
-        </form>
+        <>
+            {
+                !isChangePassword && !isRecoveryPassword
+                    ? FormTSX
+                    : isRecoveryPassword && confirmEmail.confirm
+                        ? FormTSX 
+                        : isChangePassword && isChangePasswordForm 
+                            ? FormTSX
+                            : FormTSX
+            }
+        </>
   )
-}
-
-FormBody.defaultProps = {
-    pagename: 'login'
 }
 
 export default FormBody

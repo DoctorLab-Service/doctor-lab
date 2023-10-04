@@ -18,10 +18,9 @@ import {
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { onError } from '@apollo/client/link/error'
-import { toast } from 'react-toastify'
 import { localStorageKey } from 'core/localstorage'
 import { paths } from 'core/routes'
-import { getPagename } from 'hooks/usePaths'
+import { getPage } from 'hooks/usePaths'
 import { getLanguage, getToken } from './helpers'
 
 
@@ -39,22 +38,21 @@ const uri = `http://localhost:8000/auth`
 
 
 const authLink: ApolloLink = new ApolloLink((_operation: Operation, _forward: NextLink) => {
-    const pagename = getPagename(paths())
-
-    const isLogin = pagename === 'login'
-    const isRegister = pagename === 'register'
+    const { isLogin, isRegister, isSupport, isForgot, isVerification, isChangePassword, isRecoveryPassword } = getPage()
 
     _operation.setContext(({ headers }) => {
-        const customHeaders = isLogin || isRegister 
+        const customHeaders = isLogin || isRegister || isSupport || isForgot || isVerification || isRecoveryPassword
             ? {
                 language: getLanguage(),
                 ...headers
             }
             : {
-                "x-jwt": getToken(), // however you get your token
+                [isChangePassword ? "r-jwt" :"x-jwt"]: getToken(), // however you get your token
                 language: getLanguage(),
                 ...headers
             }
+
+        console.log(customHeaders)
         return {
             headers: customHeaders
         }
@@ -106,7 +104,6 @@ const errorLink: ApolloLink = onError(({ graphQLErrors, networkError }) => {
         graphQLErrors.map(({ message, extensions: { exception } = {} }) => {
             // toast.error(`Unexpected error: ${exception}`)
             // console.log('Unexpected error:', exception)
-            return 
         })
     }
     if (networkError) {
@@ -144,3 +141,7 @@ const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
 
 // Endpoint Client
 export default client
+
+function usePath(): { page: { isLogin: any; isRegister: any; isSupport: any; isForgot: any; isVerification: any; isChangePassword: any } } {
+    throw new Error('Function not implemented.')
+}

@@ -1,4 +1,4 @@
-import { CurrentRole, Mutations, RolesList, SocialProviders, Validate } from "types"
+import { RolesList, SocialProviders, Validate } from "types"
 import {
     ButtonSize,
     FormType,
@@ -14,6 +14,7 @@ import {
 
 export interface FormProps {
     darkMode?: boolean
+    setIsChangePassword?: Dispatch<SetStateAction<boolean>>
 }
 
 export interface LogoProps {
@@ -40,6 +41,7 @@ export interface ContentProps {
 */
 export interface TitleProps { }
 export interface FooterProps { }
+export interface Page404Props { }
 export interface FormFooterProps { }
 export interface MergingTextProps { }
 export interface NotificationsProps { }
@@ -58,11 +60,12 @@ export interface FormBodyFooterProps {
     paths?: any
     isAdmin?: boolean
     emptyForm?: boolean
-    mutations: Mutations
-    toRegister?: () => void
+    mutations: MutationsRequest
     onClick?: (e: MouseEventHandler<HTMLButtonElement>, request?: any) => void
 }
-export interface FormBodyProps {}
+export interface FormBodyProps {
+    setIsChangePassword?: Dispatch<SetStateAction<boolean>>
+}
 
 export interface FormHeaderProps {
     darkMode?: boolean
@@ -117,14 +120,9 @@ export interface LanguagesOptions {
 
 export interface FieldsProps {
     placeholders?: any
-    setForm?: Dispatch<SetStateAction<Record<string, Form>>>
-    setValidate?: Dispatch<SetStateAction<Record<string, any>>>
 }
 
-export interface InputGroupProps {
-    setForm?: Dispatch<SetStateAction<Record<string, Form>>>
-    setValidate?: Dispatch<SetStateAction<Record<string, any>>>
-}
+export interface InputGroupProps {}
 
 
 export interface TextareaProps {
@@ -186,4 +184,6 @@ export interface ButtonProps {
 
 
 //  PAGES
-export interface PageLayoutProps extends DefaultProps {}
+export interface PageLayoutProps extends DefaultProps {
+    setIsChangePassword?: Dispatch<SetStateAction<boolean>>
+}

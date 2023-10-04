@@ -1,4 +1,4 @@
-export type FormType = 'login' | 'register' | 'forgot' | 'support' | 'verification' | 'changePassword'
+export type FormType = 'login' | 'register' | 'forgot' | 'support' | 'verification' | 'changePassword' | 'recoveryPassword'
 export type InputAutoComplete = 'on' | 'off'
 export type InputStatus = 'success' | 'error' | undefined
 export type ButtonType = 'button' | 'submit' | 'reset' | 'link'

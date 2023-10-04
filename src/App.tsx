@@ -1,28 +1,42 @@
 
-import { useState } from 'react'
-import { useAuth, useDarkMode, useDevice, usePaths } from 'hooks'
-import { Link, Route, Routes } from 'react-router-dom'
-import { PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
+import { useEffect, useMemo } from 'react'
+import { useDarkMode, useDevice, usePaths } from 'hooks'
+import { Route, Routes } from 'react-router-dom'
+import { Page404, PageLayout, PrivacyPolicy, TermOfUse  } from 'pages'
+import { useAppSelector, RootState, checkRecoveryPassword, useAppDispatch, checkIsChangePasswordForm } from 'store'
 import { VersionApp } from 'components'
 import packageJson from '../package.json'
 
 import 'utils/languages/i18next'
 import 'styles/index.sass'
+import 'utils/reset-transition'
+
 
 const App = (props) => {
-    const [isChangePassword, setIsChangePassword] = useState<boolean>(false)
     const { name, version } = packageJson
-    // const { isAuth, redirectToApp } = useAuth()
-    
-    const { paths, state } = usePaths()
-    const { darkMode, toggleTheme } = useDarkMode()
     const { device, orientation } = useDevice()
+    
+    const { paths, page: { isRecoveryPassword, isChangePassword } } = usePaths()
+    const { darkMode, toggleTheme } = useDarkMode()
+    // const { isAuth, redirectToApp } = useAuth()
+
+    const dispatch = useAppDispatch()
+
+    const { forms: { register: registerState }, isChangePasswordForm, confirmEmail } = useAppSelector((({ form }: RootState) => form))
+ 
+    useMemo(() => {
+        isChangePassword && dispatch(checkIsChangePasswordForm())
+    }, [dispatch, isChangePassword])
+    
+    useMemo(() => {
+        isRecoveryPassword && dispatch(checkRecoveryPassword())
+    }, [dispatch, isRecoveryPassword])
     
     return (
         <div className='app' data-device={device} data-orient={orientation} >
             {/* {
                 !isAuth ? ( */}
-
+                    
                     <Routes>
                         {/* LOGIN LINKS */}
                         <Route path={paths.main} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} >
@@ -42,9 +56,9 @@ const App = (props) => {
         
                         {/* CHANGE PASSWORD LINKS */}
                         {
-                            isChangePassword && <Route
-                                path={paths.cahnge.password}
-                                element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />}
+                            (isChangePassword && isChangePasswordForm) && <Route
+                                path={paths.cahnge.password} 
+                                element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} /> }
                             />
                         }
         
@@ -54,32 +68,36 @@ const App = (props) => {
                         {/* VERIFICATION LINKS */}
                         {
                             // Verification phone when create account
-                            (state?.fields?.phone) && <Route
+                            registerState.phone && <Route
                                 path={paths.verification.phone}
                                 element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />}
                             />
                         }
-                        {/* <Route path={paths.verification.password} element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />} /> */}
-        
-        
+
+                        {/* RECOVER PASSWORD LINK */}
+                        {
+                            (isRecoveryPassword && confirmEmail.confirm && !isChangePasswordForm) &&
+                                <Route 
+                                    path={paths.verification.password}
+                                    element={<PageLayout darkMode={darkMode} toggleTheme={toggleTheme} />}
+                                />
+                        }
         
                         {/* PRIVACY & TERM  LINKS */}
                         <Route path={paths.privacyPolicy} element={<PrivacyPolicy />} />
                         <Route path={paths.termOfUse} element={<TermOfUse />} />
         
         
-                        <Route path='*' element={
-                            <>
-                                <h1>Page not found 404!</h1>
-                                <Link to={paths.main}>Go to main</Link>
-                            </>
-                        } />
+                        <Route path='*' element={<Page404 />} />
         
                     </Routes>
                 {/* )
                     // : redirectToApp()
 
             } */}
+
+            {/* Ваш код компонента для восстановления пароля */}
+
 
             <VersionApp version={`${name}_v${version}`} />
     

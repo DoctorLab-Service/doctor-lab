@@ -1,22 +1,13 @@
-import { FC, useEffect} from 'react'
+import { FC} from 'react'
 import { Input } from 'components/ui'
 import { useForm, useValidation } from 'hooks'
 import { FieldsProps } from 'types/props'
 import { PhoneSVG, EmailSVG, PasswordSVG } from 'assets/icons'
-import { toast } from 'react-toastify'
 
 
-const LoginFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) => {
+const LoginFields: FC<FieldsProps> = ({ placeholders }) => {
     const { isPhone } = useValidation()
-    const { onChange, form, validate } = useForm({
-        login: '',
-        password: '',
-    })
-
-    useEffect(() => {
-        setForm(form)
-        setValidate(validate)
-    }, [form, setForm, setValidate, validate])
+    const { onChange, onBlur, form, validate } = useForm()
 
     return (
         <>
@@ -27,6 +18,7 @@ const LoginFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) =>
                 placeholder={placeholders.login}
                 value={form.login ? form.login : ''}
                 validate={validate}
+                onBlur={onBlur}
                 onChange={onChange}
                 />
             <Input
@@ -36,6 +28,7 @@ const LoginFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) =>
                 placeholder={placeholders.password}
                 value={form.password ? form.password : ''}
                 validate={validate}
+                onBlur={onBlur}
                 onChange={onChange}
                 />
         </>

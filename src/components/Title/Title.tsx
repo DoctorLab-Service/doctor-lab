@@ -16,16 +16,9 @@ const Title: FC<TitleProps> = () => {
         ['verification', true]
     ])
     
-    const { pagename } = usePaths()
+    const { page: { isLogin, isRegister, isForgot, isSupport, isVerification } } = usePaths()
     const { currentRole } = useRoles()
 
-
-    const isLogin = pagename === 'login'
-    const isRegister = pagename === 'register'
-    const isForgot = pagename === 'forgot'
-    const isSupport = pagename === 'support'
-    const isVerification = pagename === 'verification'
-    // const isChangePassword = pagename === 'changePassword'
 
     const pageTitle = isLogin
         ? `${login.title} ${currentRole.value}` : isRegister

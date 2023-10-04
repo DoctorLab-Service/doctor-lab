@@ -5,11 +5,9 @@ import FormFooter from './FormFooter'
 import FormHeader from './FormHeader'
 import { FormBody } from 'modules'
 
-const Form: FC<FormProps> = ({ darkMode }) => {
+const Form: FC<FormProps> = ({ darkMode, setIsChangePassword }) => {
     const { roles, changeRole } = useRoles()
-    const { pagename } = usePaths()
-
-    const isLogin = pagename === 'login'
+    const { page: { isLogin } } = usePaths()
 
     return (
         <div className='form-wrapper'>
@@ -24,8 +22,7 @@ const Form: FC<FormProps> = ({ darkMode }) => {
                         />
                 }
 
-                <FormBody />
-
+                <FormBody setIsChangePassword={setIsChangePassword} />
 
                 {
                     isLogin && <FormFooter />

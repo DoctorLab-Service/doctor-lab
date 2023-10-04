@@ -17,8 +17,4 @@ export { MUTATION_CREATE_HELP_MESSAGE } from './CreateHelpMessage'
 // ChangePassword
 export { MUTATION_CHANGE_PASSWORD } from './ChangePassword'
 export { MUTATION_PASSWORD_RECOVERY_CODE } from './PasswordRecoveryCode'
-export { MUTATION_VERIFICATION_CHANGE_PASSWORD } from './VerificationChangePassword'
-
-
-// 
-// VerificationPhone
+export { MUTATION_VERIFICATION_PASSWORD_RECOVERY } from './VerificationPasswordRecovery'

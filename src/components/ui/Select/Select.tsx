@@ -82,7 +82,7 @@ const Select: FC = () => {
                                     options && options.map((option, idx) => {
                                         return (
                                             <div key={idx}>
-                                                <input id={option.value} className={inputStyles(option)} type={option.type} disabled={option.disabled} name={option.value} />
+                                                <input  id={option.value} className={inputStyles(option)} type={option.type} disabled={option.disabled} name={option.value} placeholder={option.value} />
                                                 <label htmlFor={option.value} tabIndex={idx} className='select-label' data-value={option.value} onClick={e => selectOption(e)}></label>
                                             </div>
 

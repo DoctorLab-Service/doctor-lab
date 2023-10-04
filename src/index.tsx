@@ -6,6 +6,8 @@ import ReactDOM from 'react-dom/client'
 import { ApolloProvider } from '@apollo/client'
 import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter as Router } from 'react-router-dom'
+import { Provider as ReduxProvider } from 'react-redux'
+import { store } from 'store'
 
 import reportWebVitals from './reportWebVitals'
 
@@ -17,13 +19,15 @@ const root = ReactDOM.createRoot(
 root.render(
     <StrictMode>
         <ApolloProvider client={client}>
-            <Router>
-                <HelmetProvider>
-                    <Title />
-                    <App />
-                    <Notifications />
-                </HelmetProvider>
-            </Router>  
+            <ReduxProvider store={store}>
+                <Router>
+                    <HelmetProvider>
+                        <Title />
+                        <App />
+                        <Notifications />
+                    </HelmetProvider>
+                </Router>  
+            </ReduxProvider>
         </ApolloProvider>
     </StrictMode>
 );

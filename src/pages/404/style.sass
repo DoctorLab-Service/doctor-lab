@@ -1,0 +1,70 @@
+#notfound 
+    position: relative
+    height: 100vh
+    background-color: var(--background-color)
+    .notfound 
+        position: absolute
+        left: 50%
+        top: 50%
+        -webkit-transform: translate(-50%, -50%)
+        -ms-transform: translate(-50%, -50%)
+        transform: translate(-50%, -50%)
+
+
+.notfound 
+    max-width: 460px
+    width: 100%
+    text-align: center
+    line-height: 1.4
+
+
+    &-404 
+        height: 158px
+        line-height: 153px
+        h1 
+            font-family: 'Josefin Sans', sans-serif
+            color: var(--font-color-invert)
+            font-size: 220px
+            letter-spacing: 10px
+            margin: 0px
+            font-weight: 700
+            text-shadow: var(--border-error-page)
+            
+            &>span 
+                text-shadow: var(--border-error-page-hover)
+
+
+    p 
+
+        font-family: 'Josefin Sans', sans-serif
+        color: var(--font-color)
+        opacity: .7
+        font-size: 16px
+        font-weight: 400
+        margin-top: 10px
+        margin-bottom: 15px
+
+
+    a 
+        font-family: 'Josefin Sans', sans-serif
+        text-decoration: none
+        text-transform: uppercase
+        // box-shadow: var(--easy-border)
+
+        
+        &:hover
+            color: var(--primary)
+            box-shadow: var(--primary-outline-shadow)
+            
+
+
+
+@media only screen and (max-width: 480px) 
+    .notfound 
+        &-404 
+            height: 122px
+            line-height: 122px
+            h1 
+                font-size: 122px
+    
+

@@ -78,10 +78,17 @@ export const useDarkMode = () => {
         setIsDark(!isDark)
     }
     
+    const offTransition = (timeout: number = 100) => {
+        resetTransition(true)
+        setTimeout(() => {
+            resetTransition()
+        }, timeout)
+    }
+    
     return {
         darkMode: isDark, 
         transition,
         toggleTheme,
-        resetTransition,
+        resetTransition: offTransition,
     }
 }

@@ -7,24 +7,34 @@ export const useAuth = (): UseAuth => {
     const { paths } = usePaths()
     
     const redirectToApp = () => document.location.href = process.env.REACT_APP_APP_URI || paths.main
- 
+    
+    const setToken = (token: string): void => {
+        localStorage.setItem(localStorageKey.token, token)
+    }
+    const removeToken = (): void => {
+        localStorage.removeItem(localStorageKey.token)
+    }
+
     const authentication = (token: string): void => {
         if (token) {
-            console.log(token)
-            localStorage.setItem(localStorageKey.token, token)
+            setToken(token)
             isAuth(true)
             redirectToApp()
         }
     }
     const logout = (): void => {
-        localStorage.removeItem(localStorageKey.token)
+        removeToken()
         isAuth(false)
         document.location.pathname = paths.login
     }
+
+
     return {
-        authentication,
         logout,
+        setToken,
+        removeToken,
+        redirectToApp,
+        authentication,
         isAuth: isAuth(),
-        redirectToApp
     }
 }

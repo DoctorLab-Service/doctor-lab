@@ -1,0 +1,11 @@
+{
+    "success": {
+        "login": "Hello, you have successfully logged in",
+        "verificationPhone": "You have successfully verified your phone number",
+        "passwordRecoveryCode": "An email has been sent to your email address to reset your password",
+        "verificationPasswordRecovery": "You have successfully verified your email",
+        "createAccount": "A verification code has been sent to your phone number",
+        "createHelpMessage": "Your message has been successfully sent",
+        "changePassword": "Your password has been changed"
+    }
+}

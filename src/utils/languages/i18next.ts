@@ -11,17 +11,19 @@ import { localStorageKey } from 'core'
 const fallbackLng = ['EN']
 
 
-const { enAuth, enError } = translations
-const { ruAuth, ruError } = translations
+const { enAuth, enError, enSuccess } = translations
+const { ruAuth, ruError, ruSuccess } = translations
 
 const languages = {
     EN: {
         ...enAuth,
-        ...enError
+        ...enError,
+        ...enSuccess,
     },
     RU: {
         ...ruAuth,
-        ...ruError
+        ...ruError,
+        ...ruSuccess,
     }
 }
 

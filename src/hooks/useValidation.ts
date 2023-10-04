@@ -1,15 +1,18 @@
 import { usePaths } from 'hooks'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { Form, UseValidation } from 'types'
+import { useAppSelector, RootState, useAppDispatch, setValidate } from 'store'
 import { useTranslate } from 'utils/languages'
+import { UseValidation } from 'types'
+import { FormType } from 'types/core'
 
 
-export const useValidation = (): UseValidation => {
-    const { navigate, state, pathname } = usePaths()
-    const [validate, setValidate] = useState<Record<string, any>>({})
+export const useValidation = (formName?: FormType): UseValidation => {
+    const { navigate, state, setState, pathname } = usePaths()
 
-    const [form, setForm] = useState<Record<string, Form>>({})
+    const dispatch = useAppDispatch()
+    const { validate, forms } = useAppSelector((({ form }: RootState) => form))
+    const form = forms[formName]
 
     const { translation: { empty, password, phone, email, fullname } } = useTranslate('errors', [
         ['empty', true], ['password', true], ['phone', true], ['email', true], ['fullname', true]
@@ -34,7 +37,6 @@ export const useValidation = (): UseValidation => {
     const isOnlyNumber = (value: string): boolean => REGEX_ONLY_NUMBER.test(String(value))
     const isEmpty = form => JSON.stringify(form) === '{}'
     
-    const validateForm = useMemo(() => form && form, [form])
 
     // Validation
     const validation = (e: any) => { 
@@ -42,13 +44,13 @@ export const useValidation = (): UseValidation => {
         const inputValue = e.target.value
 
         const statusInput = (status: boolean = false, message: string = '', customInputName: string = undefined): void => {
-            setValidate(state => ({
-                ...state,
+            dispatch(setValidate({
                 [customInputName || inputName]: {
                     status: status,
                     message: message
                 }
             }))
+
         }
 
        
@@ -67,7 +69,6 @@ export const useValidation = (): UseValidation => {
         } else {
             // Not Empty
             statusInput(true)
-
             /*
                 Validate Rules
             */
@@ -99,19 +100,19 @@ export const useValidation = (): UseValidation => {
             }
 
             // Validate Password to length
-            if (inputName === 'password' && (validateForm && !validateForm.confirmPassword)) {
+            if (inputName === 'password' && (form && !form.rePassword)) {
                 validateInput(
                     inputValue.length >= 6 && inputValue.length <= 64,
                     password.length,
                 )
             }
             
-            // Validate Password to Equal if exist confirmPassword
-            if (inputName === 'password' && (validateForm && !!validateForm.confirmPassword)) {
+            // Validate Password to Equal if exist rePassword
+            if (inputName === 'password' && (form && !!form.rePassword)) {
                 validateInput(
-                    validateForm && validateForm.confirmPassword === inputValue,
+                    form && form.rePassword === inputValue,
                     password.equal,
-                    'confirmPassword'
+                    'rePassword'
                 )
                 validateInput(
                     (inputValue.length >= 6 && inputValue.length <= 64),
@@ -119,9 +120,9 @@ export const useValidation = (): UseValidation => {
                 )
             }
             // Validate Confirm password to Equal
-            if(inputName === 'confirmPassword') {
+            if(inputName === 'rePassword') {
                 validateInput(
-                    validateForm && validateForm.password === inputValue,
+                    form && form.password === inputValue,
                     password.equal,
                 )
             }
@@ -132,13 +133,13 @@ export const useValidation = (): UseValidation => {
     // Errors from server
     useEffect(() => {
         if (state && state.errors && !isEmpty(state.errors)) {
-            setValidate({
+            dispatch(setValidate({
                 ...validate,
                 ...state.errors
-            })
-            navigate(pathname, { state: null })
+            }))
+            setState(null)
         }
-    }, [navigate, pathname, state, validate])
+    }, [dispatch, navigate, pathname, setState, state, validate])
 
     // Validation Input
     const validationInput = (e: any) => { 
@@ -152,11 +153,10 @@ export const useValidation = (): UseValidation => {
         isEmpty,
         isEmail,
         isPhone,
-        setForm,
         isNumber,
         validate,
         isPassword,
-        setValidate,
+        setValidate: (value: any) => dispatch(setValidate(value)),
         isOnlyNumber,
         validationInput,
     }

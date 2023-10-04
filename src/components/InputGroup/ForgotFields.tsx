@@ -1,18 +1,11 @@
 import { useForm } from 'hooks'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { Input } from 'components/ui'
 import { EmailSVG } from 'assets/icons'
 import { FieldsProps } from 'types/props'
 
-const ForgotFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) => {
-    const { onChange, onBlur, form, validate } = useForm({
-        email: ''
-    })
-
-    useEffect(() => {
-        setForm(form)
-        setValidate(validate)
-    }, [form, setForm, setValidate, validate])
+const ForgotFields: FC<FieldsProps> = ({ placeholders }) => {
+    const { onChange, onBlur, form, validate } = useForm()
 
     return (
         <>

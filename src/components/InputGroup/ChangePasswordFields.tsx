@@ -1,20 +1,12 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { Input } from 'components/ui'
 import { FieldsProps } from 'types/props'
 import { PasswordSVG } from 'assets/icons'
 import { useForm } from 'hooks'
 
-const ChangePasswordFields: FC<FieldsProps> = ({ placeholders, setForm, setValidate }) => {
-    const { onChange, onBlur, form, validate } = useForm({
-        password: '',
-        confirmPassword: ''
-    })
+const ChangePasswordFields: FC<FieldsProps> = ({ placeholders }) => {
+    const { onChange, onBlur, form, validate } = useForm()
 
-    useEffect(() => {
-        setForm(form)
-        setValidate(validate)
-    }, [form, setForm, setValidate, validate])
-    
     return (
         <>
             <Input
@@ -28,12 +20,12 @@ const ChangePasswordFields: FC<FieldsProps> = ({ placeholders, setForm, setValid
                 onChange={onChange}
                 />
             <Input
-                id='confirmPassword'
+                id='rePassword'
                 type='password'
                 validate={validate}
                 image={<PasswordSVG className='input-icon' />}
-                placeholder={placeholders.confirmPassword}
-                value={form.confirmPassword ? form.confirmPassword : ''}
+                placeholder={placeholders.rePassword}
+                value={form.rePassword ? form.rePassword : ''}
                 onBlur={onBlur}
                 onChange={onChange}
                 />

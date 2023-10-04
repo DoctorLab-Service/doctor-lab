@@ -1,68 +1,104 @@
 import { Button } from 'components/ui'
-import { usePaths, useRoles } from 'hooks'
+import { useDarkMode, useForm, usePaths, useRoles } from 'hooks'
 
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import { RootState, useAppDispatch, useAppSelector } from 'store'
 import { FormBodyFooterProps } from 'types/props'
 import { useTranslate } from 'utils/languages'
 
-const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, emptyForm, isAdmin, mutations }) => {
+const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, emptyForm, isAdmin, mutations, }) => {
+    const [loading, setLoading] = useState(false)
+
     const { translation: {
-        login, forgot, changePassword, register, support, verification
+        login, forgot, changePassword, register, support, verification, recoveryPassword,
     } } = useTranslate('auth', [
         ['login', true],
         ['forgot', true],
         ['changePassword', true],
         ['register', true],
         ['support', true],
-        ['verification', true]
+        ['verification', true],
+        ['recoveryPassword', true],
     ])
-    const { paths, pagename } = usePaths()
+    
     const { pathWithRole } = useRoles()
-    const { mutation, loading } = mutations
+    const { resetForm } = useForm()
+    const { resetTransition } = useDarkMode()
 
-    const isLogin = pagename === 'login'
-    const isRegister = pagename === 'register'
-    const isForgot = pagename === 'forgot'
-    const isSupport = pagename === 'support'
-    const isVerification = pagename === 'verification'
-    const isChangePassword = pagename === 'changePassword'
+    const { 
+        paths,
+        page: {
+            isLogin,
+            isRegister,
+            isForgot,
+            isSupport,
+            isVerification,
+            isChangePassword,
+            isRecoveryPassword,
+        },
+        navigate
+    } = usePaths()
 
-    const buttonText = isLogin
-        ? login.buttons.submit : isRegister
-            ? register.buttons.submit : isForgot
-                ? forgot.buttons.submit : isSupport
-                    ? support.buttons.submit : isVerification
-                        ? verification.buttons.submit : changePassword.buttons.submit
+    // Redux store
+    const { confirmEmail } = useAppSelector(({ form }: RootState) => form)
 
-    const linkText = isRegister
-        ? register.links.login : isForgot
-            ? forgot.links.back : isSupport
-                ? support.links.cancel : isVerification
-                    ? verification.links.back : changePassword.links.back
+    const buttonText = isLogin ? login.buttons.submit 
+        : isRegister ? register.buttons.submit
+        : isForgot ? forgot.buttons.submit
+        : isSupport ? support.buttons.submit
+        : isVerification ? verification.buttons.submit
+        : isChangePassword ? changePassword.buttons.submit
+        : recoveryPassword.buttons.submit
+
+    const linkText = isRegister ? register.links.login
+        : isForgot ? forgot.links.back 
+        : isSupport ? support.links.cancel
+        : isVerification ? verification.links.back
+        : isChangePassword ? changePassword.links.back
+        : recoveryPassword.links[confirmEmail.status ? 'cancel' : 'back']
 
 
 
     const handleClick = async (e): Promise<void> => {
-        if (isLogin) {
-            onClick(e, mutation._login)
+        let mutationName = isLogin ? 'login'
+            : isRegister ? 'createAccount'
+            : isVerification ? 'verificationPhone'
+            : isForgot ? 'passwordRecoveryCode'
+            : isSupport  ? 'createHelpMessage' 
+            : isChangePassword ? 'changePassword'
+            : isRecoveryPassword && 'verificationPasswordRecovery'
+
+
+        if (mutationName.length) {
+            const { mutation, loading } = mutations[mutationName]
+            onClick(e, mutation)
+            setLoading(loading)
+            return
         } 
-        if (isRegister) {
-            onClick(e, mutation._createAccount)
-        }
-        if (isVerification) {
-            onClick(e, mutation._verificationPhone)
-        }
-        if (isForgot) {
-            onClick(e, mutation._passwordRecoveryCode)
-        }
-        if (isSupport) {
-            onClick(e, mutation._createHelpMessage)            
-        }
-        if (isChangePassword) {
-            onClick(e, mutation._changePassword)
-        }
+        
         onClick(e)
+        return
     }
+    const handleLinkClick = (): string => {
+        resetForm()
+        resetTransition()
+
+        return navigate(isVerification ? pathWithRole : paths.login)
+    }
+
+    const ButtonJSX = <Button
+        text={buttonText}
+        variant='primary'
+        size={!isLogin ? 'medium' : undefined}
+        type='button'
+        fullSize
+        loading={loading}
+        disabled={emptyForm}
+        onClick={isRegister
+            ? emptyForm ? undefined : handleClick
+            : ((isLogin || isChangePassword || isForgot) && emptyForm) || loading ? undefined : handleClick
+        }
+    />
 
     return (
         <footer className='form-body-footer'>
@@ -73,36 +109,28 @@ const FormBodyFooter: FC<FormBodyFooterProps> = ({ onClick, toRegister, emptyFor
                         link={pathWithRole}
                         size='medium'
                         text={login.links.register}
+                        onClick={() => resetForm()}
                         disabled={isAdmin}
-                    />
+                        />
                     <Button
                         link={paths.forgot.password}
                         size='medium'
                         text={login.links.forgot}
+                        onClick={() => resetForm()}
+                        
                     />
                 </div>
             }
 
-            <Button
-                text={buttonText}
-                variant='primary'
-                size={!isLogin ? 'medium' : undefined}
-                type='button'
-                fullSize
-                loading={loading}
-                disabled={emptyForm}
-                onClick={isRegister
-                    ? emptyForm ? undefined : handleClick
-                    : ((isLogin || isChangePassword || isForgot) && emptyForm) || loading ? undefined : handleClick
-                }
-            />
+            { 
+                !isRecoveryPassword  ? ButtonJSX : confirmEmail.status ? ButtonJSX : undefined
+            }
 
             {
                 !isLogin && <Button
                     size={!isForgot ? 'medium' : undefined}
                     type='link'
-                    link={isVerification ? undefined : paths.login}
-                    onClick={isVerification ? toRegister : undefined}
+                    onClick={handleLinkClick}
                     text={linkText}
                 />
             }

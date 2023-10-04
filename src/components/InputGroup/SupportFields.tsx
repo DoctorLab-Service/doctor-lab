@@ -1,19 +1,11 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { FieldsProps } from 'types/props'
 import { Input, Textarea } from 'components/ui'
-import { EmailSVG, SubjectSVG } from 'assets/icons'
+import { EmailSVG, SubjectSVG, UserSVG } from 'assets/icons'
 import { useForm } from 'hooks'
 
-const SupportFields: FC<FieldsProps> = ({ placeholders, setForm }) => {
-    const { onChange, onBlur, form, validate } = useForm({
-        email: '',
-        subject: '',
-        message: '',
-    })
-
-    useEffect(() => {
-        setForm(form)
-    }, [form, setForm])
+const SupportFields: FC<FieldsProps> = ({ placeholders }) => {
+    const { onChange, onBlur, form, validate } = useForm()
 
     return (
         <>
@@ -24,6 +16,16 @@ const SupportFields: FC<FieldsProps> = ({ placeholders, setForm }) => {
                 image={<EmailSVG className='input-icon' />}
                 placeholder={placeholders.email}
                 value={form.email ? form.email : ''}
+                onBlur={onBlur}
+                onChange={onChange}
+            />
+            <Input
+                id='fullname'
+                type='text'
+                validate={validate}
+                image={<UserSVG className='input-icon' />}
+                placeholder={placeholders.fullname}
+                value={form.fullname ? form.fullname : ''}
                 onBlur={onBlur}
                 onChange={onChange}
             />

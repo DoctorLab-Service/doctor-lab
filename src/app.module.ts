@@ -88,6 +88,7 @@ import { HelpAnswer, HelpMessage } from './help/entities'
             introspection: true,
             autoSchemaFile: true,
             persistedQueries: false,
+            cache: 'bounded',
             context: ({ req, res }) => ({ req, res }),
             // formatError: (error: GraphQLError | any) => {
             //     const graphQLFormattedError: GraphQLFormattedError = {

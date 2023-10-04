@@ -82,7 +82,7 @@ import { HelpAnswer, HelpMessage } from './help/entities'
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
-            cors: false,
+            // cors: false,
             path: 'auth',
             playground: true,
             introspection: true,

@@ -290,6 +290,12 @@ export class UsersService {
      */
     async changePassword(body: ChangePasswordInput, context): Promise<ChangeOutput> {
         const currentUser: User = getCurrentUser(context)
+        if (!currentUser) {
+            throw new ValidationException({
+                not_exists: await this.languageService.setError(['isNotExist', 'user'], 'users'),
+            })
+        }
+
         const user = await this.users.findOne({ where: { id: currentUser.id, resetKey: EResetKey.password } })
         if (!user) {
             throw new ValidationException({

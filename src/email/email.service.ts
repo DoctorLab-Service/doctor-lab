@@ -53,7 +53,7 @@ export class EmailService {
      * @param code code
      */
     async sendPasswordRecovery({ to, code }: EmailParams): Promise<boolean> {
-        const link = `${process.env.SERVER_HOST + process.env.SERVER_PORT}/forgot-password?${code}`
+        const link = `${process.env.CLIENT_AUTH_HOST + process.env.CLIENT_RECOVERY_PASSWORD_URI}?${code}`
         return this.sendMail({
             to,
             from: this.options.fromEmail,
@@ -90,7 +90,7 @@ export class EmailService {
             to,
             from: this.options.fromEmail,
             subject: `Change ${changeName} - Complited`,
-            html: changeInfoMessage({ fullname }, changedData),
+            html: changeInfoMessage({ fullname }, changedData, changeName),
         })
     }
 

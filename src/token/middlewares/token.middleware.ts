@@ -41,16 +41,17 @@ export class TokenMiddleware implements NestMiddleware {
         }
         if (tokenKey.RECOVERY_JWT in req.headers) {
             const recoveryToken = req.headers[tokenKey.RECOVERY_JWT]
+
             try {
                 const decoded = await this.tokenService.validateToken('recoveryToken', recoveryToken.toString())
-
                 let user
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
                     user = await this.usersService.findById({ id: decoded.id })
                 }
+
                 req['recovery_user'] = user.user
             } catch (error) {
-                console.log(error.message)
+                console.log(error)
                 if (error.message === 'jwt expired') {
                     await this.tokenService.removeExpiredToken('recoveryToken', recoveryToken.toString())
                     next(

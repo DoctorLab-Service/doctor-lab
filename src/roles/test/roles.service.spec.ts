@@ -160,7 +160,6 @@ describe('RolesService', () => {
         test('should fail if input type system and user do not have system role', async () => {
             input.type = ERolesType.system
             const currentUser = getCurrentUser(context)
-            console.log(currentUser)
 
             const errorMessage = 'You do not have permission to create the system role'
             languageService.setError.mockResolvedValue(errorMessage)

@@ -48,7 +48,7 @@ export class UsersMutations {
         return this.usersService.changeEmail(body, context)
     }
 
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @Mutation(() => ChangeOutput)
     @UsePipes(new ValidationPipe('users'))
     async changePassword(@Args('input') body: ChangePasswordInput, @Context() context: any): Promise<ChangeOutput> {

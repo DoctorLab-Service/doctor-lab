@@ -332,10 +332,6 @@ export class VerificationsService {
             // Create new user object without password
             await this.users.save({ ...object.withoutProperties(verification.user, ['password']) })
 
-            // $2b$12$wfm7d0dLTUAArjLi2rceteh0.6ReZe5AhW3FZIGzoHPZ6VWspCw1K
-            // $2b$12$wfm7d0dLTUAArjLi2rceteh0.6ReZe5AhW3FZIGzoHPZ6VWspCw1K
-            // $2b$12$wfm7d0dLTUAArjLi2rceteh0.6ReZe5AhW3FZIGzoHPZ6VWspCw1K
-
             // Delete verify code
             await this.verifyPhone.delete(verification.id)
             return { ok: true }
@@ -401,8 +397,9 @@ export class VerificationsService {
 
             // Check to exists tokens for this user
             await this.tokenService.removeTokenByUserId(user.id)
+
             // Save token in database
-            await this.tokenService.saveTokens(user, { recoveryToken: token.recoveryToken })
+            await this.tokenService.saveTokens(user.id, { recoveryToken: token.recoveryToken })
             // await this.tokens.save(this.tokens.create({ recoveryToken: token.recoveryToken, user }))
 
             return { ok: Boolean(deletedCode.affected > 0), token: token.recoveryToken }

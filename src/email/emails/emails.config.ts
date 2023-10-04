@@ -21,13 +21,13 @@ export const changeEmailParams: DefaultMailParams = {
     button: 'Change Email',
 }
 
-export const changeEmailInfoParams: DefaultMailParams = {
+export const changeEmailInfoParams = (data: string, name: string): DefaultMailParams => ({
     path: '',
-    title: 'Change Email - Complited',
-    emailTitle: 'Your email address has been changed',
-    content: 'Your email address has been changed to:',
-    button: 'Change Email',
-}
+    title: `Change ${name} - Complited`,
+    emailTitle: `Your ${name} has been changed`,
+    content: `Your ${name} has been changed to: `,
+    button: data,
+})
 
 export const helpMessageEmailParams: DefaultMailParams = {
     path: '',

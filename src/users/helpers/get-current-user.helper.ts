@@ -7,8 +7,15 @@ import { User } from '../entities'
  */
 export const getCurrentUser = (context: any): User => {
     let currentUser: User
-    if (context && context.req.user.roles) {
+    // If user
+    if (context && context.req && context.req.user && context.req.user.roles) {
         currentUser = context.req.user
+        return currentUser
+    }
+    // If recovery user
+    if (context && context.req && context.req['recovery_user']) {
+        currentUser = context.req['recovery_user']
+        return currentUser
     }
     return currentUser
 }

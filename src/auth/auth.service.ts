@@ -47,6 +47,7 @@ export class AuthService {
 
     async login(body: LoginInput): Promise<LoginOutput> {
         let user: User
+
         // Login by email
         if (body.email) {
             user = await this.users.findOne({ where: { email: body.email } })

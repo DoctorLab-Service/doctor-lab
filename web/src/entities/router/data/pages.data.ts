@@ -1,4 +1,5 @@
 export const Pages = Object.freeze({
 	HOME:'/',
-	LOGIN: '/login'
+	LOGIN: '/login',
+	REGISTER: '/register'
 })

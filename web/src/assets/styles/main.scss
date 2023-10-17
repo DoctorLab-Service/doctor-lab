@@ -1,0 +1,27 @@
+body {
+  font-family: "Poppins", sans-serif;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+  }
+}
+
+.app {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &.dark {
+    //
+  }
+}
+
+.p-datatable-thead tr th {
+  border-top: none !important;
+}

@@ -1,6 +1,5 @@
 {
     "version": 2,
-    "buildCommand": "next build",
     "builds": [
         {
             "src": "dist/main.js",
@@ -15,7 +14,10 @@
                 "GET",
                 "POST",
                 "PUT",
-                "DELETE"
+                "PATCH",
+                "DELETE",
+                "HEAD",
+                "OPTIONS"
             ]
         }
     ]

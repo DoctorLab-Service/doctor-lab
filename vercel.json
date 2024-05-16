@@ -1,0 +1,35 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/next"
+        }
+    ],
+    "env": {
+        "NEXT_PUBLIC_API_URL": "https://api.example.com"
+    },
+    "rewrites": [
+        {
+            "source": "/old-path",
+            "destination": "/new-path"
+        }
+    ],
+    "redirects": [
+        {
+            "source": "/old-route",
+            "destination": "/new-route",
+            "permanent": true
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
+        }
+    ]
+}

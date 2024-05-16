@@ -9,19 +9,7 @@
     "env": {
         "NEXT_PUBLIC_API_URL": "https://api.example.com"
     },
-    "rewrites": [
-        {
-            "source": "/old-path",
-            "destination": "/new-path"
-        }
-    ],
-    "redirects": [
-        {
-            "source": "/old-route",
-            "destination": "/new-route",
-            "permanent": true
-        }
-    ],
+    
     "routes": [
         {
             "src": "/api/(.*)",

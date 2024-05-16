@@ -29,6 +29,7 @@ export default function Home() {
       </div>
 
       <div className={styles.center}>
+        AUTH SERVICE
         <Image
           className={styles.logo}
           src="/next.svg"

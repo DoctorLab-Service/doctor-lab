@@ -29,7 +29,6 @@ export default function Home() {
       </div>
 
       <div className={styles.center}>
-        MAIN SERVICE
         <Image
           className={styles.logo}
           src="/next.svg"

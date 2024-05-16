@@ -1,0 +1,22 @@
+# .eslintignore
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build artifacts
+build/
+
+# Ignore generated files
+dist/
+
+# Ignore specific files
+codegen.ts
+.eslintrc.js
+next-env.d.ts
+
+*.test.ts
+*.spec.ts
+
+
+.vscode/
+.idea/

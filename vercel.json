@@ -1,15 +1,16 @@
 {
     "version": 2,
+    "buildCommand": "next build",
     "builds": [
         {
-            "src": "package.json",
+            "src": "dist/main.js",
             "use": "@vercel/node"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/index.js"
+            "dest": "dist/main.js"
         }
     ]
 }
